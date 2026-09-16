@@ -67,11 +67,17 @@ it does not mean that the corresponding result is merely assumed.
   `det(Z(P,Q,R)+sI) = det(G_s(P,R)+J_s(Q))` for every `s > 0`.
 - [x] Joint convexity in `(P,R)` of the fixed-middle shifted log-determinant
   integrand for every positive integral parameter `s`.
+- [x] Exact finite-cutoff formula for the integral of the difference of two
+  finite spectral log-resolvents.
+- [x] Cancellation at infinity of all divergent spectral terms under the
+  equal-mass/equal-trace hypothesis.
+- [x] Matrix log-determinant entropy-integral limit for positive semidefinite
+  matrices of equal trace, including singular matrices.
 
 ## Open proof obligations
 
-- [ ] Improper entropy-integral identity, integration of the pointwise
-  log-determinant convexity, and passage to the semidefinite boundary.
+- [ ] Integration of the pointwise fixed-middle log-determinant convexity and
+  passage of convexity through the entropy-integral limit.
 - [ ] Dephasing/scalar Jensen reduction and the full triangular block entropy
   inequality.  At present `TriangularBlockEntropyInequality` is a proposition
   naming this target, not a theorem asserting it.

@@ -46,9 +46,13 @@ proof obligations.
     positivity of the coupling matrix `Z(P,Q,R)`, the Schur-complement
     determinant identity, and fixed-middle joint convexity of the shifted
     log-determinant integrand in `(P,R)`.
-14. Future modules will finish the improper entropy-integral/dephasing
-    reduction and the triangular theorem, and finally prove the EoF/channel
-    corollaries.
+14. `Triangular/EntropyIntegral.lean`: checked finite-cutoff spectral
+    logarithm integral, cancellation at infinity for equal trace, and the
+    matrix log-determinant entropy-integral limit, including singular
+    positive semidefinite matrices.
+15. Future modules will finish integration of the fixed-middle convexity,
+    the dephasing reduction and triangular theorem, and finally prove the
+    EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
