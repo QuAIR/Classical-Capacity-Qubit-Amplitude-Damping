@@ -1,0 +1,10 @@
+name = "AmplitudeDampingFormalization"
+defaultTargets = ["AmplitudeDamping"]
+
+[[require]]
+name = "QIT"
+path = "/Users/ziaotang/.qiform/corpus/lean-qit-da54e30"
+
+[[lean_lib]]
+name = "AmplitudeDamping"
+moreLeanArgs = ["-DautoImplicit=false"]
