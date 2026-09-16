@@ -95,13 +95,19 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Positive-semidefiniteness of basis dephasing and the Jensen inequality
   showing that dephasing both outer arguments cannot increase the entropy
   defect when the middle argument is diagonal.
+- [x] Positive-semidefiniteness and spectral-entropy additivity for arbitrary
+  finite homogeneous block diagonals.
+- [x] Exact coordinatewise block decomposition of the entropy coupling for
+  nonnegative real diagonal inputs, including the finite basis relabeling.
+- [x] Exact formula expressing a diagonal entropy defect as the sum of its
+  one-dimensional scalar entropy defects.
 
 ## Open proof obligations
 
-- [ ] Scalar diagonal decomposition/Jensen reduction and the full triangular
-  block entropy inequality.  The matrix dephasing step is checked.  At present
-  `TriangularBlockEntropyInequality` is a proposition naming the remaining
-  target, not a theorem asserting it.
+- [ ] Scalar perspective Jensen/trace compression and the full triangular
+  block entropy inequality.  Matrix dephasing and diagonal scalar
+  decomposition are checked.  At present `TriangularBlockEntropyInequality`
+  is a proposition naming the remaining target, not a theorem asserting it.
 - [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.

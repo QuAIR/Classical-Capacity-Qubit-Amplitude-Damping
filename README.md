@@ -58,7 +58,12 @@ proof obligations.
     diagonal-sign twirl, its exact identification with basis dephasing, and
     the Jensen proof that dephasing the two outer blocks cannot increase the
     fixed-diagonal-middle entropy defect.
-16. Future modules will finish the scalar diagonal reduction and triangular
+16. `Triangular/ScalarCompression.lean`: checked entropy additivity for finite
+    homogeneous block diagonals, positive square roots of real diagonal
+    matrices, coordinatewise scalarization of the diagonal entropy coupling,
+    and the exact decomposition of a diagonal entropy defect into scalar
+    defects.
+17. Future modules will finish scalar perspective Jensen and the triangular
     theorem, and finally prove the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
