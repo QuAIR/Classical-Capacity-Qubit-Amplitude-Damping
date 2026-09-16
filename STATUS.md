@@ -106,14 +106,18 @@ it does not mean that the corresponding result is merely assumed.
   trace corrections.
 - [x] Scalar perspective identity and finite Jensen/trace-compression
   inequality when every middle scalar coordinate is strictly positive.
+- [x] Continuity of spectral entropy along arbitrary continuous
+  positive-semidefinite matrix paths, including singular boundary points.
+- [x] Extension of scalar perspective Jensen to all nonnegative middle
+  coordinates by a checked strictly-positive perturbation and limit argument.
 
 ## Open proof obligations
 
-- [ ] Extension of scalar perspective Jensen to zero middle coordinates and
-  the full triangular block entropy inequality.  Matrix dephasing, diagonal
-  scalar decomposition, homogeneity, and the strictly-positive perspective
-  case are checked.  At present `TriangularBlockEntropyInequality` is a
-  proposition naming the remaining target, not a theorem asserting it.
+- [ ] Matrix trace compression and the full triangular block entropy
+  inequality.  Matrix dephasing, diagonal scalar decomposition, homogeneity,
+  and scalar perspective Jensen on the closed nonnegative octant are checked.
+  At present `TriangularBlockEntropyInequality` is a proposition naming the
+  remaining target, not a theorem asserting it.
 - [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.

@@ -64,9 +64,11 @@ proof obligations.
     the exact decomposition of a diagonal entropy defect into scalar defects,
     positive homogeneity, and scalar perspective Jensen when all middle
     coordinates are strictly positive.
-17. Future modules will close the semidefinite boundary of scalar perspective
-    Jensen and prove the triangular theorem, followed by the EoF/channel
-    corollaries.
+17. `Triangular/ScalarBoundary.lean`: checked continuity of spectral entropy
+    along positive-semidefinite matrix paths and the limiting argument that
+    extends scalar perspective Jensen to zero middle coordinates.
+18. Future modules will assemble matrix trace compression and prove the
+    triangular theorem, followed by the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
