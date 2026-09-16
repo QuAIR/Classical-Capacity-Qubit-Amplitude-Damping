@@ -86,12 +86,22 @@ it does not mean that the corresponding result is merely assumed.
   through the entropy-integral limit.
 - [x] Ambient-space totalization of the entropy defect and a checked finite
   Jensen inequality, ready for the sign-unitary dephasing average.
+- [x] Unitary covariance of the positive square root and unitary invariance of
+  the positive-semidefinite spectral entropy.
+- [x] Simultaneous-unitary invariance of the entropy coupling and entropy
+  defect, including invariance under stabilizers of the fixed middle block.
+- [x] Exact finite sign-unitary twirl identity: averaging all diagonal sign
+  conjugations removes precisely the off-diagonal entries.
+- [x] Positive-semidefiniteness of basis dephasing and the Jensen inequality
+  showing that dephasing both outer arguments cannot increase the entropy
+  defect when the middle argument is diagonal.
 
 ## Open proof obligations
 
-- [ ] Dephasing/scalar Jensen reduction and the full triangular block entropy
-  inequality.  At present `TriangularBlockEntropyInequality` is a proposition
-  naming this target, not a theorem asserting it.
+- [ ] Scalar diagonal decomposition/Jensen reduction and the full triangular
+  block entropy inequality.  The matrix dephasing step is checked.  At present
+  `TriangularBlockEntropyInequality` is a proposition naming the remaining
+  target, not a theorem asserting it.
 - [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.

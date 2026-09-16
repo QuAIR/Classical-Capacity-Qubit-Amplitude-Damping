@@ -12,6 +12,7 @@ import AmplitudeDamping.Triangular.LogDet
 import AmplitudeDamping.Triangular.LogDetCalculus
 import AmplitudeDamping.Triangular.EntropyReduction
 import AmplitudeDamping.Triangular.EntropyIntegral
+import AmplitudeDamping.Triangular.Dephasing
 
 /-!
 # Formalization of strong additivity for amplitude damping

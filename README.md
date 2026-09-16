@@ -53,7 +53,12 @@ proof obligations.
     additivity, identifies the padded integral with the manuscript entropy
     defect, integrates pointwise convexity, and proves the full fixed-middle
     convexity theorem on the semidefinite cone.
-15. Future modules will finish the dephasing reduction and triangular
+15. `Triangular/Dephasing.lean`: checked unitary covariance of positive square
+    roots and spectral entropy, invariance of the entropy defect, the finite
+    diagonal-sign twirl, its exact identification with basis dephasing, and
+    the Jensen proof that dephasing the two outer blocks cannot increase the
+    fixed-diagonal-middle entropy defect.
+16. Future modules will finish the scalar diagonal reduction and triangular
     theorem, and finally prove the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
