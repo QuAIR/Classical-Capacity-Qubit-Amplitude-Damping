@@ -116,6 +116,8 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Exact normalized scalar formula: the trace-one scalar coupling has
   determinant `p*r`, entropy `entanglementCurve (2*sqrt(p*r))`, and the
   corresponding scalar entropy defect has the required `xlog2` corrections.
+- [x] Normalized triangular entropy lower bound for the canonical
+  lower-triangular square-root factor `[[sqrt P, 0], [sqrt Q, sqrt R]]`.
 
 ## Open proof obligations
 

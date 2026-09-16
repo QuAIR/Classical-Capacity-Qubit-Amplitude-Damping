@@ -72,7 +72,8 @@ proof obligations.
     middle matrix, and the full PSD matrix trace-compression theorem.
 19. `Triangular/ScalarNormalization.lean`: checked the scalar coupling
     determinant and its exact identification with the normalized qubit
-    entanglement curve, together with the resulting scalar-defect formula.
+    entanglement curve, the resulting scalar-defect formula, and the
+    normalized entropy lower bound for the canonical square-root factor.
 20. Future modules will recover the triangular blocks by polar/isometric
     embeddings, followed by the EoF/channel corollaries.
 

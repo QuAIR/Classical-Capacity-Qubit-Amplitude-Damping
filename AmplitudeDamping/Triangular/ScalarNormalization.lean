@@ -129,6 +129,58 @@ theorem scalarEntropyDefect_eq_entanglementCurve
     psdEntropy_scalarMatrix q hq, psdEntropy_scalarMatrix r hr]
   ring
 
+/-- Normalized entropy lower bound for the canonical coupling matrix.  This is
+the triangular inequality before replacing arbitrary blocks by polar factors. -/
+theorem entropyCoupling_entropy_lower_bound_normalized
+    {d : Type} [Fintype d] [DecidableEq d] [Nonempty d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef)
+    (hsum : P.trace.re + Q.trace.re + R.trace.re = 1) :
+    psdEntropy (entropyCoupling P Q R)
+        (entropyCoupling_posSemidef P Q R hP hQ hR) ≥
+      entanglementCurve (2 * Real.sqrt (P.trace.re * R.trace.re)) +
+        psdEntropy P hP + psdEntropy Q hQ + psdEntropy R hR +
+        QIT.xlog2 P.trace.re + QIT.xlog2 Q.trace.re +
+        QIT.xlog2 R.trace.re := by
+  have hp : 0 ≤ P.trace.re := (Matrix.PosSemidef.trace_nonneg hP).1
+  have hq : 0 ≤ Q.trace.re := (Matrix.PosSemidef.trace_nonneg hQ).1
+  have hr : 0 ≤ R.trace.re := (Matrix.PosSemidef.trace_nonneg hR).1
+  have hcompression := entropyDefect_ge_scalar_trace P Q R hP hQ hR
+  have hscalar := scalarEntropyDefect_eq_entanglementCurve
+    P.trace.re Q.trace.re R.trace.re hp hq hr hsum
+  rw [hscalar] at hcompression
+  unfold entropyDefect at hcompression
+  linarith
+
+/-- The same normalized lower bound for the lower-triangular square-root
+factor whose Gram matrix is the entropy coupling. -/
+theorem entropyCouplingSqrtFactor_entropy_lower_bound_normalized
+    {d : Type} [Fintype d] [DecidableEq d] [Nonempty d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef)
+    (hsum : P.trace.re + Q.trace.re + R.trace.re = 1) :
+    psdEntropy
+        ((entropyCouplingSqrtFactor P Q R).conjTranspose *
+          entropyCouplingSqrtFactor P Q R)
+        (Matrix.posSemidef_conjTranspose_mul_self
+          (entropyCouplingSqrtFactor P Q R)) ≥
+      entanglementCurve (2 * Real.sqrt (P.trace.re * R.trace.re)) +
+        psdEntropy P hP + psdEntropy Q hQ + psdEntropy R hR +
+        QIT.xlog2 P.trace.re + QIT.xlog2 Q.trace.re +
+        QIT.xlog2 R.trace.re := by
+  calc
+    psdEntropy
+        ((entropyCouplingSqrtFactor P Q R).conjTranspose *
+          entropyCouplingSqrtFactor P Q R)
+        (Matrix.posSemidef_conjTranspose_mul_self
+          (entropyCouplingSqrtFactor P Q R)) =
+      psdEntropy (entropyCoupling P Q R)
+        (entropyCoupling_posSemidef P Q R hP hQ hR) := by
+      exact psdEntropy_congr
+        (entropyCoupling_eq_sqrtFactor_gram P Q R hP hQ hR) _ _
+    _ ≥ _ := entropyCoupling_entropy_lower_bound_normalized
+      P Q R hP hQ hR hsum
+
 end
 
 end AmplitudeDamping
