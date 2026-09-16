@@ -31,15 +31,17 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Coordinate normal form for every qubit state, including the positivity
   bound `|rho_01|^2 <= q(1-q)`.
 - [x] Explicit two-state equal-excitation decomposition for every qubit state.
+- [x] Strict monotonicity and convexity of the scalar concurrence entropy
+  curve, including checked first- and second-derivative formulas and the
+  logarithmic curvature inequality.
+- [x] Monotonicity and convexity of `g_p` for every physical damping parameter.
 - [x] Unconditional upper bound `roof(A_p, rho) <= g_p(q)` and the exact
-  fixed-excitation roof formula conditional only on scalar convexity of `g_p`.
+  fixed-excitation roof formula `roof(A_p, rho) = g_p(q)`.
 - [x] Exact formal statement of the triangular block entropy inequality,
   including the zero-weight convention.
 
 ## Open proof obligations
 
-- [ ] Convexity and monotonicity of the scalar entanglement curve used by
-  Jensen's inequality.
 - [ ] Log-determinant convexity lemma in the appendix proof.
 - [ ] Dephasing/scalar Jensen reduction and the full triangular block entropy
   inequality.  At present `TriangularBlockEntropyInequality` is a proposition

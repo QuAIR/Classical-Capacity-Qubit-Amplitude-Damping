@@ -4,6 +4,7 @@ import AmplitudeDamping.Channel
 import AmplitudeDamping.QubitState
 import AmplitudeDamping.QubitEntropy
 import AmplitudeDamping.FixedExcitation
+import AmplitudeDamping.ScalarCurve
 import AmplitudeDamping.EqualExcitation
 import AmplitudeDamping.HolevoReduction
 import AmplitudeDamping.Triangular.Statement

@@ -1,4 +1,4 @@
-import AmplitudeDamping.FixedExcitation
+import AmplitudeDamping.ScalarCurve
 import AmplitudeDamping.QubitState
 
 /-!
@@ -316,6 +316,14 @@ theorem outputEntropyRoof_eq_dampingEntropyCurve_of_convex
   · exact outputEntropyRoof_le_dampingEntropyCurve p hp0 hp1 rho
   · exact dampingEntropyCurve_le_outputEntropyRoof_of_convex
       p hp0 hp1 hconv rho
+
+/-- Exact fixed-excitation convex-roof formula for amplitude damping. -/
+theorem outputEntropyRoof_eq_dampingEntropyCurve
+    (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (rho : State Qubit) :
+    outputEntropyRoof (amplitudeDamping p hp0 hp1) rho =
+      dampingEntropyCurve p (stateExcitation rho) :=
+  outputEntropyRoof_eq_dampingEntropyCurve_of_convex
+    p hp0 hp1 (dampingEntropyCurve_convexOn p hp0 hp1) rho
 
 end
 
