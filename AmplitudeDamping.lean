@@ -1,8 +1,10 @@
 import AmplitudeDamping.Definitions
 import AmplitudeDamping.ConvexRoof
 import AmplitudeDamping.Channel
+import AmplitudeDamping.QubitState
 import AmplitudeDamping.QubitEntropy
 import AmplitudeDamping.FixedExcitation
+import AmplitudeDamping.EqualExcitation
 import AmplitudeDamping.HolevoReduction
 import AmplitudeDamping.Triangular.Statement
 

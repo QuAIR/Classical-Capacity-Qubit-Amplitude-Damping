@@ -1,4 +1,5 @@
 import AmplitudeDamping.QubitEntropy
+import AmplitudeDamping.QubitState
 import AmplitudeDamping.ConvexRoof
 import Mathlib.Analysis.Convex.Jensen
 import QIT.Information.Entropy.Entropy
@@ -22,10 +23,6 @@ noncomputable section
 /-- Excited-state population of a normalized pure qubit. -/
 def excitationProbability (ψ : PureVector Qubit) : ℝ :=
   Complex.normSq (ψ.amp 1)
-
-/-- Excited-state population of an arbitrary qubit density state. -/
-def stateExcitation (ρ : State Qubit) : ℝ :=
-  (ρ.matrix 1 1).re
 
 @[simp]
 theorem stateExcitation_pure (ψ : PureVector Qubit) :

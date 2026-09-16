@@ -19,18 +19,23 @@ proof obligations.
    defining the output-entropy convex roof, and its lower-envelope theorem.
 3. `Channel.lean`: the two Kraus operators of the qubit amplitude-damping
    channel and a checked proof of their trace-preserving completeness relation.
-4. `FixedExcitation.lean`: excitation bounds and the checked determinant
+4. `QubitState.lean`: coordinate normal form and coherence bound for arbitrary
+   qubit density matrices.
+5. `FixedExcitation.lean`: excitation bounds and the checked determinant
    and entropy formulas for the output of a pure qubit input, together with
    the Jensen reduction for the roof lower bound.
-5. `QubitEntropy.lean`: the checked two-level spectral formula expressing
+6. `EqualExcitation.lean`: explicit two-pure-state equal-excitation
+   decomposition, the unconditional roof upper bound, and the exact roof
+   formula conditional only on scalar convexity.
+7. `QubitEntropy.lean`: the checked two-level spectral formula expressing
    qubit entropy in terms of the determinant.
-6. `HolevoReduction.lean`: checked reduction from strong superadditivity of
+8. `HolevoReduction.lean`: checked reduction from strong superadditivity of
    the roof to the fixed-input and ensemble Holevo converse.
-7. `Triangular/Statement.lean`: formal statement and normalization API for the
+9. `Triangular/Statement.lean`: formal statement and normalization API for the
    triangular block entropy inequality.
-8. Future modules will prove the logarithmic-determinant convexity lemma,
-   scalar Jensen reduction, the triangular theorem, the amplitude-damping roof
-   formula, and finally the EoF/channel corollaries.
+10. Future modules will prove scalar convexity, the logarithmic-determinant
+   convexity lemma, the triangular theorem, and finally the EoF/channel
+   corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until

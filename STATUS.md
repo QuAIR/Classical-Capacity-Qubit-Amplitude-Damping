@@ -28,6 +28,11 @@ it does not mean that the corresponding result is merely assumed.
   of `2 sqrt(det rho)`.
 - [x] Pure-input formula `S(A_p(psi)) = g_p(q)` and the Jensen reduction of the
   roof lower bound to convexity of `g_p`.
+- [x] Coordinate normal form for every qubit state, including the positivity
+  bound `|rho_01|^2 <= q(1-q)`.
+- [x] Explicit two-state equal-excitation decomposition for every qubit state.
+- [x] Unconditional upper bound `roof(A_p, rho) <= g_p(q)` and the exact
+  fixed-excitation roof formula conditional only on scalar convexity of `g_p`.
 - [x] Exact formal statement of the triangular block entropy inequality,
   including the zero-weight convention.
 
@@ -35,8 +40,6 @@ it does not mean that the corresponding result is merely assumed.
 
 - [ ] Convexity and monotonicity of the scalar entanglement curve used by
   Jensen's inequality.
-- [ ] Equal-excitation two-state construction giving the upper-bound half of
-  the exact fixed-excitation roof formula for amplitude damping.
 - [ ] Log-determinant convexity lemma in the appendix proof.
 - [ ] Dephasing/scalar Jensen reduction and the full triangular block entropy
   inequality.  At present `TriangularBlockEntropyInequality` is a proposition
