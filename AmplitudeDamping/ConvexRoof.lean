@@ -1,5 +1,6 @@
 import AmplitudeDamping.Definitions
 import QIT.Core.Pure
+import QIT.Symmetry.DeFinetti.RennerProjectors
 
 /-!
 # Finite pure-state decompositions and the output-entropy convex roof
@@ -9,7 +10,7 @@ classical alphabet size as a field avoids quantifying over Lean types inside a
 set comprehension and permits a literal real infimum.
 -/
 
-open scoped BigOperators NNReal
+open scoped BigOperators ComplexOrder MatrixOrder NNReal
 
 namespace AmplitudeDamping
 
@@ -96,6 +97,58 @@ theorem outputEntropyRoof_isPureOutputEntropyRoof (Φ : Channel a b) :
     IsPureOutputEntropyRoof Φ (outputEntropyRoof Φ) := by
   intro E
   exact outputEntropyRoof_le_outputCost Φ E
+
+/-- The spectral decomposition of a state, reindexed by a canonical finite
+alphabet, as a `PureDecomposition`. -/
+def spectralPureDecomposition (ρ : State a) : PureDecomposition a where
+  card := Fintype.card a
+  probs k :=
+    ⟨ρ.pos.isHermitian.eigenvalues ((Fintype.equivFin a).symm k),
+      ρ.pos.eigenvalues_nonneg _⟩
+  weights_sum := by
+    apply NNReal.eq
+    simp only [NNReal.coe_sum, NNReal.coe_one]
+    calc
+      ∑ k : Fin (Fintype.card a),
+          ρ.pos.isHermitian.eigenvalues ((Fintype.equivFin a).symm k) =
+          ∑ i : a, ρ.pos.isHermitian.eigenvalues i := by
+            exact Fintype.sum_equiv (Fintype.equivFin a).symm _ _ (fun _ => rfl)
+      _ = 1 := State.sum_eigenvalues_eq_one ρ
+  vectors k := ρ.spectralPureVector ((Fintype.equivFin a).symm k)
+
+/-- The spectral pure decomposition has the original state as its average. -/
+@[simp]
+theorem spectralPureDecomposition_averageState (ρ : State a) :
+    (spectralPureDecomposition ρ).averageState = ρ := by
+  apply State.ext
+  rw [PureDecomposition.averageState, Ensemble.averageState_matrix]
+  change (∑ k : Fin (Fintype.card a),
+      ((ρ.pos.isHermitian.eigenvalues ((Fintype.equivFin a).symm k) : ℝ) : ℂ) •
+        (ρ.spectralPureVector ((Fintype.equivFin a).symm k)).state.matrix) = ρ.matrix
+  calc
+    (∑ k : Fin (Fintype.card a),
+        ((ρ.pos.isHermitian.eigenvalues ((Fintype.equivFin a).symm k) : ℝ) : ℂ) •
+          (ρ.spectralPureVector ((Fintype.equivFin a).symm k)).state.matrix) =
+        ∑ i : a, ((ρ.pos.isHermitian.eigenvalues i : ℝ) : ℂ) •
+          (ρ.spectralPureVector i).state.matrix := by
+            exact Fintype.sum_equiv (Fintype.equivFin a).symm _ _ (fun _ => rfl)
+    _ = ρ.matrix := (State.matrix_eq_sum_spectralPureVector ρ).symm
+
+theorem exists_pureDecomposition (ρ : State a) :
+    ∃ E : PureDecomposition a, E.averageState = ρ :=
+  ⟨spectralPureDecomposition ρ, spectralPureDecomposition_averageState ρ⟩
+
+theorem pureOutputEntropyValues_nonempty (Φ : Channel a b) (ρ : State a) :
+    (pureOutputEntropyValues Φ ρ).Nonempty := by
+  let E := spectralPureDecomposition ρ
+  exact ⟨E.outputCost Φ, E, spectralPureDecomposition_averageState ρ, rfl⟩
+
+theorem outputEntropyRoof_nonneg (Φ : Channel a b) (ρ : State a) :
+    0 ≤ outputEntropyRoof Φ ρ := by
+  apply le_csInf (pureOutputEntropyValues_nonempty Φ ρ)
+  intro x hx
+  rcases hx with ⟨E, _, rfl⟩
+  exact E.outputCost_nonneg Φ
 
 end
 

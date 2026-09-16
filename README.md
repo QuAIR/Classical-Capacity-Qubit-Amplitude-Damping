@@ -20,12 +20,15 @@ proof obligations.
 3. `Channel.lean`: the two Kraus operators of the qubit amplitude-damping
    channel and a checked proof of their trace-preserving completeness relation.
 4. `FixedExcitation.lean`: excitation bounds and the checked determinant
-   formula for the output of a pure qubit input.
-5. `HolevoReduction.lean`: checked reduction from strong superadditivity of
+   and entropy formulas for the output of a pure qubit input, together with
+   the Jensen reduction for the roof lower bound.
+5. `QubitEntropy.lean`: the checked two-level spectral formula expressing
+   qubit entropy in terms of the determinant.
+6. `HolevoReduction.lean`: checked reduction from strong superadditivity of
    the roof to the fixed-input and ensemble Holevo converse.
-6. `Triangular/Statement.lean`: formal statement and normalization API for the
+7. `Triangular/Statement.lean`: formal statement and normalization API for the
    triangular block entropy inequality.
-7. Future modules will prove the logarithmic-determinant convexity lemma,
+8. Future modules will prove the logarithmic-determinant convexity lemma,
    scalar Jensen reduction, the triangular theorem, the amplitude-damping roof
    formula, and finally the EoF/channel corollaries.
 

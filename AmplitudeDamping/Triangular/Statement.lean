@@ -34,6 +34,31 @@ theorem frobeniusSq_nonneg {r : Type u₁} {c : Type v₁}
   exact (Matrix.PosSemidef.trace_nonneg
     (Matrix.posSemidef_self_mul_conjTranspose A)).1
 
+theorem frobeniusSq_eq_sum_normSq {r : Type u₁} {c : Type v₁}
+    [Fintype r] [DecidableEq r] [Fintype c] [DecidableEq c]
+    (A : Matrix r c ℂ) :
+    frobeniusSq A = ∑ i, ∑ j, Complex.normSq (A i j) := by
+  unfold frobeniusSq
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.conjTranspose_apply,
+    Complex.mul_conj]
+
+/-- Squared Frobenius norm of a lower-triangular block matrix is the sum of
+the squared Frobenius norms of its three nonzero blocks. -/
+theorem frobeniusSq_fromBlocks_lower
+    {r₁ : Type u₁} {r₂ : Type u₂} {c₁ : Type v₁} {c₂ : Type v₂}
+    [Fintype r₁] [DecidableEq r₁]
+    [Fintype r₂] [DecidableEq r₂]
+    [Fintype c₁] [DecidableEq c₁]
+    [Fintype c₂] [DecidableEq c₂]
+    (A : Matrix r₁ c₁ ℂ) (B : Matrix r₂ c₁ ℂ) (D : Matrix r₂ c₂ ℂ) :
+    frobeniusSq (Matrix.fromBlocks A 0 B D) =
+      frobeniusSq A + frobeniusSq B + frobeniusSq D := by
+  simp only [frobeniusSq_eq_sum_normSq, Fintype.sum_sum_type]
+  simp [Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂,
+    Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂,
+    Finset.sum_add_distrib]
+  ring
+
 /-- Spectral entropy `-Tr X log₂ X` of a positive semidefinite matrix.
 
 The positivity witness supplies the Hermitian eigenvalue API.  The definition

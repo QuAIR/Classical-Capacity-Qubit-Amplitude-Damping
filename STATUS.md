@@ -13,6 +13,9 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Entrywise formula for the action of amplitude damping.
 - [x] Finite pure-state decompositions and the real-infimum definition of the
   output-entropy convex roof.
+- [x] Spectral construction of a finite pure-state decomposition for every
+  finite-dimensional density state; in particular, the roof's admissible set
+  is nonempty and the roof is nonnegative.
 - [x] The roof is below the cost of every admissible pure decomposition.
 - [x] Entropy subadditivity, derived from Lean-QIT relative-entropy
   nonnegativity and the mutual-information identity.
@@ -21,16 +24,19 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Pure-qubit excitation lies in `[0,1]`.
 - [x] Determinant formula
   `det(A_p(|psi><psi|)) = p(1-p)q^2`.
+- [x] Qubit spectral lemma: von Neumann entropy is the binary-spectrum function
+  of `2 sqrt(det rho)`.
+- [x] Pure-input formula `S(A_p(psi)) = g_p(q)` and the Jensen reduction of the
+  roof lower bound to convexity of `g_p`.
 - [x] Exact formal statement of the triangular block entropy inequality,
   including the zero-weight convention.
 
 ## Open proof obligations
 
-- [ ] Two-level spectral lemma converting trace and determinant into the
-  binary-spectrum entropy formula.
 - [ ] Convexity and monotonicity of the scalar entanglement curve used by
   Jensen's inequality.
-- [ ] Exact fixed-excitation roof formula for amplitude damping.
+- [ ] Equal-excitation two-state construction giving the upper-bound half of
+  the exact fixed-excitation roof formula for amplitude damping.
 - [ ] Log-determinant convexity lemma in the appendix proof.
 - [ ] Dephasing/scalar Jensen reduction and the full triangular block entropy
   inequality.  At present `TriangularBlockEntropyInequality` is a proposition
