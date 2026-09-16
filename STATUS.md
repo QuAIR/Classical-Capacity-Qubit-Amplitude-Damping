@@ -110,14 +110,16 @@ it does not mean that the corresponding result is merely assumed.
   positive-semidefinite matrix paths, including singular boundary points.
 - [x] Extension of scalar perspective Jensen to all nonnegative middle
   coordinates by a checked strictly-positive perturbation and limit argument.
+- [x] Full matrix trace compression
+  `F(P,Q,R) ≥ f(Tr P, Tr Q, Tr R)` for arbitrary finite-dimensional positive
+  semidefinite matrices, using dephasing and spectral diagonalization.
 
 ## Open proof obligations
 
-- [ ] Matrix trace compression and the full triangular block entropy
-  inequality.  Matrix dephasing, diagonal scalar decomposition, homogeneity,
-  and scalar perspective Jensen on the closed nonnegative octant are checked.
-  At present `TriangularBlockEntropyInequality` is a proposition naming the
-  remaining target, not a theorem asserting it.
+- [ ] Recovery of the full triangular block entropy inequality from matrix
+  trace compression via polar decompositions and rectangular isometric
+  embeddings.  At present `TriangularBlockEntropyInequality` is a proposition
+  naming the remaining target, not a theorem asserting it.
 - [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.

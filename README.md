@@ -67,8 +67,11 @@ proof obligations.
 17. `Triangular/ScalarBoundary.lean`: checked continuity of spectral entropy
     along positive-semidefinite matrix paths and the limiting argument that
     extends scalar perspective Jensen to zero middle coordinates.
-18. Future modules will assemble matrix trace compression and prove the
-    triangular theorem, followed by the EoF/channel corollaries.
+18. `Triangular/TraceCompression.lean`: checked diagonal scalar compression,
+    dephasing for arbitrary outer matrices, spectral diagonalization of the
+    middle matrix, and the full PSD matrix trace-compression theorem.
+19. Future modules will recover the triangular blocks by polar/isometric
+    embeddings, followed by the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
