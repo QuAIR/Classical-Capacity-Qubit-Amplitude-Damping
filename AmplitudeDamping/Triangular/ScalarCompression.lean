@@ -338,6 +338,320 @@ theorem entropyDefect_diagonal_eq_sum_scalar
         (hq i) (hr i)) _ _
   rw [hblockEntropy]
 
+/-- Product rule for the repository's `x log₂ x` convention on nonnegative
+real arguments. -/
+theorem xlog2_mul_of_nonneg
+    {x y : ℝ} (_hx : 0 ≤ x) (_hy : 0 ≤ y) :
+    QIT.xlog2 (x * y) =
+      y * QIT.xlog2 x + x * QIT.xlog2 y := by
+  by_cases hx0 : x = 0
+  · simp [hx0, QIT.xlog2]
+  by_cases hy0 : y = 0
+  · simp [hy0, QIT.xlog2]
+  have hxy0 : x * y ≠ 0 := mul_ne_zero hx0 hy0
+  simp only [QIT.xlog2, if_neg hx0, if_neg hy0, if_neg hxy0, QIT.log2]
+  rw [Real.log_mul hx0 hy0]
+  ring
+
+/-- Spectral entropy under multiplication by a nonnegative real scalar. -/
+theorem psdEntropy_real_smul
+    {d : Type} [Fintype d] [DecidableEq d]
+    (c : ℝ) (hc : 0 ≤ c) (X : Matrix d d ℂ) (hX : X.PosSemidef) :
+    psdEntropy ((c : ℂ) • X) (hX.smul (by exact_mod_cast hc)) =
+      c * psdEntropy X hX - QIT.xlog2 c * X.trace.re := by
+  let hscaled : ((c : ℂ) • X).PosSemidef := hX.smul (by exact_mod_cast hc)
+  have hspectrum :
+      QIT.eigenvalueMultiset hscaled.isHermitian =
+        Multiset.map (fun x : ℝ => c * x)
+          (QIT.eigenvalueMultiset hX.isHermitian) := by
+    simpa [hscaled] using
+      QIT.eigenvalueMultiset_smul_ofReal c X hX.isHermitian
+  have heigen_nonneg : ∀ x ∈ QIT.eigenvalueMultiset hX.isHermitian,
+      0 ≤ x := by
+    intro x hxmem
+    rw [QIT.eigenvalueMultiset] at hxmem
+    rcases Multiset.mem_map.mp hxmem with ⟨i, _, rfl⟩
+    exact hX.eigenvalues_nonneg i
+  have hsum : (QIT.eigenvalueMultiset hX.isHermitian).sum = X.trace.re := by
+    rw [QIT.eigenvalueMultiset, ← Finset.sum_eq_multiset_sum]
+    have htrace := congrArg Complex.re hX.isHermitian.trace_eq_sum_eigenvalues
+    simpa using htrace.symm
+  rw [psdEntropy_eq_neg_sum_eigenvalueMultiset,
+    psdEntropy_eq_neg_sum_eigenvalueMultiset, hspectrum,
+    Multiset.map_map]
+  have hmap :
+      (Multiset.map (fun x : ℝ => QIT.xlog2 (c * x))
+          (QIT.eigenvalueMultiset hX.isHermitian)).sum =
+        QIT.xlog2 c * (QIT.eigenvalueMultiset hX.isHermitian).sum +
+          c * (Multiset.map QIT.xlog2
+            (QIT.eigenvalueMultiset hX.isHermitian)).sum := by
+    calc
+      _ = (Multiset.map (fun x : ℝ =>
+          x * QIT.xlog2 c + c * QIT.xlog2 x)
+          (QIT.eigenvalueMultiset hX.isHermitian)).sum := by
+        apply congrArg Multiset.sum
+        apply Multiset.map_congr rfl
+        intro x hxmem
+        exact xlog2_mul_of_nonneg hc (heigen_nonneg x hxmem)
+      _ = _ := by
+        rw [QIT.multiset_sum_add_distrib]
+        have hright :
+            (Multiset.map (fun x : ℝ => c * QIT.xlog2 x)
+              (QIT.eigenvalueMultiset hX.isHermitian)).sum =
+              (Multiset.map QIT.xlog2
+                (QIT.eigenvalueMultiset hX.isHermitian)).sum * c := by
+          calc
+            _ = (Multiset.map (fun x : ℝ => QIT.xlog2 x * c)
+                (QIT.eigenvalueMultiset hX.isHermitian)).sum := by
+              apply congrArg Multiset.sum
+              apply Multiset.map_congr rfl
+              intro x _
+              ring
+            _ = _ := QIT.multiset_sum_mul_const _ _ _
+        rw [QIT.multiset_sum_mul_const, hright]
+        rw [Multiset.map_id']
+        ring
+  change -(Multiset.map (fun x : ℝ => QIT.xlog2 (c * x))
+      (QIT.eigenvalueMultiset hX.isHermitian)).sum = _
+  rw [hmap, hsum]
+  ring
+
+/-- The coupling matrix is positively homogeneous when all three inputs are
+scaled by the same nonnegative real scalar. -/
+theorem entropyCoupling_real_smul
+    {d : Type} [Fintype d] [DecidableEq d]
+    (c : ℝ) (hc : 0 ≤ c) (P Q R : Matrix d d ℂ)
+    (hQ : Q.PosSemidef) (hR : R.PosSemidef) :
+    entropyCoupling ((c : ℂ) • P) ((c : ℂ) • Q) ((c : ℂ) • R) =
+      (c : ℂ) • entropyCoupling P Q R := by
+  unfold entropyCoupling
+  rw [QIT.psdSqrt_real_smul hc hQ, QIT.psdSqrt_real_smul hc hR]
+  ext i j
+  rcases i with i | i <;> rcases j with j | j
+  all_goals
+    simp [Matrix.fromBlocks_apply₁₁, Matrix.fromBlocks_apply₁₂,
+      Matrix.fromBlocks_apply₂₁, Matrix.fromBlocks_apply₂₂,
+      smul_smul, Real.mul_self_sqrt hc] <;> ring
+
+/-- Positive homogeneity of the entropy defect.  The scalar entropy correction
+terms cancel because the coupling and its three inputs have the same trace. -/
+theorem entropyDefect_real_smul
+    {d : Type} [Fintype d] [DecidableEq d]
+    (c : ℝ) (hc : 0 ≤ c) (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef) :
+    entropyDefect ((c : ℂ) • P) ((c : ℂ) • Q) ((c : ℂ) • R)
+        (hP.smul (by exact_mod_cast hc))
+        (hQ.smul (by exact_mod_cast hc))
+        (hR.smul (by exact_mod_cast hc)) =
+      c * entropyDefect P Q R hP hQ hR := by
+  let hP' : ((c : ℂ) • P).PosSemidef := hP.smul (by exact_mod_cast hc)
+  let hQ' : ((c : ℂ) • Q).PosSemidef := hQ.smul (by exact_mod_cast hc)
+  let hR' : ((c : ℂ) • R).PosSemidef := hR.smul (by exact_mod_cast hc)
+  let Z := entropyCoupling P Q R
+  let hZ : Z.PosSemidef := entropyCoupling_posSemidef P Q R hP hQ hR
+  have hZeq : entropyCoupling ((c : ℂ) • P) ((c : ℂ) • Q) ((c : ℂ) • R) =
+      (c : ℂ) • Z := entropyCoupling_real_smul c hc P Q R hQ hR
+  have hZentropy :
+      psdEntropy
+          (entropyCoupling ((c : ℂ) • P) ((c : ℂ) • Q) ((c : ℂ) • R))
+          (entropyCoupling_posSemidef
+            ((c : ℂ) • P) ((c : ℂ) • Q) ((c : ℂ) • R) hP' hQ' hR') =
+        c * psdEntropy Z hZ - QIT.xlog2 c * Z.trace.re := by
+    calc
+      _ = psdEntropy ((c : ℂ) • Z) (hZ.smul (by exact_mod_cast hc)) :=
+        psdEntropy_congr hZeq _ _
+      _ = _ := psdEntropy_real_smul c hc Z hZ
+  have htrace : Z.trace.re = P.trace.re + Q.trace.re + R.trace.re := by
+    rw [show Z.trace = P.trace + Q.trace + R.trace by
+      exact entropyCoupling_trace P Q R]
+    simp
+  change entropyDefect ((c : ℂ) • P) ((c : ℂ) • Q) ((c : ℂ) • R)
+      hP' hQ' hR' = _
+  unfold entropyDefect
+  rw [hZentropy,
+    psdEntropy_real_smul c hc P hP,
+    psdEntropy_real_smul c hc Q hQ,
+    psdEntropy_real_smul c hc R hR,
+    htrace]
+  ring
+
+/-- Scalar matrices commute with real scalar multiplication. -/
+theorem scalarMatrix_mul (c x : ℝ) :
+    scalarMatrix (c * x) = (c : ℂ) • scalarMatrix x := by
+  ext i j
+  cases i
+  cases j
+  simp [scalarMatrix]
+
+/-- Positive homogeneity of the one-dimensional entropy defect. -/
+theorem scalarEntropyDefect_real_smul
+    (c p q r : ℝ) (hc : 0 ≤ c) (hp : 0 ≤ p)
+    (hq : 0 ≤ q) (hr : 0 ≤ r) :
+    scalarEntropyDefect (c * p) (c * q) (c * r)
+        (mul_nonneg hc hp) (mul_nonneg hc hq) (mul_nonneg hc hr) =
+      c * scalarEntropyDefect p q r hp hq hr := by
+  let hP := scalarMatrix_posSemidef p hp
+  let hQ := scalarMatrix_posSemidef q hq
+  let hR := scalarMatrix_posSemidef r hr
+  have hcC : (0 : ℂ) ≤ (c : ℂ) := by exact_mod_cast hc
+  unfold scalarEntropyDefect
+  calc
+    _ = entropyDefect
+        ((c : ℂ) • scalarMatrix p)
+        ((c : ℂ) • scalarMatrix q)
+        ((c : ℂ) • scalarMatrix r)
+        (hP.smul hcC) (hQ.smul hcC) (hR.smul hcC) := by
+      exact entropyDefect_congr
+        (scalarMatrix_mul c p) (scalarMatrix_mul c q) (scalarMatrix_mul c r)
+        _ _ _ _ _ _
+    _ = c * entropyDefect (scalarMatrix p) (scalarMatrix q) (scalarMatrix r)
+        hP hQ hR := entropyDefect_real_smul c hc
+          (scalarMatrix p) (scalarMatrix q) (scalarMatrix r) hP hQ hR
+
+/-- Perspective identity obtained from positive homogeneity when the middle
+scalar is strictly positive. -/
+theorem scalarEntropyDefect_perspective
+    (p q r : ℝ) (hp : 0 ≤ p) (hq : 0 < q) (hr : 0 ≤ r) :
+    scalarEntropyDefect p q r hp hq.le hr =
+      q * scalarEntropyDefect (p / q) 1 (r / q)
+        (div_nonneg hp hq.le) zero_le_one (div_nonneg hr hq.le) := by
+  have hscale := scalarEntropyDefect_real_smul
+    q (p / q) 1 (r / q) hq.le
+    (div_nonneg hp hq.le) zero_le_one (div_nonneg hr hq.le)
+  have hpq : q * (p / q) = p := by field_simp
+  have hrq : q * (r / q) = r := by field_simp
+  simpa [hpq, hrq] using hscale
+
+/-- Scalar perspective Jensen inequality when every middle coordinate is
+strictly positive. -/
+theorem scalarEntropyDefect_sum_le_of_middle_pos
+    {ι : Type} [Fintype ι] [DecidableEq ι] [Nonempty ι]
+    (p q r : ι → ℝ)
+    (hp : ∀ i, 0 ≤ p i) (hq : ∀ i, 0 < q i) (hr : ∀ i, 0 ≤ r i) :
+    scalarEntropyDefect (∑ i, p i) (∑ i, q i) (∑ i, r i)
+        (Finset.sum_nonneg fun i _ => hp i)
+        (Finset.sum_nonneg fun i _ => (hq i).le)
+        (Finset.sum_nonneg fun i _ => hr i) ≤
+      ∑ i, scalarEntropyDefect (p i) (q i) (r i)
+        (hp i) (hq i).le (hr i) := by
+  classical
+  let ps : ℝ := ∑ i, p i
+  let qs : ℝ := ∑ i, q i
+  let rs : ℝ := ∑ i, r i
+  have hps : 0 ≤ ps := Finset.sum_nonneg fun i _ => hp i
+  have hrs : 0 ≤ rs := Finset.sum_nonneg fun i _ => hr i
+  let i0 : ι := Classical.choice inferInstance
+  have hqs : 0 < qs := by
+    exact Finset.sum_pos'
+      (fun i _ => (hq i).le) ⟨i0, Finset.mem_univ i0, hq i0⟩
+  let Q1 : Matrix Unit Unit ℂ := scalarMatrix 1
+  let hQ1 : Q1.PosSemidef := scalarMatrix_posSemidef 1 zero_le_one
+  let w : ι → ℝ := fun i => q i / qs
+  let X : ι → Matrix Unit Unit ℂ × Matrix Unit Unit ℂ := fun i =>
+    (scalarMatrix (p i / q i), scalarMatrix (r i / q i))
+  have hw : ∀ i ∈ (Finset.univ : Finset ι), 0 ≤ w i := by
+    intro i _
+    exact div_nonneg (hq i).le hqs.le
+  have hsum : ∑ i ∈ (Finset.univ : Finset ι), w i = 1 := by
+    change (∑ i, q i / qs) = 1
+    rw [← Finset.sum_div]
+    change qs / qs = 1
+    exact div_self hqs.ne'
+  have hX : ∀ i ∈ (Finset.univ : Finset ι),
+      (X i).1.PosSemidef ∧ (X i).2.PosSemidef := by
+    intro i _
+    exact ⟨
+      scalarMatrix_posSemidef _ (div_nonneg (hp i) (hq i).le),
+      scalarMatrix_posSemidef _ (div_nonneg (hr i) (hq i).le)⟩
+  have hweightedP (i : ι) :
+      w i • scalarMatrix (p i / q i) = scalarMatrix (p i / qs) := by
+    ext u v
+    cases u
+    cases v
+    simp [w, scalarMatrix]
+    field_simp [hqs.ne', (hq i).ne']
+  have hweightedR (i : ι) :
+      w i • scalarMatrix (r i / q i) = scalarMatrix (r i / qs) := by
+    ext u v
+    cases u
+    cases v
+    simp [w, scalarMatrix]
+    field_simp [hqs.ne', (hq i).ne']
+  have havg :
+      (∑ i ∈ (Finset.univ : Finset ι), w i • X i) =
+        (scalarMatrix (ps / qs), scalarMatrix (rs / qs)) := by
+    apply Prod.ext
+    · simp only [Prod.fst_sum, Prod.smul_fst]
+      simp_rw [show ∀ i, (X i).1 = scalarMatrix (p i / q i) by
+        intro i
+        rfl, hweightedP]
+      ext u v
+      cases u
+      cases v
+      simp [Matrix.sum_apply, scalarMatrix, ps, Finset.sum_div]
+    · simp only [Prod.snd_sum, Prod.smul_snd]
+      simp_rw [show ∀ i, (X i).2 = scalarMatrix (r i / q i) by
+        intro i
+        rfl, hweightedR]
+      ext u v
+      cases u
+      cases v
+      simp [Matrix.sum_apply, scalarMatrix, rs, Finset.sum_div]
+  have hvalue (i : ι) :
+      entropyDefectTotal Q1 hQ1 (X i) =
+        scalarEntropyDefect (p i / q i) 1 (r i / q i)
+          (div_nonneg (hp i) (hq i).le) zero_le_one
+          (div_nonneg (hr i) (hq i).le) := by
+    have hPi := scalarMatrix_posSemidef (p i / q i)
+      (div_nonneg (hp i) (hq i).le)
+    have hRi := scalarMatrix_posSemidef (r i / q i)
+      (div_nonneg (hr i) (hq i).le)
+    change entropyDefectTotal (scalarMatrix 1)
+        (scalarMatrix_posSemidef 1 zero_le_one)
+        (scalarMatrix (p i / q i), scalarMatrix (r i / q i)) = _
+    simp [entropyDefectTotal, scalarEntropyDefect, hPi, hRi]
+  have hjensen := entropyDefectTotal_map_sum_le
+    Q1 hQ1 (Finset.univ : Finset ι) w X hw hsum hX
+  rw [havg] at hjensen
+  have hleft :
+      entropyDefectTotal Q1 hQ1
+          (scalarMatrix (ps / qs), scalarMatrix (rs / qs)) =
+        scalarEntropyDefect (ps / qs) 1 (rs / qs)
+          (div_nonneg hps hqs.le) zero_le_one (div_nonneg hrs hqs.le) := by
+    have hPs := scalarMatrix_posSemidef (ps / qs) (div_nonneg hps hqs.le)
+    have hRs := scalarMatrix_posSemidef (rs / qs) (div_nonneg hrs hqs.le)
+    change entropyDefectTotal (scalarMatrix 1)
+        (scalarMatrix_posSemidef 1 zero_le_one)
+        (scalarMatrix (ps / qs), scalarMatrix (rs / qs)) = _
+    simp [entropyDefectTotal, scalarEntropyDefect, hPs, hRs]
+  rw [hleft] at hjensen
+  simp_rw [hvalue] at hjensen
+  have htotal := scalarEntropyDefect_perspective ps qs rs hps hqs hrs
+  have hcoord (i : ι) :=
+    scalarEntropyDefect_perspective (p i) (q i) (r i) (hp i) (hq i) (hr i)
+  calc
+    scalarEntropyDefect (∑ i, p i) (∑ i, q i) (∑ i, r i)
+        (Finset.sum_nonneg fun i _ => hp i)
+        (Finset.sum_nonneg fun i _ => (hq i).le)
+        (Finset.sum_nonneg fun i _ => hr i) =
+      qs * scalarEntropyDefect (ps / qs) 1 (rs / qs)
+        (div_nonneg hps hqs.le) zero_le_one (div_nonneg hrs hqs.le) := by
+          simpa [ps, qs, rs] using htotal
+    _ ≤ qs * (∑ i ∈ (Finset.univ : Finset ι),
+        w i • scalarEntropyDefect (p i / q i) 1 (r i / q i)
+          (div_nonneg (hp i) (hq i).le) zero_le_one
+          (div_nonneg (hr i) (hq i).le)) :=
+      mul_le_mul_of_nonneg_left hjensen hqs.le
+    _ = ∑ i, scalarEntropyDefect (p i) (q i) (r i)
+        (hp i) (hq i).le (hr i) := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i _
+      have hi := hcoord i
+      rw [hi]
+      simp only [w, smul_eq_mul]
+      field_simp [hqs.ne', (hq i).ne']
+
 end
 
 end AmplitudeDamping

@@ -101,13 +101,19 @@ it does not mean that the corresponding result is merely assumed.
   nonnegative real diagonal inputs, including the finite basis relabeling.
 - [x] Exact formula expressing a diagonal entropy defect as the sum of its
   one-dimensional scalar entropy defects.
+- [x] Positive homogeneity of the full matrix entropy defect, including a
+  checked spectral-entropy scaling formula and exact cancellation of all
+  trace corrections.
+- [x] Scalar perspective identity and finite Jensen/trace-compression
+  inequality when every middle scalar coordinate is strictly positive.
 
 ## Open proof obligations
 
-- [ ] Scalar perspective Jensen/trace compression and the full triangular
-  block entropy inequality.  Matrix dephasing and diagonal scalar
-  decomposition are checked.  At present `TriangularBlockEntropyInequality`
-  is a proposition naming the remaining target, not a theorem asserting it.
+- [ ] Extension of scalar perspective Jensen to zero middle coordinates and
+  the full triangular block entropy inequality.  Matrix dephasing, diagonal
+  scalar decomposition, homogeneity, and the strictly-positive perspective
+  case are checked.  At present `TriangularBlockEntropyInequality` is a
+  proposition naming the remaining target, not a theorem asserting it.
 - [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.

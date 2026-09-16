@@ -61,10 +61,12 @@ proof obligations.
 16. `Triangular/ScalarCompression.lean`: checked entropy additivity for finite
     homogeneous block diagonals, positive square roots of real diagonal
     matrices, coordinatewise scalarization of the diagonal entropy coupling,
-    and the exact decomposition of a diagonal entropy defect into scalar
-    defects.
-17. Future modules will finish scalar perspective Jensen and the triangular
-    theorem, and finally prove the EoF/channel corollaries.
+    the exact decomposition of a diagonal entropy defect into scalar defects,
+    positive homogeneity, and scalar perspective Jensen when all middle
+    coordinates are strictly positive.
+17. Future modules will close the semidefinite boundary of scalar perspective
+    Jensen and prove the triangular theorem, followed by the EoF/channel
+    corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
