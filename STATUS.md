@@ -61,9 +61,17 @@ it does not mean that the corresponding result is merely assumed.
   closed-interval continuity and calculus endpoint obligations.
 - [x] Full matrix-level log-determinant convexity lemma:
   `G ↦ log |det(G+J)| - log |det G|` is convex on the positive-definite cone.
+- [x] Gram factorization `Z(P,Q,R) = LᴴL`, positivity of `Z`, and
+  `Tr Z = Tr P + Tr Q + Tr R`.
+- [x] The Schur-complement identity
+  `det(Z(P,Q,R)+sI) = det(G_s(P,R)+J_s(Q))` for every `s > 0`.
+- [x] Joint convexity in `(P,R)` of the fixed-middle shifted log-determinant
+  integrand for every positive integral parameter `s`.
 
 ## Open proof obligations
 
+- [ ] Improper entropy-integral identity, integration of the pointwise
+  log-determinant convexity, and passage to the semidefinite boundary.
 - [ ] Dephasing/scalar Jensen reduction and the full triangular block entropy
   inequality.  At present `TriangularBlockEntropyInequality` is a proposition
   naming this target, not a theorem asserting it.

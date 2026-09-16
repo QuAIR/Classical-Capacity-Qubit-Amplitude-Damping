@@ -42,8 +42,13 @@ proof obligations.
     polynomial proof of Jacobi's determinant formula, the first derivative of
     `log |det(M+tH)|`, the inverse-trace second-derivative identity, and the
     resulting convexity theorem on the full positive-definite cone.
-13. Future modules will prove the entropy-integral/dephasing reduction and the
-    triangular theorem, and finally prove the EoF/channel corollaries.
+13. `Triangular/EntropyReduction.lean`: checked Gram factorization and
+    positivity of the coupling matrix `Z(P,Q,R)`, the Schur-complement
+    determinant identity, and fixed-middle joint convexity of the shifted
+    log-determinant integrand in `(P,R)`.
+14. Future modules will finish the improper entropy-integral/dephasing
+    reduction and the triangular theorem, and finally prove the EoF/channel
+    corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
