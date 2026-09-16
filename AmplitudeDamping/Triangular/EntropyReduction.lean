@@ -10,8 +10,8 @@ matrix `Z(P,Q,R)` is a Gram matrix, records its trace, and applies the
 log-determinant theorem to prove joint convexity in the two outer variables of
 the shifted fixed-middle log-determinant integrand.
 
-The remaining analytic bridge is the improper entropy-integral identity and
-its passage to the semidefinite boundary.
+The entropy-integral passage and the resulting fixed-middle convexity of the
+entropy defect are completed in `Triangular.EntropyIntegral`.
 -/
 
 open scoped BigOperators ComplexConjugate ComplexOrder MatrixOrder
@@ -256,6 +256,30 @@ theorem fixedMiddleLogDetIntegrand_convexOn
         (outerShift s ((a • x + b • y).1) ((a • x + b • y).2)) ≤ _
     rw [houter]
     exact hmain
+
+/-- The complete fixed-middle integrand from the entropy representation.
+The second term depends only on the fixed middle matrix `Q`, not on the
+outer variables `(P,R)`. -/
+def fixedMiddleEntropyIntegrand
+    {d : Type u} [Fintype d] [DecidableEq d]
+    (s : ℝ) (Q : Matrix d d ℂ)
+    (PR : Matrix d d ℂ × Matrix d d ℂ) : ℝ :=
+  fixedMiddleLogDetIntegrand s Q PR -
+    Real.log (Complex.abs (1 + s⁻¹ • Q).det)
+
+/-- Adding back the term depending only on `Q` preserves the joint convexity
+in the two outer positive semidefinite matrices. -/
+theorem fixedMiddleEntropyIntegrand_convexOn
+    {d : Type u} [Fintype d] [DecidableEq d]
+    (s : ℝ) (hs : 0 < s) (Q : Matrix d d ℂ) :
+    ConvexOn ℝ
+      ({PR : Matrix d d ℂ × Matrix d d ℂ |
+        PR.1.PosSemidef ∧ PR.2.PosSemidef} :
+        Set (Matrix d d ℂ × Matrix d d ℂ))
+      (fixedMiddleEntropyIntegrand s Q) := by
+  simpa [fixedMiddleEntropyIntegrand, sub_eq_add_neg] using
+    (fixedMiddleLogDetIntegrand_convexOn s hs Q).add_const
+      (-Real.log (Complex.abs (1 + s⁻¹ • Q).det))
 
 end
 

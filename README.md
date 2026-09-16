@@ -49,10 +49,12 @@ proof obligations.
 14. `Triangular/EntropyIntegral.lean`: checked finite-cutoff spectral
     logarithm integral, cancellation at infinity for equal trace, and the
     matrix log-determinant entropy-integral limit, including singular
-    positive semidefinite matrices.
-15. Future modules will finish integration of the fixed-middle convexity,
-    the dephasing reduction and triangular theorem, and finally prove the
-    EoF/channel corollaries.
+    positive semidefinite matrices.  It also proves block-diagonal entropy
+    additivity, identifies the padded integral with the manuscript entropy
+    defect, integrates pointwise convexity, and proves the full fixed-middle
+    convexity theorem on the semidefinite cone.
+15. Future modules will finish the dephasing reduction and triangular
+    theorem, and finally prove the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until

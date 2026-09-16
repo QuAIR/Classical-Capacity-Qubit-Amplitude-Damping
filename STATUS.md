@@ -73,11 +73,20 @@ it does not mean that the corresponding result is merely assumed.
   equal-mass/equal-trace hypothesis.
 - [x] Matrix log-determinant entropy-integral limit for positive semidefinite
   matrices of equal trace, including singular matrices.
+- [x] Exact pointwise identification of the padded entropy-integral
+  log-determinant difference with the fixed-middle skew integrand.
+- [x] Interval integrability and joint convexity of every finite truncated
+  fixed-middle integral, including lower endpoint zero modulo its null set.
+- [x] Functional-calculus proof that `psdEntropy` is additive on
+  unequal-dimensional positive semidefinite block diagonals.
+- [x] Equality between the padded entropy defect and the manuscript function
+  `F(P,Q,R) = H(Z(P,Q,R)) - H(P) - H(Q) - H(R)`.
+- [x] Full fixed-middle joint convexity of `F(P,Q,R)` in `(P,R)` on the
+  positive semidefinite cone, obtained by passing the truncated inequalities
+  through the entropy-integral limit.
 
 ## Open proof obligations
 
-- [ ] Integration of the pointwise fixed-middle log-determinant convexity and
-  passage of convexity through the entropy-integral limit.
 - [ ] Dephasing/scalar Jensen reduction and the full triangular block entropy
   inequality.  At present `TriangularBlockEntropyInequality` is a proposition
   naming this target, not a theorem asserting it.

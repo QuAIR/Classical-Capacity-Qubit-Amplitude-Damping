@@ -1,6 +1,7 @@
 import AmplitudeDamping.Triangular.EntropyReduction
 import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import QIT.Information.Renyi.DirectSumMean
 
 /-!
 # Scalar entropy-integral identities
@@ -293,6 +294,511 @@ theorem tendsto_psdEntropy_logDet_integral
     exact hs'.1
   rw [log_abs_det_add_smul_one X hX s hspos,
     log_abs_det_add_smul_one Y hY s hspos]
+
+/-- Scalar function whose functional-calculus trace is `psdEntropy`. -/
+def psdEntropyCfcScalar (x : ℝ) : ℝ := -QIT.xlog2 x
+
+/-- Functional-calculus trace representation of the entropy of an arbitrary
+positive semidefinite matrix. -/
+theorem psdEntropy_eq_cfc_trace
+    {d : Type} [Fintype d] [DecidableEq d]
+    (X : Matrix d d ℂ) (hX : X.PosSemidef) :
+    psdEntropy X hX = ((cfc psdEntropyCfcScalar X).trace).re := by
+  unfold psdEntropy
+  have hcfc : cfc psdEntropyCfcScalar X =
+      hX.isHermitian.cfc psdEntropyCfcScalar :=
+    Matrix.IsHermitian.cfc_eq (f := psdEntropyCfcScalar) hX.isHermitian
+  rw [hcfc]
+  unfold Matrix.IsHermitian.cfc
+  rw [Unitary.conjStarAlgAut_apply, Matrix.trace_mul_cycle,
+    Unitary.coe_star_mul_self, one_mul, Matrix.trace_diagonal]
+  simp only [Function.comp_apply, psdEntropyCfcScalar]
+  norm_cast
+  rw [Finset.sum_neg_distrib]
+  simp
+
+/-- Spectral entropy is additive on unequal-dimensional positive
+semidefinite block-diagonal matrices. -/
+theorem psdEntropy_fromBlocks_diagonal
+    {d e : Type} [Fintype d] [DecidableEq d]
+    [Fintype e] [DecidableEq e]
+    (A : Matrix d d ℂ) (D : Matrix e e ℂ)
+    (hA : A.PosSemidef) (hD : D.PosSemidef) :
+    psdEntropy (Matrix.fromBlocks A 0 0 D)
+        (Matrix.fromBlocks_diagonal_posSemidef hA hD) =
+      psdEntropy A hA + psdEntropy D hD := by
+  rw [psdEntropy_eq_cfc_trace, psdEntropy_eq_cfc_trace,
+    psdEntropy_eq_cfc_trace]
+  rw [QIT.cMatrix_cfc_fromBlocks_diagonal hA hD psdEntropyCfcScalar,
+    Matrix.trace_fromBlocks_diagonal]
+  simp
+
+/-- A zero positive semidefinite matrix has zero spectral entropy. -/
+@[simp]
+theorem psdEntropy_zero
+    {d : Type} [Fintype d] [DecidableEq d] :
+    psdEntropy (0 : Matrix d d ℂ) Matrix.PosSemidef.zero = 0 := by
+  rw [psdEntropy_eq_cfc_trace]
+  simp [psdEntropyCfcScalar, QIT.xlog2]
+
+/-- The coupling matrix padded by a zero block so that it has the same
+dimension as the three-block reference matrix. -/
+def paddedEntropyCoupling
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ) :
+    Matrix (Sum d (Sum d d)) (Sum d (Sum d d)) ℂ :=
+  Matrix.fromBlocks 0 0 0 (entropyCoupling P Q R)
+
+/-- The block-diagonal reference matrix `P ⊕ Q ⊕ R`. -/
+def entropyReference
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ) :
+    Matrix (Sum d (Sum d d)) (Sum d (Sum d d)) ℂ :=
+  Matrix.fromBlocks P 0 0 (Matrix.fromBlocks Q 0 0 R)
+
+/-- Positivity of the zero-padded coupling matrix. -/
+theorem paddedEntropyCoupling_posSemidef
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef) :
+    (paddedEntropyCoupling P Q R).PosSemidef := by
+  exact Matrix.fromBlocks_diagonal_posSemidef Matrix.PosSemidef.zero
+    (entropyCoupling_posSemidef P Q R hP hQ hR)
+
+/-- Positivity of the three-block reference matrix. -/
+theorem entropyReference_posSemidef
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef) :
+    (entropyReference P Q R).PosSemidef := by
+  exact Matrix.fromBlocks_diagonal_posSemidef hP
+    (Matrix.fromBlocks_diagonal_posSemidef hQ hR)
+
+/-- The padded coupling and block-diagonal reference have the same trace. -/
+theorem paddedEntropyCoupling_trace_eq_entropyReference
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ) :
+    (paddedEntropyCoupling P Q R).trace =
+      (entropyReference P Q R).trace := by
+  simp only [paddedEntropyCoupling, entropyReference,
+    Matrix.trace_fromBlocks_diagonal, Matrix.trace_zero,
+    entropyCoupling_trace, zero_add]
+  ring
+
+/-- Determinant factorization of the shifted padded coupling. -/
+theorem paddedEntropyCoupling_shift_det
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ) (s : ℝ) :
+    (paddedEntropyCoupling P Q R + s • 1).det =
+      (s • (1 : Matrix d d ℂ)).det *
+        (entropyCoupling P Q R + s • 1).det := by
+  rw [show paddedEntropyCoupling P Q R + s • 1 =
+      Matrix.fromBlocks (s • (1 : Matrix d d ℂ)) 0 0
+        (entropyCoupling P Q R + s • 1) by
+    unfold paddedEntropyCoupling
+    rw [← Matrix.fromBlocks_one, Matrix.fromBlocks_smul,
+      Matrix.fromBlocks_add]
+    simp]
+  exact Matrix.det_fromBlocks_zero₁₂ _ _ _
+
+/-- Determinant factorization of the shifted three-block reference. -/
+theorem entropyReference_shift_det
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ) (s : ℝ) :
+    (entropyReference P Q R + s • 1).det =
+      (P + s • 1).det * ((Q + s • 1).det * (R + s • 1).det) := by
+  rw [show entropyReference P Q R + s • 1 =
+      Matrix.fromBlocks (P + s • 1) 0 0
+        (Matrix.fromBlocks (Q + s • 1) 0 0 (R + s • 1)) by
+    unfold entropyReference
+    rw [← Matrix.fromBlocks_one, Matrix.fromBlocks_smul,
+      Matrix.fromBlocks_add]
+    simp only [smul_zero, add_zero]
+    congr 1
+    rw [← Matrix.fromBlocks_one, Matrix.fromBlocks_smul,
+      Matrix.fromBlocks_add]
+    simp]
+  rw [Matrix.det_fromBlocks_zero₁₂, Matrix.det_fromBlocks_zero₁₂]
+
+/-- Determinant factorization of the shifted outer block. -/
+theorem outerShift_det
+    {d : Type} [Fintype d] [DecidableEq d]
+    (s : ℝ) (P R : Matrix d d ℂ) :
+    (outerShift s P R).det = (P + s • 1).det * (R + s • 1).det := by
+  unfold outerShift
+  exact Matrix.det_fromBlocks_zero₁₂ _ _ _
+
+/-- Pull the scalar shift out of `Q+sI` in a form suited to determinant
+factorization. -/
+theorem add_smul_one_eq_scalarBlock_mul
+    {d : Type} [Fintype d] [DecidableEq d]
+    (Q : Matrix d d ℂ) (s : ℝ) (hs : s ≠ 0) :
+    Q + s • 1 =
+      (s • (1 : Matrix d d ℂ)) * (1 + s⁻¹ • Q) := by
+  rw [Matrix.mul_add, Matrix.mul_one]
+  rw [Matrix.smul_mul, Matrix.one_mul, smul_smul]
+  field_simp
+  simp
+  abel
+
+/-- Elementary logarithm rule for the absolute value of a nonzero complex
+product. -/
+theorem log_abs_mul {x y : ℂ} (hx : x ≠ 0) (hy : y ≠ 0) :
+    Real.log (Complex.abs (x * y)) =
+      Real.log (Complex.abs x) + Real.log (Complex.abs y) := by
+  simp only [Complex.abs, norm_mul]
+  exact Real.log_mul (norm_ne_zero_iff.mpr hx) (norm_ne_zero_iff.mpr hy)
+
+/-- The log-determinant integrand of the padded entropy formula is exactly
+the fixed-middle integrand to which skew log-determinant convexity applies. -/
+theorem paddedLogDetIntegrand_eq_fixedMiddle
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef)
+    (s : ℝ) (hs : 0 < s) :
+    Real.log (Complex.abs
+        (paddedEntropyCoupling P Q R + s • 1).det) -
+      Real.log (Complex.abs (entropyReference P Q R + s • 1).det) =
+        fixedMiddleEntropyIntegrand s Q (P, R) := by
+  let a : ℂ := (s • (1 : Matrix d d ℂ)).det
+  let p : ℂ := (P + s • 1).det
+  let q : ℂ := (Q + s • 1).det
+  let r : ℂ := (R + s • 1).det
+  let z : ℂ := (entropyCoupling P Q R + s • 1).det
+  let v : ℂ := (1 + s⁻¹ • Q).det
+  have hscalar : (s • (1 : Matrix d d ℂ)).PosDef :=
+    Matrix.PosDef.smul Matrix.PosDef.one hs
+  have hpdef : (P + s • (1 : Matrix d d ℂ)).PosDef :=
+    Matrix.PosDef.posSemidef_add hP hscalar
+  have hqdef : (Q + s • (1 : Matrix d d ℂ)).PosDef :=
+    Matrix.PosDef.posSemidef_add hQ hscalar
+  have hrdef : (R + s • (1 : Matrix d d ℂ)).PosDef :=
+    Matrix.PosDef.posSemidef_add hR hscalar
+  have hzdef : (entropyCoupling P Q R + s •
+      (1 : Matrix (Sum d d) (Sum d d) ℂ)).PosDef :=
+    Matrix.PosDef.posSemidef_add
+      (entropyCoupling_posSemidef P Q R hP hQ hR)
+      (Matrix.PosDef.smul Matrix.PosDef.one hs)
+  have hscaledQ : (s⁻¹ • Q).PosSemidef :=
+    hQ.smul (inv_nonneg.mpr hs.le)
+  have hvdef : (1 + s⁻¹ • Q).PosDef :=
+    Matrix.PosDef.add_posSemidef Matrix.PosDef.one hscaledQ
+  have ha : a ≠ 0 := hscalar.det_pos.ne'
+  have hp : p ≠ 0 := hpdef.det_pos.ne'
+  have hq : q ≠ 0 := hqdef.det_pos.ne'
+  have hr : r ≠ 0 := hrdef.det_pos.ne'
+  have hz : z ≠ 0 := hzdef.det_pos.ne'
+  have hv : v ≠ 0 := hvdef.det_pos.ne'
+  have hpad : (paddedEntropyCoupling P Q R + s • 1).det = a * z := by
+    exact paddedEntropyCoupling_shift_det P Q R s
+  have href : (entropyReference P Q R + s • 1).det = p * (q * r) := by
+    exact entropyReference_shift_det P Q R s
+  have hqfactor : q = a * v := by
+    dsimp only [q, a, v]
+    rw [show Q + s • (1 : Matrix d d ℂ) =
+        (s • (1 : Matrix d d ℂ)) * (1 + s⁻¹ • Q) from
+      add_smul_one_eq_scalarBlock_mul Q s hs.ne']
+    exact Matrix.det_mul _ _
+  have hzfactor : z =
+      (outerShift s P R + middleSkew s Q).det :=
+    entropyCoupling_shift_det_eq P Q R hQ hR s hs
+  have houter : (outerShift s P R).det = p * r :=
+    outerShift_det s P R
+  have hlogPad : Real.log (Complex.abs (a * z)) =
+      Real.log (Complex.abs a) + Real.log (Complex.abs z) :=
+    log_abs_mul ha hz
+  have hlogRef : Real.log (Complex.abs (p * (q * r))) =
+      Real.log (Complex.abs p) + Real.log (Complex.abs q) +
+        Real.log (Complex.abs r) := by
+    rw [log_abs_mul hp (mul_ne_zero hq hr), log_abs_mul hq hr]
+    ring
+  have hlogQ : Real.log (Complex.abs q) =
+      Real.log (Complex.abs a) + Real.log (Complex.abs v) := by
+    rw [hqfactor, log_abs_mul ha hv]
+  have hlogOuter : Real.log (Complex.abs (p * r)) =
+      Real.log (Complex.abs p) + Real.log (Complex.abs r) :=
+    log_abs_mul hp hr
+  rw [hpad, href, hlogPad, hlogRef, hlogQ]
+  unfold fixedMiddleEntropyIntegrand fixedMiddleLogDetIntegrand
+    skewLogDetIncrement
+  rw [← hzfactor, houter, hlogOuter]
+  dsimp only [v]
+  ring
+
+/-- Entropy difference between the padded coupling and the three-block
+reference.  Proof irrelevance makes this independent of the supplied
+positivity witnesses. -/
+def paddedEntropyDefect
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef) : ℝ :=
+  psdEntropy (paddedEntropyCoupling P Q R)
+      (paddedEntropyCoupling_posSemidef P Q R hP hQ hR) -
+    psdEntropy (entropyReference P Q R)
+      (entropyReference_posSemidef P Q R hP hQ hR)
+
+/-- The manuscript's entropy defect
+`H(Z(P,Q,R)) - H(P) - H(Q) - H(R)`, in bits. -/
+def entropyDefect
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef) : ℝ :=
+  psdEntropy (entropyCoupling P Q R)
+      (entropyCoupling_posSemidef P Q R hP hQ hR) -
+    psdEntropy P hP - psdEntropy Q hQ - psdEntropy R hR
+
+/-- Padding by zero and collecting the three reference blocks does not
+change the entropy defect. -/
+theorem paddedEntropyDefect_eq_entropyDefect
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef) :
+    paddedEntropyDefect P Q R hP hQ hR =
+      entropyDefect P Q R hP hQ hR := by
+  have hpadEntropy :
+      psdEntropy (paddedEntropyCoupling P Q R)
+          (paddedEntropyCoupling_posSemidef P Q R hP hQ hR) =
+        psdEntropy (entropyCoupling P Q R)
+          (entropyCoupling_posSemidef P Q R hP hQ hR) := by
+    change psdEntropy
+        (Matrix.fromBlocks (0 : Matrix d d ℂ) 0 0
+          (entropyCoupling P Q R)) _ = _
+    rw [psdEntropy_fromBlocks_diagonal
+      (0 : Matrix d d ℂ) (entropyCoupling P Q R)
+      Matrix.PosSemidef.zero
+      (entropyCoupling_posSemidef P Q R hP hQ hR),
+      psdEntropy_zero, zero_add]
+  have hrefEntropy :
+      psdEntropy (entropyReference P Q R)
+          (entropyReference_posSemidef P Q R hP hQ hR) =
+        psdEntropy P hP + psdEntropy Q hQ + psdEntropy R hR := by
+    change psdEntropy
+        (Matrix.fromBlocks P 0 0 (Matrix.fromBlocks Q 0 0 R)) _ = _
+    rw [psdEntropy_fromBlocks_diagonal P (Matrix.fromBlocks Q 0 0 R)
+      hP (Matrix.fromBlocks_diagonal_posSemidef hQ hR),
+      psdEntropy_fromBlocks_diagonal Q R hQ hR]
+    ring
+  unfold paddedEntropyDefect entropyDefect
+  rw [hpadEntropy, hrefEntropy]
+  ring
+
+/-- The entropy integral applied to the same-dimensional padded matrices. -/
+theorem tendsto_paddedEntropyDefect_logDetIntegral
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef) :
+    Tendsto (fun L : ℝ =>
+      ∫ s in (0 : ℝ)..L,
+        Real.log (Complex.abs
+          (paddedEntropyCoupling P Q R + s • 1).det) -
+        Real.log (Complex.abs (entropyReference P Q R + s • 1).det))
+      atTop (nhds (paddedEntropyDefect P Q R hP hQ hR * Real.log 2)) := by
+  simpa [paddedEntropyDefect] using
+    tendsto_psdEntropy_logDet_integral
+      (paddedEntropyCoupling P Q R) (entropyReference P Q R)
+      (paddedEntropyCoupling_posSemidef P Q R hP hQ hR)
+      (entropyReference_posSemidef P Q R hP hQ hR)
+      (paddedEntropyCoupling_trace_eq_entropyReference P Q R)
+
+/-- On a compact interval bounded away from zero, the shifted
+log-determinant of a positive semidefinite matrix is interval integrable. -/
+theorem intervalIntegrable_logAbsDetShift
+    {d : Type} [Fintype d] [DecidableEq d]
+    (X : Matrix d d ℂ) (hX : X.PosSemidef)
+    (epsilon L : ℝ) (hepsilon : 0 ≤ epsilon) (hL : epsilon ≤ L) :
+    IntervalIntegrable
+      (fun s : ℝ => Real.log (Complex.abs (X + s • 1).det))
+      volume epsilon L := by
+  have hi (i : d) : IntervalIntegrable
+      (fun s : ℝ => Real.log (s + hX.isHermitian.eigenvalues i))
+      volume epsilon L := by
+    simpa [add_comm] using
+      (intervalIntegrable_log'
+        (a := epsilon + hX.isHermitian.eigenvalues i)
+        (b := L + hX.isHermitian.eigenvalues i)).comp_add_right
+          (hX.isHermitian.eigenvalues i)
+  have hsum : IntervalIntegrable
+      (fun s : ℝ => ∑ i, Real.log (s + hX.isHermitian.eigenvalues i))
+      volume epsilon L := by
+    convert IntervalIntegrable.sum Finset.univ (fun i _ => hi i) using 1
+    funext s
+    simp
+  apply hsum.congr
+  intro s hsI
+  have hsI' : s ∈ Set.Ioc epsilon L := by
+    simpa [Set.uIoc_of_le hL] using hsI
+  symm
+  exact log_abs_det_add_smul_one X hX s (lt_of_le_of_lt hepsilon hsI'.1)
+
+/-- The fixed-middle entropy integrand is integrable on every compact
+positive interval for positive semidefinite inputs. -/
+theorem intervalIntegrable_fixedMiddleEntropyIntegrand
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef)
+    (epsilon L : ℝ) (hepsilon : 0 ≤ epsilon) (hL : epsilon ≤ L) :
+    IntervalIntegrable
+      (fun s : ℝ => fixedMiddleEntropyIntegrand s Q (P, R))
+      volume epsilon L := by
+  have hpad := intervalIntegrable_logAbsDetShift
+    (paddedEntropyCoupling P Q R)
+    (paddedEntropyCoupling_posSemidef P Q R hP hQ hR)
+    epsilon L hepsilon hL
+  have href := intervalIntegrable_logAbsDetShift
+    (entropyReference P Q R)
+    (entropyReference_posSemidef P Q R hP hQ hR)
+    epsilon L hepsilon hL
+  apply (hpad.sub href).congr
+  intro s hsI
+  have hsI' : s ∈ Set.Ioc epsilon L := by
+    simpa [Set.uIoc_of_le hL] using hsI
+  exact paddedLogDetIntegrand_eq_fixedMiddle P Q R hP hQ hR s
+    (lt_of_le_of_lt hepsilon hsI'.1)
+
+/-- Finite positive-window integral of the fixed-middle entropy integrand. -/
+def truncatedFixedMiddleEntropyIntegral
+    {d : Type} [Fintype d] [DecidableEq d]
+    (epsilon L : ℝ) (Q : Matrix d d ℂ)
+    (PR : Matrix d d ℂ × Matrix d d ℂ) : ℝ :=
+  ∫ s in epsilon..L, fixedMiddleEntropyIntegrand s Q PR
+
+/-- Integration over a compact interval bounded away from zero preserves
+the fixed-middle joint convexity in the two outer matrices. -/
+theorem truncatedFixedMiddleEntropyIntegral_convexOn
+    {d : Type} [Fintype d] [DecidableEq d]
+    (Q : Matrix d d ℂ) (hQ : Q.PosSemidef)
+    (epsilon L : ℝ) (hepsilon : 0 ≤ epsilon) (hL : epsilon ≤ L) :
+    ConvexOn ℝ
+      ({PR : Matrix d d ℂ × Matrix d d ℂ |
+        PR.1.PosSemidef ∧ PR.2.PosSemidef} :
+        Set (Matrix d d ℂ × Matrix d d ℂ))
+      (truncatedFixedMiddleEntropyIntegral epsilon L Q) := by
+  constructor
+  · intro x hx y hy a b ha hb _hab
+    exact ⟨
+      (hx.1.smul ha).add (hy.1.smul hb),
+      (hx.2.smul ha).add (hy.2.smul hb)⟩
+  · intro x hx y hy a b ha hb hab
+    have hcombo :
+        ((a • x + b • y).1.PosSemidef ∧
+          (a • x + b • y).2.PosSemidef) := ⟨
+      (hx.1.smul ha).add (hy.1.smul hb),
+      (hx.2.smul ha).add (hy.2.smul hb)⟩
+    have hleft := intervalIntegrable_fixedMiddleEntropyIntegrand
+      (a • x.1 + b • y.1) Q (a • x.2 + b • y.2)
+      hcombo.1 hQ hcombo.2 epsilon L hepsilon hL
+    have hxint := intervalIntegrable_fixedMiddleEntropyIntegrand
+      x.1 Q x.2 hx.1 hQ hx.2 epsilon L hepsilon hL
+    have hyint := intervalIntegrable_fixedMiddleEntropyIntegrand
+      y.1 Q y.2 hy.1 hQ hy.2 epsilon L hepsilon hL
+    have hright : IntervalIntegrable
+        (fun s : ℝ => a * fixedMiddleEntropyIntegrand s Q x +
+          b * fixedMiddleEntropyIntegrand s Q y)
+        volume epsilon L :=
+      (hxint.const_mul a).add (hyint.const_mul b)
+    have hmono :
+        (∫ s in epsilon..L,
+          fixedMiddleEntropyIntegrand s Q (a • x + b • y)) ≤
+      ∫ s in epsilon..L,
+          (a * fixedMiddleEntropyIntegrand s Q x +
+            b * fixedMiddleEntropyIntegrand s Q y) := by
+      apply intervalIntegral.integral_mono_on_of_le_Ioo hL
+      · simpa using hleft
+      · exact hright
+      · intro s hsIoo
+        have hs : 0 < s := lt_of_le_of_lt hepsilon hsIoo.1
+        simpa [smul_eq_mul] using
+          (fixedMiddleEntropyIntegrand_convexOn s hs Q).2 hx hy ha hb hab
+    change (∫ s in epsilon..L,
+        fixedMiddleEntropyIntegrand s Q (a • x + b • y)) ≤
+      a * (∫ s in epsilon..L, fixedMiddleEntropyIntegrand s Q x) +
+      b * (∫ s in epsilon..L, fixedMiddleEntropyIntegrand s Q y)
+    calc
+      _ ≤ ∫ s in epsilon..L,
+          (a * fixedMiddleEntropyIntegrand s Q x +
+            b * fixedMiddleEntropyIntegrand s Q y) := hmono
+      _ = _ := by
+        rw [intervalIntegral.integral_add
+          (hxint.const_mul a) (hyint.const_mul b),
+          intervalIntegral.integral_const_mul,
+          intervalIntegral.integral_const_mul]
+
+/-- The zero-to-`L` fixed-middle integrals converge to the padded entropy
+defect.  The value of the displayed integrand at `s = 0` is irrelevant to
+the interval integral. -/
+theorem tendsto_truncatedFixedMiddleEntropyIntegral
+    {d : Type} [Fintype d] [DecidableEq d]
+    (P Q R : Matrix d d ℂ)
+    (hP : P.PosSemidef) (hQ : Q.PosSemidef) (hR : R.PosSemidef) :
+    Tendsto (fun L : ℝ =>
+      truncatedFixedMiddleEntropyIntegral 0 L Q (P, R))
+      atTop (nhds (paddedEntropyDefect P Q R hP hQ hR * Real.log 2)) := by
+  have hlim := tendsto_paddedEntropyDefect_logDetIntegral P Q R hP hQ hR
+  apply hlim.congr'
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with L hL
+  unfold truncatedFixedMiddleEntropyIntegral
+  apply intervalIntegral.integral_congr_ae
+  filter_upwards with s hsI
+  have hsI' : s ∈ Set.Ioc (0 : ℝ) L := by
+    simpa [Set.uIoc_of_le hL.le] using hsI
+  exact paddedLogDetIntegrand_eq_fixedMiddle P Q R hP hQ hR s hsI'.1
+
+/-- Binary fixed-middle convexity of the padded entropy defect.  This is the
+limit-level conclusion of Step 1 of the triangular entropy argument. -/
+theorem paddedEntropyDefect_convexCombination
+    {d : Type} [Fintype d] [DecidableEq d]
+    (Q : Matrix d d ℂ) (hQ : Q.PosSemidef)
+    (P₀ R₀ P₁ R₁ : Matrix d d ℂ)
+    (hP₀ : P₀.PosSemidef) (hR₀ : R₀.PosSemidef)
+    (hP₁ : P₁.PosSemidef) (hR₁ : R₁.PosSemidef)
+    (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a + b = 1) :
+    paddedEntropyDefect (a • P₀ + b • P₁) Q (a • R₀ + b • R₁)
+        ((hP₀.smul ha).add (hP₁.smul hb)) hQ
+        ((hR₀.smul ha).add (hR₁.smul hb)) ≤
+      a * paddedEntropyDefect P₀ Q R₀ hP₀ hQ hR₀ +
+        b * paddedEntropyDefect P₁ Q R₁ hP₁ hQ hR₁ := by
+  have hcomboP : (a • P₀ + b • P₁).PosSemidef :=
+    (hP₀.smul ha).add (hP₁.smul hb)
+  have hcomboR : (a • R₀ + b • R₁).PosSemidef :=
+    (hR₀.smul ha).add (hR₁.smul hb)
+  have hlimCombo := tendsto_truncatedFixedMiddleEntropyIntegral
+    (a • P₀ + b • P₁) Q (a • R₀ + b • R₁)
+    hcomboP hQ hcomboR
+  have hlim₀ := tendsto_truncatedFixedMiddleEntropyIntegral
+    P₀ Q R₀ hP₀ hQ hR₀
+  have hlim₁ := tendsto_truncatedFixedMiddleEntropyIntegral
+    P₁ Q R₁ hP₁ hQ hR₁
+  have hlimRight := (hlim₀.const_mul a).add (hlim₁.const_mul b)
+  have hevent : (fun L : ℝ =>
+      truncatedFixedMiddleEntropyIntegral 0 L Q
+          (a • (P₀, R₀) + b • (P₁, R₁))) ≤ᶠ[atTop]
+      (fun L : ℝ =>
+        a • truncatedFixedMiddleEntropyIntegral 0 L Q (P₀, R₀) +
+          b • truncatedFixedMiddleEntropyIntegral 0 L Q (P₁, R₁)) := by
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with L hL
+    exact (truncatedFixedMiddleEntropyIntegral_convexOn
+      Q hQ 0 L le_rfl hL).2 ⟨hP₀, hR₀⟩ ⟨hP₁, hR₁⟩ ha hb hab
+  have hle := le_of_tendsto_of_tendsto hlimCombo hlimRight hevent
+  have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  nlinarith
+
+/-- Fixed-middle joint convexity of the manuscript entropy defect in its two
+outer positive semidefinite arguments. -/
+theorem entropyDefect_convexCombination
+    {d : Type} [Fintype d] [DecidableEq d]
+    (Q : Matrix d d ℂ) (hQ : Q.PosSemidef)
+    (P₀ R₀ P₁ R₁ : Matrix d d ℂ)
+    (hP₀ : P₀.PosSemidef) (hR₀ : R₀.PosSemidef)
+    (hP₁ : P₁.PosSemidef) (hR₁ : R₁.PosSemidef)
+    (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a + b = 1) :
+    entropyDefect (a • P₀ + b • P₁) Q (a • R₀ + b • R₁)
+        ((hP₀.smul ha).add (hP₁.smul hb)) hQ
+        ((hR₀.smul ha).add (hR₁.smul hb)) ≤
+      a * entropyDefect P₀ Q R₀ hP₀ hQ hR₀ +
+        b * entropyDefect P₁ Q R₁ hP₁ hQ hR₁ := by
+  simpa only [paddedEntropyDefect_eq_entropyDefect] using
+    paddedEntropyDefect_convexCombination Q hQ P₀ R₀ P₁ R₁
+      hP₀ hR₀ hP₁ hR₁ a b ha hb hab
 
 end
 
