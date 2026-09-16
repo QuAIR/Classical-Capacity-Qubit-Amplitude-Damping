@@ -35,8 +35,15 @@ proof obligations.
    the roof to the fixed-input and ensemble Holevo converse.
 10. `Triangular/Statement.lean`: formal statement and normalization API for the
    triangular block entropy inequality.
-11. Future modules will prove the logarithmic-determinant convexity lemma, the
-   triangular theorem, and finally the EoF/channel corollaries.
+11. `Triangular/LogDet.lean`: checked Hilbert--Schmidt trace-square estimate,
+    skew-resolvent contraction, and nonnegativity of the normalized
+    log-determinant Hessian expression.
+12. `Triangular/LogDetCalculus.lean`: checked derivative of complex log-modulus,
+    polynomial proof of Jacobi's determinant formula, the first derivative of
+    `log |det(M+tH)|`, the inverse-trace second-derivative identity, and the
+    resulting convexity theorem on the full positive-definite cone.
+13. Future modules will prove the entropy-integral/dephasing reduction and the
+    triangular theorem, and finally prove the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until

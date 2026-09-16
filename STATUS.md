@@ -39,10 +39,31 @@ it does not mean that the corresponding result is merely assumed.
   fixed-excitation roof formula `roof(A_p, rho) = g_p(q)`.
 - [x] Exact formal statement of the triangular block entropy inequality,
   including the zero-weight convention.
+- [x] Hilbert--Schmidt estimate `|Tr(X²)| ≤ ‖X‖_F²` for arbitrary complex
+  square matrices.
+- [x] The skew-resolvent contraction
+  `((I+A)⁻¹)ᴴ(I+A)⁻¹ ≤ I` for `Aᴴ = -A`, including nonsingularity of
+  `I+A`.
+- [x] Nonnegativity of the normalized log-determinant Hessian expression
+  `‖E‖_F² - Re Tr((((I+A)⁻¹E)²))`.
+- [x] Polynomial proof of Jacobi's formula for the derivative of the
+  determinant along an invertible real affine matrix path.
+- [x] First-derivative formula
+  `d/dt log |det(M+tH)| = Re Tr((M+tH)⁻¹H)`.
+- [x] Inverse-path derivative and the resulting second-derivative identity for
+  a difference of two affine matrix log-determinants.
+- [x] Positive-definite square-root normalization of the Hessian and its
+  pointwise nonnegativity for Hermitian directions and skew-Hermitian
+  perturbations.
+- [x] Nonsingularity of `G + J` for positive-definite `G` and skew-Hermitian
+  `J`.
+- [x] Convexity along every positive-definite line segment, including the
+  closed-interval continuity and calculus endpoint obligations.
+- [x] Full matrix-level log-determinant convexity lemma:
+  `G ↦ log |det(G+J)| - log |det G|` is convex on the positive-definite cone.
 
 ## Open proof obligations
 
-- [ ] Log-determinant convexity lemma in the appendix proof.
 - [ ] Dephasing/scalar Jensen reduction and the full triangular block entropy
   inequality.  At present `TriangularBlockEntropyInequality` is a proposition
   naming this target, not a theorem asserting it.
