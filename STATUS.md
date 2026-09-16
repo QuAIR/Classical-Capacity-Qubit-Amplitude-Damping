@@ -84,6 +84,8 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Full fixed-middle joint convexity of `F(P,Q,R)` in `(P,R)` on the
   positive semidefinite cone, obtained by passing the truncated inequalities
   through the entropy-integral limit.
+- [x] Ambient-space totalization of the entropy defect and a checked finite
+  Jensen inequality, ready for the sign-unitary dephasing average.
 
 ## Open proof obligations
 

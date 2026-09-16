@@ -679,6 +679,8 @@ theorem truncatedFixedMiddleEntropyIntegral_convexOn
       (hx.1.smul ha).add (hy.1.smul hb),
       (hx.2.smul ha).add (hy.2.smul hb)⟩
   · intro x hx y hy a b ha hb hab
+    change x.1.PosSemidef ∧ x.2.PosSemidef at hx
+    change y.1.PosSemidef ∧ y.2.PosSemidef at hy
     have hcombo :
         ((a • x + b • y).1.PosSemidef ∧
           (a • x + b • y).2.PosSemidef) := ⟨
@@ -799,6 +801,72 @@ theorem entropyDefect_convexCombination
   simpa only [paddedEntropyDefect_eq_entropyDefect] using
     paddedEntropyDefect_convexCombination Q hQ P₀ R₀ P₁ R₁
       hP₀ hR₀ hP₁ hR₁ a b ha hb hab
+
+/-- Totalized form of the entropy defect.  Its values outside the positive
+semidefinite cone are irrelevant; totalization makes the function compatible
+with mathlib's ambient-space convexity and finite Jensen APIs. -/
+def entropyDefectTotal
+    {d : Type} [Fintype d] [DecidableEq d]
+    (Q : Matrix d d ℂ) (hQ : Q.PosSemidef)
+    (PR : Matrix d d ℂ × Matrix d d ℂ) : ℝ :=
+  by
+    classical
+    exact if hPR : PR.1.PosSemidef ∧ PR.2.PosSemidef then
+      entropyDefect PR.1 Q PR.2 hPR.1 hQ hPR.2
+    else 0
+
+/-- Ambient-space `ConvexOn` packaging of fixed-middle entropy-defect
+convexity, ready for finite Jensen averages. -/
+theorem entropyDefectTotal_convexOn
+    {d : Type} [Fintype d] [DecidableEq d]
+    (Q : Matrix d d ℂ) (hQ : Q.PosSemidef) :
+    ConvexOn ℝ
+      ({PR : Matrix d d ℂ × Matrix d d ℂ |
+        PR.1.PosSemidef ∧ PR.2.PosSemidef} :
+        Set (Matrix d d ℂ × Matrix d d ℂ))
+      (entropyDefectTotal Q hQ) := by
+  constructor
+  · intro x hx y hy a b ha hb _hab
+    exact ⟨
+      (hx.1.smul ha).add (hy.1.smul hb),
+      (hx.2.smul ha).add (hy.2.smul hb)⟩
+  · intro x hx y hy a b ha hb hab
+    change x.1.PosSemidef ∧ x.2.PosSemidef at hx
+    change y.1.PosSemidef ∧ y.2.PosSemidef at hy
+    have hcombo :
+        ((a • x + b • y).1.PosSemidef ∧
+          (a • x + b • y).2.PosSemidef) := ⟨
+      (hx.1.smul ha).add (hy.1.smul hb),
+      (hx.2.smul ha).add (hy.2.smul hb)⟩
+    have hcombo' :
+        (a • x.1 + b • y.1).PosSemidef ∧
+          (a • x.2 + b • y.2).PosSemidef := by
+      simpa using hcombo
+    have hxval : entropyDefectTotal Q hQ x =
+        entropyDefect x.1 Q x.2 hx.1 hQ hx.2 := by
+      simp [entropyDefectTotal, hx]
+    have hyval : entropyDefectTotal Q hQ y =
+        entropyDefect y.1 Q y.2 hy.1 hQ hy.2 := by
+      simp [entropyDefectTotal, hy]
+    have hcomboval : entropyDefectTotal Q hQ (a • x + b • y) =
+        entropyDefect (a • x + b • y).1 Q (a • x + b • y).2
+          hcombo.1 hQ hcombo.2 := by
+      simp [entropyDefectTotal, hcombo']
+    rw [hxval, hyval, hcomboval]
+    simpa using entropyDefect_convexCombination Q hQ
+      x.1 x.2 y.1 y.2 hx.1 hx.2 hy.1 hy.2 a b ha hb hab
+
+/-- Finite Jensen inequality for the fixed-middle entropy defect. -/
+theorem entropyDefectTotal_map_sum_le
+    {d ι : Type} [Fintype d] [DecidableEq d]
+    (Q : Matrix d d ℂ) (hQ : Q.PosSemidef)
+    (t : Finset ι) (w : ι → ℝ)
+    (X : ι → Matrix d d ℂ × Matrix d d ℂ)
+    (hw : ∀ i ∈ t, 0 ≤ w i) (hsum : ∑ i ∈ t, w i = 1)
+    (hX : ∀ i ∈ t, (X i).1.PosSemidef ∧ (X i).2.PosSemidef) :
+    entropyDefectTotal Q hQ (∑ i ∈ t, w i • X i) ≤
+      ∑ i ∈ t, w i • entropyDefectTotal Q hQ (X i) := by
+  exact (entropyDefectTotal_convexOn Q hQ).map_sum_le hw hsum hX
 
 end
 
