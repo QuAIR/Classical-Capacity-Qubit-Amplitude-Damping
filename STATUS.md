@@ -113,6 +113,9 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Full matrix trace compression
   `F(P,Q,R) ≥ f(Tr P, Tr Q, Tr R)` for arbitrary finite-dimensional positive
   semidefinite matrices, using dephasing and spectral diagonalization.
+- [x] Exact normalized scalar formula: the trace-one scalar coupling has
+  determinant `p*r`, entropy `entanglementCurve (2*sqrt(p*r))`, and the
+  corresponding scalar entropy defect has the required `xlog2` corrections.
 
 ## Open proof obligations
 

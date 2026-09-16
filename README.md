@@ -70,7 +70,10 @@ proof obligations.
 18. `Triangular/TraceCompression.lean`: checked diagonal scalar compression,
     dephasing for arbitrary outer matrices, spectral diagonalization of the
     middle matrix, and the full PSD matrix trace-compression theorem.
-19. Future modules will recover the triangular blocks by polar/isometric
+19. `Triangular/ScalarNormalization.lean`: checked the scalar coupling
+    determinant and its exact identification with the normalized qubit
+    entanglement curve, together with the resulting scalar-defect formula.
+20. Future modules will recover the triangular blocks by polar/isometric
     embeddings, followed by the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
