@@ -1,4 +1,4 @@
-import AmplitudeDamping.Definitions
+import AmplitudeDamping.ConvexRoof
 import QIT.Information.Entropy.MutualInformationDPI
 import QIT.Coding.EntanglementAssisted.Renyi.Sandwiched.Limit
 
@@ -62,6 +62,21 @@ theorem fixedInputHolevo_prod_le
   unfold fixedInputHolevo
   linarith
 
+/-- On product inputs, additivity of the roof gives exact additivity of the
+fixed-input Holevo quantity.  This is the achievability/reverse-inequality
+counterpart to `fixedInputHolevo_prod_le`. -/
+theorem fixedInputHolevo_prod_eq_of_roof_prod
+    (roofProd : State (Prod a c) → ℝ)
+    (roofLeft : State a → ℝ) (roofRight : State c → ℝ)
+    (Φ : Channel a b) (Ψ : Channel c d)
+    (ρ : State a) (σ : State c)
+    (hroof : roofProd (ρ.prod σ) = roofLeft ρ + roofRight σ) :
+    fixedInputHolevo roofProd (Φ.prod Ψ) (ρ.prod σ) =
+      fixedInputHolevo roofLeft Φ ρ + fixedInputHolevo roofRight Ψ σ := by
+  unfold fixedInputHolevo
+  rw [Channel.applyState_prod, State.vonNeumann_prod, hroof]
+  ring
+
 /-- Ensemble-level Holevo converse.  Every output ensemble is bounded by the
 sum of the two fixed-input Holevo quantities evaluated on the marginals of its
 average input. -/
@@ -83,6 +98,30 @@ theorem ensembleHolevoAfter_prod_le
     E.averageState (hroof E.averageState)
   unfold fixedInputHolevo at hfixed
   unfold fixedInputHolevo
+  linarith
+
+/-- Concrete pure-decomposition version of the Holevo converse for the actual
+finite pure-state convex roof defined in `ConvexRoof.lean`. -/
+theorem pureDecompositionHolevoAfter_prod_le
+    (Φ : Channel a b) (Ψ : Channel c d)
+    (E : PureDecomposition (Prod a c))
+    (hroof : ∀ σ : State (Prod a c),
+      outputEntropyRoof (Φ.prod Ψ) σ ≥
+        outputEntropyRoof Φ σ.marginalA +
+          outputEntropyRoof Ψ σ.marginalB) :
+    ensembleHolevoAfter (Φ.prod Ψ) E.toEnsemble ≤
+      fixedInputHolevo (outputEntropyRoof Φ) Φ E.averageState.marginalA +
+        fixedInputHolevo (outputEntropyRoof Ψ) Ψ E.averageState.marginalB := by
+  rw [ensembleHolevoAfter_eq]
+  have hcost := outputEntropyRoof_le_outputCost (Φ.prod Ψ) E
+  have hfixed := fixedInputHolevo_prod_le
+    (outputEntropyRoof (Φ.prod Ψ)) (outputEntropyRoof Φ) (outputEntropyRoof Ψ)
+    Φ Ψ E.averageState (hroof E.averageState)
+  unfold PureDecomposition.outputCost at hcost
+  unfold PureDecomposition.averageState at hcost hfixed
+  unfold fixedInputHolevo at hfixed
+  unfold fixedInputHolevo
+  unfold PureDecomposition.averageState
   linarith
 
 end

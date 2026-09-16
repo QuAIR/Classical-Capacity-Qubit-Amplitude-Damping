@@ -28,6 +28,12 @@ def frobeniusSq {r : Type u₁} {c : Type v₁}
     (A : Matrix r c ℂ) : ℝ :=
   (Matrix.trace (A * A.conjTranspose)).re
 
+theorem frobeniusSq_nonneg {r : Type u₁} {c : Type v₁}
+    [Fintype r] [DecidableEq r] [Fintype c] [DecidableEq c]
+    (A : Matrix r c ℂ) : 0 ≤ frobeniusSq A := by
+  exact (Matrix.PosSemidef.trace_nonneg
+    (Matrix.posSemidef_self_mul_conjTranspose A)).1
+
 /-- Spectral entropy `-Tr X log₂ X` of a positive semidefinite matrix.
 
 The positivity witness supplies the Hermitian eigenvalue API.  The definition
@@ -35,6 +41,11 @@ does not require `X` to have trace one. -/
 def psdEntropy {r : Type u₁} [Fintype r] [DecidableEq r]
     (X : Matrix r r ℂ) (hX : X.PosSemidef) : ℝ :=
   -(∑ i, QIT.xlog2 (hX.isHermitian.eigenvalues i))
+
+/-- On a density state, `psdEntropy` is exactly Lean-QIT's von Neumann
+entropy. -/
+theorem psdEntropy_state {r : Type u₁} [Fintype r] [DecidableEq r]
+    (ρ : State r) : psdEntropy ρ.matrix ρ.pos = ρ.vonNeumann := rfl
 
 /-- The manuscript's zero-weight convention for
 `weight * S(A Aᴴ / weight)`, expressed directly through eigenvalues. -/
@@ -46,6 +57,12 @@ def normalizedGramEntropy {r : Type u₁} {c : Type v₁}
     QIT.xlog2
       ((Matrix.posSemidef_self_mul_conjTranspose A).isHermitian.eigenvalues i /
         weight)
+
+@[simp]
+theorem normalizedGramEntropy_zero {r : Type u₁} {c : Type v₁}
+    [Fintype r] [DecidableEq r] [Fintype c] [DecidableEq c]
+    (A : Matrix r c ℂ) : normalizedGramEntropy 0 A = 0 := by
+  simp [normalizedGramEntropy]
 
 /-- Binary entropy, in bits. -/
 def binaryEntropy (q : ℝ) : ℝ :=

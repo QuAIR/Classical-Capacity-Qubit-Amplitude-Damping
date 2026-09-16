@@ -1,4 +1,7 @@
 import AmplitudeDamping.Definitions
+import AmplitudeDamping.ConvexRoof
+import AmplitudeDamping.Channel
+import AmplitudeDamping.FixedExcitation
 import AmplitudeDamping.HolevoReduction
 import AmplitudeDamping.Triangular.Statement
 
