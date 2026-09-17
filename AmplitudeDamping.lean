@@ -12,6 +12,7 @@ import AmplitudeDamping.PureAuxiliary
 import AmplitudeDamping.PureAuxiliaryOutput
 import AmplitudeDamping.PureAuxiliaryRoof
 import AmplitudeDamping.StrongSuperadditivity
+import AmplitudeDamping.NCopy
 import AmplitudeDamping.Triangular.Statement
 import AmplitudeDamping.Triangular.LogDet
 import AmplitudeDamping.Triangular.LogDetCalculus
