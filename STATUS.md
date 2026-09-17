@@ -137,6 +137,9 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Full arbitrary-rectangular triangular block entropy inequality.  The
   proposition `TriangularBlockEntropyInequality` now has the checked theorem
   `triangularBlockEntropyInequality`.
+- [x] Exact amplitude-damping specialization
+  `[[sqrt(1-p) A, 0], [B, sqrt(p) A]]`, including homogeneity of normalized
+  Gram entropy and the zero-weight endpoint cases.
 
 ## Open proof obligations
 

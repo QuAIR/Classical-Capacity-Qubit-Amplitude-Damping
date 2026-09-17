@@ -23,6 +23,7 @@ import AmplitudeDamping.Triangular.SquarePolar
 import AmplitudeDamping.Triangular.UnitaryPolar
 import AmplitudeDamping.Triangular.IsometricEmbedding
 import AmplitudeDamping.Triangular.Rectangular
+import AmplitudeDamping.Triangular.AmplitudeSpecialization
 
 /-!
 # Formalization of strong additivity for amplitude damping

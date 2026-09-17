@@ -357,7 +357,7 @@ theorem xlog2_mul_of_nonneg
 
 /-- Spectral entropy under multiplication by a nonnegative real scalar. -/
 theorem psdEntropy_real_smul
-    {d : Type} [Fintype d] [DecidableEq d]
+    {d : Type u} [Fintype d] [DecidableEq d]
     (c : ℝ) (hc : 0 ≤ c) (X : Matrix d d ℂ) (hX : X.PosSemidef) :
     psdEntropy ((c : ℂ) • X) (hX.smul (by exact_mod_cast hc)) =
       c * psdEntropy X hX - QIT.xlog2 c * X.trace.re := by

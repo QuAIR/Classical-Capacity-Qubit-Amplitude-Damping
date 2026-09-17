@@ -92,7 +92,10 @@ proof obligations.
 25. `Triangular/Rectangular.lean`: checked the full arbitrary-rectangular
     `TriangularBlockEntropyInequality` by embedding all four index spaces into
     a common finite coordinate space and applying the square theorem.
-26. Future modules derive the EoF/channel corollaries from the completed
+26. `Triangular/AmplitudeSpecialization.lean`: checked the exact
+    amplitude-damping block specialization, including square-root scaling,
+    normalized Gram-entropy homogeneity, and all endpoint cases.
+27. Future modules derive the EoF/channel corollaries from the completed
     analytic inequality.
 
 The project does not use `sorry` or introduce axioms for the mathematical
