@@ -99,7 +99,11 @@ proof obligations.
     isometry for every channel and identifies its coefficient-matrix Gram,
     Frobenius weight, and normalized Gram entropy with the corresponding
     channel output data.
-28. Future modules derive the EoF/channel corollaries from the completed
+28. `PureAuxiliary.lean`: splits an arbitrary pure input on `Qubit × Y`
+    into its excited and ground branches, identifies their weights with the
+    qubit marginal excitation and its complement, and applies the sharp
+    triangular coefficient bound to an arbitrary auxiliary channel.
+29. Future modules derive the EoF/channel corollaries from the completed
     analytic inequality.
 
 The project does not use `sorry` or introduce axioms for the mathematical

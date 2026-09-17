@@ -144,6 +144,10 @@ it does not mean that the corresponding result is merely assumed.
   checked identities equating its coefficient-matrix Gram to the channel
   output on a rank-one input, its Frobenius weight to the input norm, and its
   normalized Gram entropy to pure-input output entropy.
+- [x] Pure-input qubit branch decomposition for an arbitrary auxiliary
+  channel: the branch weights are exactly the qubit marginal excitation and
+  its complement, and the amplitude-damping triangular coefficient bound is
+  instantiated for the resulting Stinespring blocks.
 
 ## Open proof obligations
 
