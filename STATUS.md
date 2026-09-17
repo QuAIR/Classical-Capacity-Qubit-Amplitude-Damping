@@ -162,10 +162,17 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Product-ensemble lower bound and optimized strong Holevo additivity
   `χ(A_p ⊗ Φ) = χ(A_p) + χ(Φ)` for every finite-dimensional auxiliary
   channel with nonempty input system.
+- [x] General one-letter variational identity equating optimized finite-
+  ensemble Holevo information with the state supremum of output entropy
+  minus the exact output-entropy convex roof.
+- [x] Exact reduction of amplitude-damping Holevo information to the scalar
+  excitation curve on `[0,1]`, including continuity, boundedness, and
+  attainment of the maximum.
 
 ## Open proof obligations
 
-- [ ] Optimization over input states and the exact one-letter Holevo formula.
+- [ ] Identification of the regularized HSW classical capacity with the
+  one-letter scalar maximum, plus the mean-excitation constrained variant.
 - [ ] Entanglement-of-formation convex roof, product-kernel support theorem,
   Choi-state cost formula, and the two-Kraus qubit-channel corollary.
 

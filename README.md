@@ -118,6 +118,12 @@ proof obligations.
     every fixed-input roof expression with a lower bound on the optimized
     Holevo information, and derives strong additivity
     `χ(A_p ⊗ Φ) = χ(A_p) + χ(Φ)`.
+34. `OneLetterCapacity.lean`: identifies the finite-ensemble Holevo supremum
+    of an arbitrary channel with the state-wise supremum of output entropy
+    minus its exact output-entropy convex roof.
+35. `ScalarCapacity.lean`: reduces the amplitude-damping state optimization
+    to the manuscript's single excitation variable, proves the exact scalar
+    supremum formula, and proves that the maximum on `[0,1]` is attained.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
