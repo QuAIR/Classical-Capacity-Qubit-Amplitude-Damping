@@ -65,7 +65,7 @@ theorem PureDecomposition.rightMarginalEnsemble_averageState
 
 /-- The pure-input bound plus finite Jensen for the factor roofs implies full
 strong superadditivity of the concrete output-entropy convex roof. -/
-theorem amplitudeDamping_outputEntropyRoof_stronglySuperadditive
+theorem amplitudeDamping_outputEntropyRoof_stronglySuperadditive_of_finiteJensen
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (Phi : Channel a b)
     (hleft : SatisfiesFiniteJensen
       (outputEntropyRoof (amplitudeDamping p hp0 hp1)))
@@ -100,6 +100,19 @@ theorem amplitudeDamping_outputEntropyRoof_stronglySuperadditive
   simp_rw [mul_add] at hweighted
   rw [Finset.sum_add_distrib] at hweighted
   linarith
+
+/-- Strong superadditivity of the output-entropy convex roof for amplitude
+damping tensored with an arbitrary finite-dimensional channel. -/
+theorem amplitudeDamping_outputEntropyRoof_stronglySuperadditive
+    (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (Phi : Channel a b) :
+    StronglySuperadditiveFor
+      (outputEntropyRoof ((amplitudeDamping p hp0 hp1).prod Phi))
+      (outputEntropyRoof (amplitudeDamping p hp0 hp1))
+      (outputEntropyRoof Phi) :=
+  amplitudeDamping_outputEntropyRoof_stronglySuperadditive_of_finiteJensen
+    p hp0 hp1 Phi
+    (outputEntropyRoof_satisfiesFiniteJensen _)
+    (outputEntropyRoof_satisfiesFiniteJensen _)
 
 end
 
