@@ -74,7 +74,10 @@ proof obligations.
     determinant and its exact identification with the normalized qubit
     entanglement curve, the resulting scalar-defect formula, and the
     normalized entropy lower bound for the canonical square-root factor.
-20. Future modules will recover the triangular blocks by polar/isometric
+20. `Triangular/GramEntropy.lean`: checked equality of the two square Gram
+    entropies and the exact zero-weight-safe conversion from unnormalized
+    Gram entropy to `normalizedGramEntropy` for arbitrary rectangular blocks.
+21. Future modules will recover the triangular blocks by polar/isometric
     embeddings, followed by the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical

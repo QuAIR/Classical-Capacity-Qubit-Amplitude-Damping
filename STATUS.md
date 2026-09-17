@@ -118,6 +118,9 @@ it does not mean that the corresponding result is merely assumed.
   corresponding scalar entropy defect has the required `xlog2` corrections.
 - [x] Normalized triangular entropy lower bound for the canonical
   lower-triangular square-root factor `[[sqrt P, 0], [sqrt Q, sqrt R]]`.
+- [x] Equality of `H(AᴴA)` and `H(AAᴴ)` for square matrices, and the exact
+  zero-weight-safe identity converting `H(AAᴴ)` to `normalizedGramEntropy`
+  plus its scalar `xlog2` correction for arbitrary rectangular matrices.
 
 ## Open proof obligations
 
