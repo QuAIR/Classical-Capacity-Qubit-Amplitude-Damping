@@ -29,6 +29,14 @@ def pureGroundBranch (psi : PureVector (Prod Qubit a)) : a → ℂ :=
 def pureAuxiliaryExcitation (psi : PureVector (Prod Qubit a)) : ℝ :=
   ∑ x, Complex.normSq (pureExcitedBranch psi x)
 
+@[simp]
+theorem pureExcitedBranch_rankOne_trace_re
+    (psi : PureVector (Prod Qubit a)) :
+    (rankOneMatrix (pureExcitedBranch psi)).trace.re =
+      pureAuxiliaryExcitation psi := by
+  simp [rankOneMatrix_trace, dotProduct, Complex.mul_conj,
+    pureAuxiliaryExcitation]
+
 theorem pureAuxiliaryExcitation_nonneg (psi : PureVector (Prod Qubit a)) :
     0 ≤ pureAuxiliaryExcitation psi := by
   exact Finset.sum_nonneg fun i _ => Complex.normSq_nonneg _
@@ -48,6 +56,14 @@ theorem pureGroundBranch_normSq_sum
   simp only [pureExcitedBranch]
   linarith
 
+@[simp]
+theorem pureGroundBranch_rankOne_trace_re
+    (psi : PureVector (Prod Qubit a)) :
+    (rankOneMatrix (pureGroundBranch psi)).trace.re =
+      1 - pureAuxiliaryExcitation psi := by
+  simp [rankOneMatrix_trace, dotProduct, Complex.mul_conj,
+    pureGroundBranch_normSq_sum]
+
 theorem pureAuxiliaryExcitation_le_one (psi : PureVector (Prod Qubit a)) :
     pureAuxiliaryExcitation psi ≤ 1 := by
   have hground : 0 ≤ ∑ x, Complex.normSq (pureGroundBranch psi x) :=
@@ -62,6 +78,19 @@ theorem pureAuxiliaryExcitation_eq_marginal
   unfold pureAuxiliaryExcitation pureExcitedBranch stateExcitation
   rw [State.marginalA_matrix, PureVector.state_matrix]
   simp [partialTraceB, rankOneMatrix_apply, Complex.mul_conj]
+
+/-- The auxiliary marginal of a bipartite pure vector is the sum of the two
+unnormalized branch projectors. -/
+theorem pure_marginalB_matrix_eq_branch_rankOne_sum
+    (psi : PureVector (Prod Qubit a)) :
+    psi.state.marginalB.matrix =
+      rankOneMatrix (pureExcitedBranch psi) +
+        rankOneMatrix (pureGroundBranch psi) := by
+  ext x y
+  simp [State.marginalB_matrix, partialTraceA,
+    rankOneMatrix_apply, pureExcitedBranch, pureGroundBranch,
+    Fin.sum_univ_two]
+  ring
 
 /-- The triangular coefficient-matrix bound for a pure bipartite input and an
 arbitrary auxiliary channel.  This is the matrix core of the pure-input

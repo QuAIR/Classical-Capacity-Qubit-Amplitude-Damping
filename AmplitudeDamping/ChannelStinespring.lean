@@ -124,6 +124,57 @@ theorem normalizedGramEntropy_stinespringCoefficientMatrix
     _ = (Phi.applyState psi.state).vonNeumann :=
       AmplitudeDamping.psdEntropy_state (Phi.applyState psi.state)
 
+/-- For a nonzero, not necessarily normalized amplitude, normalized Gram
+entropy is its squared norm times the output entropy of the normalized pure
+state. -/
+theorem normalizedGramEntropy_stinespringCoefficientMatrix_of_pos
+    (Phi : Channel a b) (v : a → ℂ)
+    (hpos : 0 < ∑ x, Complex.normSq (v x)) :
+    AmplitudeDamping.normalizedGramEntropy
+        (∑ x, Complex.normSq (v x))
+        (Phi.stinespringCoefficientMatrix v) =
+      (∑ x, Complex.normSq (v x)) *
+        (Phi.applyState
+          (PureVector.normalize v (by
+            rw [rankOneMatrix_trace]
+            simpa [dotProduct, Complex.mul_conj] using hpos)).state).vonNeumann := by
+  let t : ℝ := ∑ x, Complex.normSq (v x)
+  have ht : 0 ≤ t := le_of_lt hpos
+  have htrace : (rankOneMatrix v).trace.re = t := by
+    simp [t, rankOneMatrix_trace, dotProduct, Complex.mul_conj]
+  let psi : PureVector a := PureVector.normalize v (by
+    rw [htrace]
+    exact hpos)
+  let A := Phi.stinespringCoefficientMatrix psi.amp
+  have hnorm : AmplitudeDamping.frobeniusSq A = 1 := by
+    have := Phi.frobeniusSq_stinespringCoefficientMatrix psi.amp
+    rw [this]
+    have h := congrArg Complex.re psi.trace_rankOne_eq_one
+    simpa [rankOneMatrix_trace, dotProduct, Complex.mul_conj] using h
+  have hsqrt : Real.sqrt t ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hpos)
+  have hscale :
+      (Real.sqrt t : ℂ) • A = Phi.stinespringCoefficientMatrix v := by
+    ext y k
+    simp only [A, psi, Channel.stinespringCoefficientMatrix,
+      PureVector.normalize, Matrix.smul_apply, smul_eq_mul]
+    rw [htrace]
+    simp only [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro x _
+    push_cast
+    field_simp
+  have hhom := AmplitudeDamping.normalizedGramEntropy_sqrt_smul t ht A
+  rw [hnorm, hscale] at hhom
+  have hvnorm : AmplitudeDamping.frobeniusSq
+      (Phi.stinespringCoefficientMatrix v) = t := by
+    exact Phi.frobeniusSq_stinespringCoefficientMatrix v
+  rw [hvnorm] at hhom
+  have hunit := Phi.normalizedGramEntropy_stinespringCoefficientMatrix psi
+  rw [hnorm] at hunit
+  change AmplitudeDamping.normalizedGramEntropy t
+      (Phi.stinespringCoefficientMatrix v) = t * _
+  rw [hhom, hunit]
+
 end Channel
 
 end
