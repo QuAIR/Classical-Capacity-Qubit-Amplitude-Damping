@@ -80,7 +80,10 @@ proof obligations.
 21. `Triangular/PolarGauge.lean`: checked the exact block-matrix gauge
     identity converting unitary polar factors of square triangular blocks to
     the canonical entropy coupling.
-22. Future modules will supply the polar-factor existence and rectangular
+22. `Triangular/SquarePolar.lean`: checked the full normalized entropy
+    inequality for square triangular blocks, conditional only on supplied
+    unitary polar factors for the two lower-row blocks.
+23. Future modules will supply the polar-factor existence and rectangular
     isometric embeddings, then derive the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical

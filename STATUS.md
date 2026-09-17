@@ -123,13 +123,18 @@ it does not mean that the corresponding result is merely assumed.
   plus its scalar `xlog2` correction for arbitrary rectangular matrices.
 - [x] Exact polar-gauge block identity for square triangular matrices, given
   unitary polar factors for the two lower-row blocks.
+- [x] Full normalized triangular entropy inequality for square blocks,
+  conditional only on supplied unitary polar factors for the two lower-row
+  blocks; all Gram-spectrum, unitary-invariance, and normalization corrections
+  are discharged.
 
 ## Open proof obligations
 
-- [ ] Recovery of the full triangular block entropy inequality from matrix
-  trace compression via polar decompositions and rectangular isometric
-  embeddings.  At present `TriangularBlockEntropyInequality` is a proposition
-  naming the remaining target, not a theorem asserting it.
+- [ ] Existence of unitary polar factors for singular finite square complex
+  matrices, followed by rectangular isometric embeddings.  These are the two
+  remaining linear-algebra inputs needed to turn the conditional square
+  theorem into `TriangularBlockEntropyInequality`; the latter still names the
+  target proposition rather than asserting it.
 - [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.
