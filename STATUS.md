@@ -140,6 +140,10 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Exact amplitude-damping specialization
   `[[sqrt(1-p) A, 0], [B, sqrt(p) A]]`, including homogeneity of normalized
   Gram entropy and the zero-weight endpoint cases.
+- [x] A canonical chosen Stinespring isometry for every finite channel, with
+  checked identities equating its coefficient-matrix Gram to the channel
+  output on a rank-one input, its Frobenius weight to the input norm, and its
+  normalized Gram entropy to pure-input output entropy.
 
 ## Open proof obligations
 
