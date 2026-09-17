@@ -18,6 +18,8 @@ open scoped BigOperators ComplexConjugate ComplexOrder MatrixOrder Topology
 
 namespace AmplitudeDamping
 
+universe u
+
 noncomputable section
 
 /-- Integral of a translated real logarithm over a finite interval. -/
@@ -301,7 +303,7 @@ def psdEntropyCfcScalar (x : ℝ) : ℝ := -QIT.xlog2 x
 /-- Functional-calculus trace representation of the entropy of an arbitrary
 positive semidefinite matrix. -/
 theorem psdEntropy_eq_cfc_trace
-    {d : Type} [Fintype d] [DecidableEq d]
+    {d : Type u} [Fintype d] [DecidableEq d]
     (X : Matrix d d ℂ) (hX : X.PosSemidef) :
     psdEntropy X hX = ((cfc psdEntropyCfcScalar X).trace).re := by
   unfold psdEntropy
@@ -336,7 +338,7 @@ theorem psdEntropy_fromBlocks_diagonal
 /-- A zero positive semidefinite matrix has zero spectral entropy. -/
 @[simp]
 theorem psdEntropy_zero
-    {d : Type} [Fintype d] [DecidableEq d] :
+    {d : Type u} [Fintype d] [DecidableEq d] :
     psdEntropy (0 : Matrix d d ℂ) Matrix.PosSemidef.zero = 0 := by
   rw [psdEntropy_eq_cfc_trace]
   simp [psdEntropyCfcScalar, QIT.xlog2]

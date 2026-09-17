@@ -131,13 +131,15 @@ it does not mean that the corresponding result is merely assumed.
   matrix, including singular matrices, via Lean-QIT's Gram-factorization and
   finite-dimensional isometry-extension theorem; consequently the square
   triangular entropy inequality is unconditional.
+- [x] Rectangular-isometry invariance of positive spectral entropy, together
+  with exact preservation of Frobenius norm and normalized Gram entropy under
+  coordinate zero padding.
+- [x] Full arbitrary-rectangular triangular block entropy inequality.  The
+  proposition `TriangularBlockEntropyInequality` now has the checked theorem
+  `triangularBlockEntropyInequality`.
 
 ## Open proof obligations
 
-- [ ] Rectangular isometric embeddings and their entropy-preservation lemmas.
-  This is the remaining linear-algebra input needed to turn the square theorem
-  into `TriangularBlockEntropyInequality`; the latter still names the target
-  proposition rather than asserting it.
 - [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.

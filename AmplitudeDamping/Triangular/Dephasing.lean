@@ -16,6 +16,8 @@ namespace AmplitudeDamping
 
 open QIT
 
+universe u
+
 noncomputable section
 
 /-- Positive semidefinite square roots transform covariantly under unitary
@@ -113,7 +115,7 @@ theorem psdEntropy_unitary_conj
 /-- `psdEntropy` respects equality of its matrix argument; the positivity
 witnesses disappear by proof irrelevance. -/
 theorem psdEntropy_congr
-    {d : Type} [Fintype d] [DecidableEq d]
+    {d : Type u} [Fintype d] [DecidableEq d]
     {X Y : Matrix d d ℂ} (hXY : X = Y)
     (hX : X.PosSemidef) (hY : Y.PosSemidef) :
     psdEntropy X hX = psdEntropy Y hY := by

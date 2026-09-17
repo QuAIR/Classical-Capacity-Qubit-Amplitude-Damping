@@ -13,11 +13,13 @@ namespace AmplitudeDamping
 
 open QIT
 
+universe u
+
 noncomputable section
 
 /-- Spectral entropy rewritten as a multiset sum. -/
 theorem psdEntropy_eq_neg_sum_eigenvalueMultiset
-    {d : Type} [Fintype d] [DecidableEq d]
+    {d : Type u} [Fintype d] [DecidableEq d]
     (X : Matrix d d ℂ) (hX : X.PosSemidef) :
     psdEntropy X hX =
       -((QIT.eigenvalueMultiset hX.isHermitian).map QIT.xlog2).sum := by

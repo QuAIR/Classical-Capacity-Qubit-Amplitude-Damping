@@ -86,8 +86,14 @@ proof obligations.
 23. `Triangular/UnitaryPolar.lean`: checked existence of unitary polar factors
     for every finite square complex matrix, including singular matrices, and
     hence the unconditional square triangular entropy inequality.
-24. Future modules will supply rectangular isometric embeddings, then derive
-    the EoF/channel corollaries.
+24. `Triangular/IsometricEmbedding.lean`: checked rectangular-isometry
+    invariance of positive spectral entropy and preservation of Frobenius norm
+    and normalized Gram entropy under coordinate zero padding.
+25. `Triangular/Rectangular.lean`: checked the full arbitrary-rectangular
+    `TriangularBlockEntropyInequality` by embedding all four index spaces into
+    a common finite coordinate space and applying the square theorem.
+26. Future modules derive the EoF/channel corollaries from the completed
+    analytic inequality.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until

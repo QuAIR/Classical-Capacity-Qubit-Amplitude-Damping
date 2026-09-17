@@ -15,12 +15,14 @@ namespace AmplitudeDamping
 
 open QIT
 
+universe u v
+
 noncomputable section
 
 /-- The two square Gram matrices of a complex matrix have equal spectral
 entropy. -/
 theorem psdEntropy_conjTranspose_mul_self_eq_self_mul_conjTranspose
-    {d : Type} [Fintype d] [DecidableEq d]
+    {d : Type u} [Fintype d] [DecidableEq d]
     (A : Matrix d d ℂ) :
     psdEntropy (A.conjTranspose * A)
         (Matrix.posSemidef_conjTranspose_mul_self A) =
@@ -41,7 +43,7 @@ theorem psdEntropy_conjTranspose_mul_self_eq_self_mul_conjTranspose
 /-- Exact conversion between unnormalized Gram entropy and the manuscript's
 zero-weight-safe normalized Gram entropy. -/
 theorem psdEntropy_gram_eq_normalizedGramEntropy_sub_xlog2
-    {r c : Type} [Fintype r] [DecidableEq r]
+    {r : Type u} {c : Type v} [Fintype r] [DecidableEq r]
     [Fintype c] [DecidableEq c]
     (A : Matrix r c ℂ) :
     psdEntropy (A * A.conjTranspose)
