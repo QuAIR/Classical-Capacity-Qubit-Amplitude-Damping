@@ -3,7 +3,8 @@ defaultTargets = ["AmplitudeDamping"]
 
 [[require]]
 name = "QIT"
-path = "/Users/ziaotang/.qiform/corpus/lean-qit-da54e30"
+git = "https://github.com/QuAIR/Lean-QIT.git"
+rev = "da54e3070298468dc884877726bc45a92c57e4b3"
 
 [[lean_lib]]
 name = "AmplitudeDamping"

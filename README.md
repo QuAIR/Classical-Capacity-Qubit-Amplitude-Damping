@@ -1,130 +1,78 @@
-# Lean formalization: amplitude-damping strong additivity
+# Classical Capacity of the Qubit Amplitude-Damping Channel
 
-This local-only Lean 4 project formalizes the results of `main-v1.1.tex` using
-Lean-QIT and mathlib.
+This Lean 4 library formalizes the strong-additivity argument for the
+qubit amplitude-damping channel and its consequence for the unassisted
+classical capacity. The development is based on Lean-QIT and mathlib.
 
-See `STATUS.md` for the exact boundary between checked lemmas and remaining
-proof obligations.
+The main checked conclusion is that, for every physical damping parameter
+`p ∈ [0,1]`, the regularized Holevo information and the HSW classical
+capacity reduce to the one-letter Holevo information, which in turn is an
+attained scalar maximum over the input excitation.
 
-## Reproducible environment
+## Contents
 
-- Lean: `v4.30.0`
-- Lean-QIT: local checkout at commit `da54e30`
-- Dependency mode: local `path`; no network fetch and no `lake update`
+- `AmplitudeDamping/Channel.lean` defines the channel from its Kraus
+  operators and proves its entrywise action.
+- `AmplitudeDamping/FixedExcitation.lean` through
+  `AmplitudeDamping/EqualExcitation.lean` establish the exact one-qubit
+  output-entropy roof formula.
+- `AmplitudeDamping/Triangular/` contains the matrix-analytic triangular
+  entropy inequality, including the rectangular case.
+- `AmplitudeDamping/StrongSuperadditivity.lean` proves strong
+  superadditivity of the output-entropy roof against an arbitrary finite
+  auxiliary channel.
+- `AmplitudeDamping/RoofProduct.lean` and `AmplitudeDamping/NCopy.lean`
+  prove product additivity and the finite-copy recursion.
+- `AmplitudeDamping/HolevoCapacity.lean` proves optimized strong Holevo
+  additivity.
+- `AmplitudeDamping/OneLetterCapacity.lean` and
+  `AmplitudeDamping/ScalarCapacity.lean` reduce the optimization to a
+  one-dimensional attained maximum.
+- `AmplitudeDamping/CapacityBridge.lean` connects these results to
+  Lean-QIT's block Holevo information, regularization, and formal HSW
+  classical-capacity theorem.
+- `AmplitudeDamping.lean` is the public root import.
 
-## Proof architecture
+`STATUS.md` records the exact boundary between machine-checked results and
+work that remains outside the present library.
 
-1. `Definitions.lean`: output ensembles and average output-entropy cost.
-2. `ConvexRoof.lean`: finite pure decompositions, the literal real infimum
-   defining the output-entropy convex roof, and its lower-envelope theorem.
-3. `Channel.lean`: the two Kraus operators of the qubit amplitude-damping
-   channel and a checked proof of their trace-preserving completeness relation.
-4. `QubitState.lean`: coordinate normal form and coherence bound for arbitrary
-   qubit density matrices.
-5. `FixedExcitation.lean`: excitation bounds and the checked determinant
-   and entropy formulas for the output of a pure qubit input, together with
-   the Jensen reduction for the roof lower bound.
-6. `ScalarCurve.lean`: checked monotonicity and convexity of the concurrence
-   entropy curve and hence of the amplitude-damping scalar curve.
-7. `EqualExcitation.lean`: explicit two-pure-state equal-excitation
-   decomposition, the unconditional roof upper bound, and the exact roof
-   formula.
-8. `QubitEntropy.lean`: the checked two-level spectral formula expressing
-   qubit entropy in terms of the determinant.
-9. `HolevoReduction.lean`: checked reduction from strong superadditivity of
-   the roof to the fixed-input and ensemble Holevo converse.
-10. `Triangular/Statement.lean`: formal statement and normalization API for the
-   triangular block entropy inequality.
-11. `Triangular/LogDet.lean`: checked Hilbert--Schmidt trace-square estimate,
-    skew-resolvent contraction, and nonnegativity of the normalized
-    log-determinant Hessian expression.
-12. `Triangular/LogDetCalculus.lean`: checked derivative of complex log-modulus,
-    polynomial proof of Jacobi's determinant formula, the first derivative of
-    `log |det(M+tH)|`, the inverse-trace second-derivative identity, and the
-    resulting convexity theorem on the full positive-definite cone.
-13. `Triangular/EntropyReduction.lean`: checked Gram factorization and
-    positivity of the coupling matrix `Z(P,Q,R)`, the Schur-complement
-    determinant identity, and fixed-middle joint convexity of the shifted
-    log-determinant integrand in `(P,R)`.
-14. `Triangular/EntropyIntegral.lean`: checked finite-cutoff spectral
-    logarithm integral, cancellation at infinity for equal trace, and the
-    matrix log-determinant entropy-integral limit, including singular
-    positive semidefinite matrices.  It also proves block-diagonal entropy
-    additivity, identifies the padded integral with the manuscript entropy
-    defect, integrates pointwise convexity, and proves the full fixed-middle
-    convexity theorem on the semidefinite cone.
-15. `Triangular/Dephasing.lean`: checked unitary covariance of positive square
-    roots and spectral entropy, invariance of the entropy defect, the finite
-    diagonal-sign twirl, its exact identification with basis dephasing, and
-    the Jensen proof that dephasing the two outer blocks cannot increase the
-    fixed-diagonal-middle entropy defect.
-16. `Triangular/ScalarCompression.lean`: checked entropy additivity for finite
-    homogeneous block diagonals, positive square roots of real diagonal
-    matrices, coordinatewise scalarization of the diagonal entropy coupling,
-    the exact decomposition of a diagonal entropy defect into scalar defects,
-    positive homogeneity, and scalar perspective Jensen when all middle
-    coordinates are strictly positive.
-17. `Triangular/ScalarBoundary.lean`: checked continuity of spectral entropy
-    along positive-semidefinite matrix paths and the limiting argument that
-    extends scalar perspective Jensen to zero middle coordinates.
-18. `Triangular/TraceCompression.lean`: checked diagonal scalar compression,
-    dephasing for arbitrary outer matrices, spectral diagonalization of the
-    middle matrix, and the full PSD matrix trace-compression theorem.
-19. `Triangular/ScalarNormalization.lean`: checked the scalar coupling
-    determinant and its exact identification with the normalized qubit
-    entanglement curve, the resulting scalar-defect formula, and the
-    normalized entropy lower bound for the canonical square-root factor.
-20. `Triangular/GramEntropy.lean`: checked equality of the two square Gram
-    entropies and the exact zero-weight-safe conversion from unnormalized
-    Gram entropy to `normalizedGramEntropy` for arbitrary rectangular blocks.
-21. `Triangular/PolarGauge.lean`: checked the exact block-matrix gauge
-    identity converting unitary polar factors of square triangular blocks to
-    the canonical entropy coupling.
-22. `Triangular/SquarePolar.lean`: checked the full normalized entropy
-    inequality for square triangular blocks, conditional only on supplied
-    unitary polar factors for the two lower-row blocks.
-23. `Triangular/UnitaryPolar.lean`: checked existence of unitary polar factors
-    for every finite square complex matrix, including singular matrices, and
-    hence the unconditional square triangular entropy inequality.
-24. `Triangular/IsometricEmbedding.lean`: checked rectangular-isometry
-    invariance of positive spectral entropy and preservation of Frobenius norm
-    and normalized Gram entropy under coordinate zero padding.
-25. `Triangular/Rectangular.lean`: checked the full arbitrary-rectangular
-    `TriangularBlockEntropyInequality` by embedding all four index spaces into
-    a common finite coordinate space and applying the square theorem.
-26. `Triangular/AmplitudeSpecialization.lean`: checked the exact
-    amplitude-damping block specialization, including square-root scaling,
-    normalized Gram-entropy homogeneity, and all endpoint cases.
-27. `ChannelStinespring.lean`: constructs a chosen finite Stinespring
-    isometry for every channel and identifies its coefficient-matrix Gram,
-    Frobenius weight, and normalized Gram entropy with the corresponding
-    channel output data.
-28. `PureAuxiliary.lean`: splits an arbitrary pure input on `Qubit × Y`
-    into its excited and ground branches, identifies their weights with the
-    qubit marginal excitation and its complement, and applies the sharp
-    triangular coefficient bound to an arbitrary auxiliary channel.
-29. `PureAuxiliaryRoof.lean` and `StrongSuperadditivity.lean`: lift the pure
-    auxiliary-channel inequality through finite Jensen decompositions to the
-    unconditional strong-superadditivity theorem.
-30. `RoofProduct.lean`: constructs product pure decompositions and proves the
-    reverse roof inequality, hence exact additivity on product inputs.
-31. `NCopy.lean`: proves the correlated-input recursive lower bound, exact
-    product recursion, and the closed IID identity
-    `R(A_p^⊗n, ρ^⊗n) = n R(A_p, ρ)`.
-32. `HolevoReduction.lean`: upgrades the roof to an arbitrary finite-ensemble
-    lower envelope and proves the corresponding amplitude-damping Holevo
-    converse and product-input fixed-information equality.
-33. `HolevoCapacity.lean`: proves product-ensemble achievability, identifies
-    every fixed-input roof expression with a lower bound on the optimized
-    Holevo information, and derives strong additivity
-    `χ(A_p ⊗ Φ) = χ(A_p) + χ(Φ)`.
-34. `OneLetterCapacity.lean`: identifies the finite-ensemble Holevo supremum
-    of an arbitrary channel with the state-wise supremum of output entropy
-    minus its exact output-entropy convex roof.
-35. `ScalarCapacity.lean`: reduces the amplitude-damping state optimization
-    to the manuscript's single excitation variable, proves the exact scalar
-    supremum formula, and proves that the maximum on `[0,1]` is attained.
+## Lean-QIT dependency
 
-The project does not use `sorry` or introduce axioms for the mathematical
-claims.  Work-in-progress theorems are represented as named predicates until
-their proofs are supplied.
+The project uses Lean-QIT at the pinned revision
+`da54e3070298468dc884877726bc45a92c57e4b3` and Lean/mathlib `v4.30.0`.
+The public Git dependency is recorded in `lakefile.toml`; no machine-specific
+path is required.
+
+## Manuscript-to-Lean correspondence
+
+| Mathematical component | Principal Lean module | Status |
+| --- | --- | --- |
+| Amplitude-damping channel and pure-input entropy | `Channel`, `FixedExcitation`, `QubitEntropy` | Checked |
+| Exact fixed-excitation convex roof | `ScalarCurve`, `EqualExcitation` | Checked |
+| Triangular block entropy inequality | `Triangular/*` | Checked |
+| Strong roof superadditivity | `StrongSuperadditivity` | Checked |
+| Product and finite-copy roof identities | `RoofProduct`, `NCopy` | Checked |
+| Strong additivity of optimized Holevo information | `HolevoCapacity` | Checked |
+| One-letter scalar capacity formula | `OneLetterCapacity`, `ScalarCapacity` | Checked |
+| HSW regularization and classical-capacity bridge | `CapacityBridge` | Checked |
+| Mean-excitation constrained variant | — | Not yet formalized |
+| Entanglement-of-formation and Choi-state consequences | — | Not yet formalized |
+
+## Reproduction
+
+Install the Lean toolchain specified in `lean-toolchain`, then run:
+
+```bash
+lake update
+lake build
+```
+
+The library deliberately has no remote CI workflow; it is intended to remain
+a pure Lean library whose proofs can be checked locally with Lake.
+
+## Trust boundary
+
+The project contains no `sorry` proof terms and introduces no project-defined
+axioms. It relies on Lean's kernel, mathlib, and the pinned Lean-QIT revision.
+Unfinished mathematical extensions are listed explicitly in `STATUS.md` and
+are not introduced as assumptions.

@@ -168,11 +168,18 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Exact reduction of amplitude-damping Holevo information to the scalar
   excitation curve on `[0,1]`, including continuity, boundedness, and
   attainment of the maximum.
+- [x] Exact finite-block identity
+  `χ(A_p^⊗n) = n χ(A_p)` for every positive block length.
+- [x] Collapse of regularized Holevo information to the single-letter
+  quantity for amplitude damping.
+- [x] Identification, through Lean-QIT's formal HSW theorem, of the classical
+  capacity with the single-letter Holevo information.
+- [x] Final bridge from classical capacity to an attained scalar maximum over
+  the excitation interval `[0,1]`.
 
 ## Open proof obligations
 
-- [ ] Identification of the regularized HSW classical capacity with the
-  one-letter scalar maximum, plus the mean-excitation constrained variant.
+- [ ] Mean-excitation constrained capacity variant.
 - [ ] Entanglement-of-formation convex roof, product-kernel support theorem,
   Choi-state cost formula, and the two-Kraus qubit-channel corollary.
 
