@@ -11,6 +11,7 @@ import AmplitudeDamping.ChannelStinespring
 import AmplitudeDamping.PureAuxiliary
 import AmplitudeDamping.PureAuxiliaryOutput
 import AmplitudeDamping.PureAuxiliaryRoof
+import AmplitudeDamping.StrongSuperadditivity
 import AmplitudeDamping.Triangular.Statement
 import AmplitudeDamping.Triangular.LogDet
 import AmplitudeDamping.Triangular.LogDetCalculus

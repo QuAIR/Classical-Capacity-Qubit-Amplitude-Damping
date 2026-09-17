@@ -93,6 +93,11 @@ theorem outputEntropyRoof_le_outputCost (Φ : Channel a b)
 def IsPureOutputEntropyRoof (Φ : Channel a b) (roof : State a → ℝ) : Prop :=
   ∀ E : PureDecomposition a, roof E.averageState ≤ E.outputCost Φ
 
+/-- Finite Jensen inequality for a functional on density states. -/
+def SatisfiesFiniteJensen (f : State a → ℝ) : Prop :=
+  ∀ {ι : Type} [Fintype ι] (E : Ensemble ι a),
+    f E.averageState ≤ ∑ i, (E.probs i).toReal * f (E.states i)
+
 theorem outputEntropyRoof_isPureOutputEntropyRoof (Φ : Channel a b) :
     IsPureOutputEntropyRoof Φ (outputEntropyRoof Φ) := by
   intro E
