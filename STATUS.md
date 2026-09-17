@@ -176,10 +176,23 @@ it does not mean that the corresponding result is merely assumed.
   capacity with the single-letter Holevo information.
 - [x] Final bridge from classical capacity to an attained scalar maximum over
   the excitation interval `[0,1]`.
+- [x] Mean-excitation constrained capacity variant (manuscript §4.4): the
+  finite-block bound iterating strong superadditivity of the output-entropy
+  roof over site marginals, concavity of the scalar information curve
+  `F_p(q) = h₂((1-p)q) - g_p(q)`, the Jensen converse
+  `χ ≤ n max_{[0,ν]} F_p` under `∑ q_i ≤ nν`, attainment at diagonal product
+  inputs, the variational supremum identity, and the mixed-codeword ensemble
+  version.  The operational coding layer (Fano/HSW under codeword
+  constraints) follows the formal HSW theorem's unconstrained argument and is
+  not repeated.
+- [x] Wootters corner-formula interface: the `≤` direction of eq
+  `(three-corner-eof)` packaged as the explicit hypothesis
+  `woottersKernelUpperBound` (the `≥` direction is proved in
+  `Concurrence.lean`), giving the corner identity in diagonal-entry and
+  kernel-vector phrasings for the gauge-fixed setting of Theorem 6.
 
 ## Open proof obligations
 
-- [ ] Mean-excitation constrained capacity variant.
 - [ ] Entanglement-of-formation convex roof, product-kernel support theorem,
   Choi-state cost formula, and the two-Kraus qubit-channel corollary.
 
@@ -188,4 +201,8 @@ it does not mean that the corresponding result is merely assumed.
 There are no `sorry` proof terms and no project-defined axioms.  The project
 uses Lean's standard logic together with the pinned Lean-QIT/mathlib
 dependencies.  Pending statements are represented as definitions of
-propositions and are listed above rather than being assumed.
+propositions and are listed above rather than being assumed.  The one such
+interface proposition currently in the tree is `woottersKernelUpperBound`
+(Wootters' concurrence formula for general two-qubit states, manuscript eq
+`(wootters)` and Appendix B); every downstream result invoking the corner
+identity takes it as an explicit hypothesis so the dependency is tracked.
