@@ -83,8 +83,11 @@ proof obligations.
 22. `Triangular/SquarePolar.lean`: checked the full normalized entropy
     inequality for square triangular blocks, conditional only on supplied
     unitary polar factors for the two lower-row blocks.
-23. Future modules will supply the polar-factor existence and rectangular
-    isometric embeddings, then derive the EoF/channel corollaries.
+23. `Triangular/UnitaryPolar.lean`: checked existence of unitary polar factors
+    for every finite square complex matrix, including singular matrices, and
+    hence the unconditional square triangular entropy inequality.
+24. Future modules will supply rectangular isometric embeddings, then derive
+    the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until

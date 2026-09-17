@@ -127,14 +127,17 @@ it does not mean that the corresponding result is merely assumed.
   conditional only on supplied unitary polar factors for the two lower-row
   blocks; all Gram-spectrum, unitary-invariance, and normalization corrections
   are discharged.
+- [x] Existence of a unitary left polar factor for every finite square complex
+  matrix, including singular matrices, via Lean-QIT's Gram-factorization and
+  finite-dimensional isometry-extension theorem; consequently the square
+  triangular entropy inequality is unconditional.
 
 ## Open proof obligations
 
-- [ ] Existence of unitary polar factors for singular finite square complex
-  matrices, followed by rectangular isometric embeddings.  These are the two
-  remaining linear-algebra inputs needed to turn the conditional square
-  theorem into `TriangularBlockEntropyInequality`; the latter still names the
-  target proposition rather than asserting it.
+- [ ] Rectangular isometric embeddings and their entropy-preservation lemmas.
+  This is the remaining linear-algebra input needed to turn the square theorem
+  into `TriangularBlockEntropyInequality`; the latter still names the target
+  proposition rather than asserting it.
 - [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.
