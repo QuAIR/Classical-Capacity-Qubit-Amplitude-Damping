@@ -14,6 +14,7 @@ import AmplitudeDamping.StrongSuperadditivity
 import AmplitudeDamping.RoofProduct
 import AmplitudeDamping.NCopy
 import AmplitudeDamping.HolevoReduction
+import AmplitudeDamping.HolevoCapacity
 import AmplitudeDamping.Triangular.Statement
 import AmplitudeDamping.Triangular.LogDet
 import AmplitudeDamping.Triangular.LogDetCalculus

@@ -159,11 +159,13 @@ it does not mean that the corresponding result is merely assumed.
   IID identity `R(A_p^⊗n, ρ^⊗n) = n R(A_p, ρ)`.
 - [x] Exact additivity of the associated fixed-input Holevo quantity on
   product states.
+- [x] Product-ensemble lower bound and optimized strong Holevo additivity
+  `χ(A_p ⊗ Φ) = χ(A_p) + χ(Φ)` for every finite-dimensional auxiliary
+  channel with nonempty input system.
 
 ## Open proof obligations
 
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
-- [ ] Product-ensemble lower bound and optimized strong Holevo additivity.
 - [ ] Entanglement-of-formation convex roof, product-kernel support theorem,
   Choi-state cost formula, and the two-Kraus qubit-channel corollary.
 

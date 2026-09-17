@@ -114,6 +114,10 @@ proof obligations.
 32. `HolevoReduction.lean`: upgrades the roof to an arbitrary finite-ensemble
     lower envelope and proves the corresponding amplitude-damping Holevo
     converse and product-input fixed-information equality.
+33. `HolevoCapacity.lean`: proves product-ensemble achievability, identifies
+    every fixed-input roof expression with a lower bound on the optimized
+    Holevo information, and derives strong additivity
+    `χ(A_p ⊗ Φ) = χ(A_p) + χ(Φ)`.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
