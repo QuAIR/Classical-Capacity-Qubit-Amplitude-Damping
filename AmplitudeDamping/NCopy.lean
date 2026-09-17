@@ -1,4 +1,4 @@
-import AmplitudeDamping.StrongSuperadditivity
+import AmplitudeDamping.RoofProduct
 
 /-!
 # The recursive n-copy consequence
@@ -49,6 +49,64 @@ theorem amplitudeDamping_tensorPower_roof_lower_bound
           outputEntropyRoof (amplitudeDamping p hp0 hp1) rho.marginalA +
             amplitudeDampingMarginalRoofSum p hp0 hp1 n rho.marginalB
       linarith
+
+/-- Exact recursive additivity on a product of one qubit state and an
+arbitrary `n`-copy state.  Iterating this identity gives exact additivity on
+all IID product inputs. -/
+theorem amplitudeDamping_tensorPower_roof_prod_succ_eq
+    (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (n : ℕ)
+    (rho : State Qubit) (sigma : State (QIT.TensorPower Qubit n)) :
+    outputEntropyRoof
+        ((amplitudeDamping p hp0 hp1).tensorPower (n + 1))
+        (rho.prod sigma) =
+      outputEntropyRoof (amplitudeDamping p hp0 hp1) rho +
+        outputEntropyRoof
+          ((amplitudeDamping p hp0 hp1).tensorPower n) sigma := by
+  rw [Channel.tensorPower_succ]
+  exact amplitudeDamping_outputEntropyRoof_prod_eq
+    p hp0 hp1 ((amplitudeDamping p hp0 hp1).tensorPower n) rho sigma
+
+private theorem punit_vonNeumann_eq_zero (tau : State PUnit) :
+    tau.vonNeumann = 0 := by
+  apply le_antisymm
+  · have h := State.vonNeumann_le_log_card tau
+    convert h using 1
+    norm_num [log2]
+  · exact State.vonNeumann_nonneg tau
+
+private theorem amplitudeDamping_tensorPower_zero_roof_eq_zero
+    (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
+    outputEntropyRoof
+        ((amplitudeDamping p hp0 hp1).tensorPower 0)
+        ((State.unit : State (QIT.TensorPower Qubit 0))) = 0 := by
+  apply le_antisymm
+  · have h := outputEntropyRoof_le_outputEntropy
+      ((amplitudeDamping p hp0 hp1).tensorPower 0)
+      (State.unit : State (QIT.TensorPower Qubit 0))
+    exact h.trans_eq (punit_vonNeumann_eq_zero _)
+  · exact outputEntropyRoof_nonneg
+      ((amplitudeDamping p hp0 hp1).tensorPower 0)
+      (State.unit : State (QIT.TensorPower Qubit 0))
+
+/-- Exact IID `n`-copy additivity of the output-entropy convex roof. -/
+theorem amplitudeDamping_tensorPower_roof_iid_eq
+    (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (rho : State Qubit) :
+    ∀ n : ℕ,
+      outputEntropyRoof
+          ((amplitudeDamping p hp0 hp1).tensorPower n)
+          (rho.tensorPower n) =
+        (n : ℝ) * outputEntropyRoof (amplitudeDamping p hp0 hp1) rho := by
+  intro n
+  induction n with
+  | zero =>
+      simpa [State.tensorPower_zero] using
+        amplitudeDamping_tensorPower_zero_roof_eq_zero p hp0 hp1
+  | succ n ih =>
+      rw [State.tensorPower_succ,
+        amplitudeDamping_tensorPower_roof_prod_succ_eq p hp0 hp1 n rho
+          (rho.tensorPower n), ih]
+      push_cast
+      ring
 
 end
 

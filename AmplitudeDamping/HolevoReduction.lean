@@ -1,5 +1,6 @@
-import AmplitudeDamping.ConvexRoof
+import AmplitudeDamping.RoofProduct
 import QIT.Information.Entropy.MutualInformationDPI
+import QIT.Information.Entropy.ConditionalEntropyConcavity
 import QIT.Coding.EntanglementAssisted.Renyi.Sandwiched.Limit
 
 /-!
@@ -45,6 +46,23 @@ theorem output_marginals (Φ : Channel a b) (Ψ : Channel c d)
   constructor
   · exact State.marginalA_applyState_prod ρ Φ Ψ
   · exact State.marginalB_applyState_prod ρ Φ Ψ
+
+/-- The concrete finite pure-state convex roof is a lower envelope for every
+finite ensemble, not only for ensembles whose members are pure. -/
+theorem outputEntropyRoof_isOutputEntropyRoof (Φ : Channel a b) :
+    IsOutputEntropyRoof Φ (outputEntropyRoof Φ) := by
+  intro κ _ E
+  calc
+    outputEntropyRoof Φ E.averageState ≤
+        ∑ i, (E.probs i).toReal * outputEntropyRoof Φ (E.states i) :=
+      outputEntropyRoof_satisfiesFiniteJensen Φ E
+    _ ≤ ∑ i, (E.probs i).toReal *
+        (Φ.applyState (E.states i)).vonNeumann := by
+      exact Finset.sum_le_sum fun i _ =>
+        mul_le_mul_of_nonneg_left
+          (outputEntropyRoof_le_outputEntropy Φ (E.states i))
+          (NNReal.coe_nonneg _)
+    _ = outputEntropyCost Φ E := rfl
 
 /-- The central algebraic implication in the Holevo converse. -/
 theorem fixedInputHolevo_prod_le
@@ -123,6 +141,63 @@ theorem pureDecompositionHolevoAfter_prod_le
   unfold fixedInputHolevo
   unfold PureDecomposition.averageState
   linarith
+
+/-- For amplitude damping tensored with an arbitrary finite-dimensional
+channel, the actual convex-roof fixed-input Holevo quantity is exactly
+additive on product input states. -/
+theorem amplitudeDamping_fixedInputHolevo_prod_eq
+    (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
+    (Φ : Channel a b) (rho : State Qubit) (sigma : State a) :
+    fixedInputHolevo
+        (outputEntropyRoof ((amplitudeDamping p hp0 hp1).prod Φ))
+        ((amplitudeDamping p hp0 hp1).prod Φ) (rho.prod sigma) =
+      fixedInputHolevo
+          (outputEntropyRoof (amplitudeDamping p hp0 hp1))
+          (amplitudeDamping p hp0 hp1) rho +
+        fixedInputHolevo (outputEntropyRoof Φ) Φ sigma := by
+  exact fixedInputHolevo_prod_eq_of_roof_prod
+    (outputEntropyRoof ((amplitudeDamping p hp0 hp1).prod Φ))
+    (outputEntropyRoof (amplitudeDamping p hp0 hp1))
+    (outputEntropyRoof Φ) (amplitudeDamping p hp0 hp1) Φ rho sigma
+    (amplitudeDamping_outputEntropyRoof_prod_eq
+      p hp0 hp1 Φ rho sigma)
+
+/-- Concrete Holevo converse for amplitude damping tensored with an arbitrary
+finite-dimensional auxiliary channel. -/
+theorem amplitudeDamping_pureDecompositionHolevoAfter_prod_le
+    (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
+    (Φ : Channel a b) (E : PureDecomposition (Prod Qubit a)) :
+    ensembleHolevoAfter ((amplitudeDamping p hp0 hp1).prod Φ) E.toEnsemble ≤
+      fixedInputHolevo
+          (outputEntropyRoof (amplitudeDamping p hp0 hp1))
+          (amplitudeDamping p hp0 hp1) E.averageState.marginalA +
+        fixedInputHolevo (outputEntropyRoof Φ) Φ
+          E.averageState.marginalB := by
+  exact pureDecompositionHolevoAfter_prod_le
+    (amplitudeDamping p hp0 hp1) Φ E
+    (amplitudeDamping_outputEntropyRoof_stronglySuperadditive
+      p hp0 hp1 Φ)
+
+/-- The Holevo converse for an arbitrary finite input ensemble of amplitude
+damping tensored with an arbitrary finite-dimensional auxiliary channel. -/
+theorem amplitudeDamping_ensembleHolevoAfter_prod_le
+    {ι : Type} [Fintype ι]
+    (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
+    (Φ : Channel a b) (E : Ensemble ι (Prod Qubit a)) :
+    ensembleHolevoAfter ((amplitudeDamping p hp0 hp1).prod Φ) E ≤
+      fixedInputHolevo
+          (outputEntropyRoof (amplitudeDamping p hp0 hp1))
+          (amplitudeDamping p hp0 hp1) E.averageState.marginalA +
+        fixedInputHolevo (outputEntropyRoof Φ) Φ
+          E.averageState.marginalB := by
+  exact ensembleHolevoAfter_prod_le
+    (outputEntropyRoof ((amplitudeDamping p hp0 hp1).prod Φ))
+    (outputEntropyRoof (amplitudeDamping p hp0 hp1))
+    (outputEntropyRoof Φ) (amplitudeDamping p hp0 hp1) Φ E
+    (outputEntropyRoof_isOutputEntropyRoof
+      ((amplitudeDamping p hp0 hp1).prod Φ))
+    (amplitudeDamping_outputEntropyRoof_stronglySuperadditive
+      p hp0 hp1 Φ)
 
 end
 

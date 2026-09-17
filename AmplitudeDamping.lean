@@ -6,13 +6,14 @@ import AmplitudeDamping.QubitEntropy
 import AmplitudeDamping.FixedExcitation
 import AmplitudeDamping.ScalarCurve
 import AmplitudeDamping.EqualExcitation
-import AmplitudeDamping.HolevoReduction
 import AmplitudeDamping.ChannelStinespring
 import AmplitudeDamping.PureAuxiliary
 import AmplitudeDamping.PureAuxiliaryOutput
 import AmplitudeDamping.PureAuxiliaryRoof
 import AmplitudeDamping.StrongSuperadditivity
+import AmplitudeDamping.RoofProduct
 import AmplitudeDamping.NCopy
+import AmplitudeDamping.HolevoReduction
 import AmplitudeDamping.Triangular.Statement
 import AmplitudeDamping.Triangular.LogDet
 import AmplitudeDamping.Triangular.LogDetCalculus

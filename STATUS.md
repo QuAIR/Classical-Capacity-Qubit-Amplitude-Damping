@@ -21,6 +21,9 @@ it does not mean that the corresponding result is merely assumed.
   nonnegativity and the mutual-information identity.
 - [x] Fixed-input and pure-ensemble Holevo converse from strong
   superadditivity of the roof.
+- [x] The convex roof is a lower envelope for arbitrary finite ensembles of
+  mixed states, and the amplitude-damping product-channel Holevo converse
+  holds for every finite input ensemble.
 - [x] Pure-qubit excitation lies in `[0,1]`.
 - [x] Determinant formula
   `det(A_p(|psi><psi|)) = p(1-p)q^2`.
@@ -148,10 +151,17 @@ it does not mean that the corresponding result is merely assumed.
   channel: the branch weights are exactly the qubit marginal excitation and
   its complement, and the amplitude-damping triangular coefficient bound is
   instantiated for the resulting Stinespring blocks.
+- [x] Unconditional strong superadditivity of the amplitude-damping
+  output-entropy roof against every finite-dimensional auxiliary channel.
+- [x] Product-decomposition construction and exact roof additivity on product
+  inputs when one factor is amplitude damping.
+- [x] Recursive lower bound for arbitrary correlated `n`-copy inputs and exact
+  IID identity `R(A_p^⊗n, ρ^⊗n) = n R(A_p, ρ)`.
+- [x] Exact additivity of the associated fixed-input Holevo quantity on
+  product states.
 
 ## Open proof obligations
 
-- [ ] Strong superadditivity of the amplitude-damping output-entropy roof.
 - [ ] Optimization over input states and the exact one-letter Holevo formula.
 - [ ] Product-ensemble lower bound and optimized strong Holevo additivity.
 - [ ] Entanglement-of-formation convex roof, product-kernel support theorem,

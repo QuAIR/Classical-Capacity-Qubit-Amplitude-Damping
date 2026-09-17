@@ -1,6 +1,7 @@
 import AmplitudeDamping.Definitions
 import QIT.Core.Pure
 import QIT.Symmetry.DeFinetti.RennerProjectors
+import QIT.Information.Entropy.ConditionalEntropyConcavity
 
 /-!
 # Finite pure-state decompositions and the output-entropy convex roof
@@ -307,6 +308,26 @@ theorem outputEntropyRoof_satisfiesFiniteJensen (Φ : Channel a b) :
       have hw := congrArg (fun x : ℝ≥0 => (x : ℝ)) E.weights_sum
       have hwR : (∑ i, (E.probs i : ℝ)) = 1 := by simpa using hw
       rw [hwR, one_mul]
+
+/-- The pure-state output-entropy convex roof is bounded above by the output
+entropy of the state itself. -/
+theorem outputEntropyRoof_le_outputEntropy
+    (Φ : Channel a b) (ρ : State a) :
+    outputEntropyRoof Φ ρ ≤ (Φ.applyState ρ).vonNeumann := by
+  let E := spectralPureDecomposition ρ
+  have hroof : outputEntropyRoof Φ ρ ≤ E.outputCost Φ := by
+    rw [← spectralPureDecomposition_averageState ρ]
+    exact outputEntropyRoof_le_outputCost Φ E
+  have hconc := Ensemble.vonNeumann_average_ge_sum
+    (outputEnsemble Φ E.toEnsemble)
+  rw [outputEnsemble_averageState] at hconc
+  have hEavg : E.toEnsemble.averageState = ρ := by
+    exact spectralPureDecomposition_averageState ρ
+  have hcost : E.outputCost Φ ≤ (Φ.applyState ρ).vonNeumann := by
+    rw [hEavg] at hconc
+    simpa [PureDecomposition.outputCost, outputEntropyCost,
+      outputEnsemble] using hconc
+  exact hroof.trans hcost
 
 end
 

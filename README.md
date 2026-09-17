@@ -103,8 +103,17 @@ proof obligations.
     into its excited and ground branches, identifies their weights with the
     qubit marginal excitation and its complement, and applies the sharp
     triangular coefficient bound to an arbitrary auxiliary channel.
-29. Future modules derive the EoF/channel corollaries from the completed
-    analytic inequality.
+29. `PureAuxiliaryRoof.lean` and `StrongSuperadditivity.lean`: lift the pure
+    auxiliary-channel inequality through finite Jensen decompositions to the
+    unconditional strong-superadditivity theorem.
+30. `RoofProduct.lean`: constructs product pure decompositions and proves the
+    reverse roof inequality, hence exact additivity on product inputs.
+31. `NCopy.lean`: proves the correlated-input recursive lower bound, exact
+    product recursion, and the closed IID identity
+    `R(A_p^⊗n, ρ^⊗n) = n R(A_p, ρ)`.
+32. `HolevoReduction.lean`: upgrades the roof to an arbitrary finite-ensemble
+    lower envelope and proves the corresponding amplitude-damping Holevo
+    converse and product-input fixed-information equality.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
