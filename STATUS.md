@@ -121,6 +121,8 @@ it does not mean that the corresponding result is merely assumed.
 - [x] Equality of `H(AᴴA)` and `H(AAᴴ)` for square matrices, and the exact
   zero-weight-safe identity converting `H(AAᴴ)` to `normalizedGramEntropy`
   plus its scalar `xlog2` correction for arbitrary rectangular matrices.
+- [x] Exact polar-gauge block identity for square triangular matrices, given
+  unitary polar factors for the two lower-row blocks.
 
 ## Open proof obligations
 

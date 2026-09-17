@@ -77,8 +77,11 @@ proof obligations.
 20. `Triangular/GramEntropy.lean`: checked equality of the two square Gram
     entropies and the exact zero-weight-safe conversion from unnormalized
     Gram entropy to `normalizedGramEntropy` for arbitrary rectangular blocks.
-21. Future modules will recover the triangular blocks by polar/isometric
-    embeddings, followed by the EoF/channel corollaries.
+21. `Triangular/PolarGauge.lean`: checked the exact block-matrix gauge
+    identity converting unitary polar factors of square triangular blocks to
+    the canonical entropy coupling.
+22. Future modules will supply the polar-factor existence and rectangular
+    isometric embeddings, then derive the EoF/channel corollaries.
 
 The project does not use `sorry` or introduce axioms for the mathematical
 claims.  Work-in-progress theorems are represented as named predicates until
