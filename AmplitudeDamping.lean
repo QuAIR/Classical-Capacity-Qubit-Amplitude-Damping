@@ -9,6 +9,7 @@ import AmplitudeDamping.EqualExcitation
 import AmplitudeDamping.HolevoReduction
 import AmplitudeDamping.ChannelStinespring
 import AmplitudeDamping.PureAuxiliary
+import AmplitudeDamping.PureAuxiliaryOutput
 import AmplitudeDamping.Triangular.Statement
 import AmplitudeDamping.Triangular.LogDet
 import AmplitudeDamping.Triangular.LogDetCalculus

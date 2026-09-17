@@ -13,7 +13,7 @@ namespace AmplitudeDamping
 
 open QIT
 
-universe u
+universe u v
 
 noncomputable section
 
@@ -169,7 +169,7 @@ theorem entropyCoupling_diagonal_reindex_eq_blockDiagonal
 
 /-- Spectral entropy is invariant under a finite basis relabeling. -/
 theorem psdEntropy_reindex
-    {a b : Type} [Fintype a] [DecidableEq a]
+    {a : Type u} {b : Type v} [Fintype a] [DecidableEq a]
     [Fintype b] [DecidableEq b]
     (X : Matrix a a ℂ) (hX : X.PosSemidef) (e : a ≃ b) :
     psdEntropy (X.submatrix e.symm e.symm) (hX.submatrix e.symm) =
