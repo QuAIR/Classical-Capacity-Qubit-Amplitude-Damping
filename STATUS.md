@@ -236,13 +236,30 @@ it does not mean that the corresponding result is merely assumed.
   product-kernel and rank-at-most-two states; and the boxed Choi-state
   conclusion `E_F(ω_p^⊗n) = n · h₂((1+√p)/2)` and
   `E_C(ω_p) = h₂((1+√p)/2)` for all `p ∈ [0,1]`.
+- [x] Corollary 8, fixed-input roof superadditivity (eq (two-kraus-roof)):
+  for a qubit channel `N` admitting a Kraus family indexed by a type of
+  cardinality at most two (with the Kraus-stack isometry, its qubit-
+  environment padding, completeness, and the rank bridge
+  `card_filter_eigenvalues_eq_rank` into the rank-two kernel-vector
+  theorem), `roof(N ⊗ M)(τ) ≥ roof(N)(τ_X) + roof(M)(τ_Y)` for every
+  finite-dimensional channel `M` and input state `τ`.  The engine is the
+  generalized MSW identity `roof(Φ)(τ) = E_F(V τ V†)` for an ARBITRARY
+  isometry dilation `V` (both directions: decomposition pushforward and
+  range-projection pullback), which also subsumes the canonical-dilation
+  version.
+- [x] Corollary 8, Holevo additivity and capacity collapse
+  (eq (two-kraus-holevo)): from the roof superadditivity packaged as an
+  explicit hypothesis, `χ(N ⊗ M) = χ(N) + χ(M)` for every auxiliary channel
+  with nonempty input, the `n`-copy identity in the regularized-rate
+  convention, regularization collapse, and `C(N) = χ(N)` for two-Kraus
+  qubit channels.
 
 ## Open proof obligations
 
-- [ ] The two-Kraus qubit-channel corollary (Corollary 8): the fixed-input
-  roof superadditivity `roof(N ⊗ M)(τ) ≥ roof(N)(τ_X) + roof(M)(τ_Y)` for
-  qubit channels `N` of Kraus rank at most two, the Holevo additivity
-  `χ(N ⊗ M) = χ(N) + χ(M)`, and the capacity collapse `C(N) = χ(N)`.
+Manuscript §5 is fully formalized.  The remaining gap to an unconditional
+treatment is the single interface proposition `woottersKernelUpperBound`
+(Wootters' concurrence formula for general two-qubit states); see the
+trust boundary below.
 
 ## Trust boundary
 
@@ -254,3 +271,9 @@ interface proposition currently in the tree is `woottersKernelUpperBound`
 (Wootters' concurrence formula for general two-qubit states, manuscript eq
 `(wootters)` and Appendix B); every downstream result invoking the corner
 identity takes it as an explicit hypothesis so the dependency is tracked.
+In §5 the consumers are Theorem 6 (both forms) and, through it, the
+`≥`/equality halves of Corollary 7, the entanglement-cost identities, and
+Corollary 8 (both the roof superadditivity and the Holevo/capacity
+conclusions).  The `≤` halves, the MSW identities, the Choi-state
+computation (with its optimal two-branch decomposition), and the
+regularization collapses are unconditional.

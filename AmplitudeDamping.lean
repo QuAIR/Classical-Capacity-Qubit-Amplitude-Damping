@@ -43,6 +43,8 @@ import AmplitudeDamping.StinespringEOF
 import AmplitudeDamping.ChoiState
 import AmplitudeDamping.EntanglementAdditivity
 import AmplitudeDamping.EntanglementCost
+import AmplitudeDamping.TwoKrausRoof
+import AmplitudeDamping.TwoKrausCapacity
 
 /-!
 # Formalization of strong additivity for amplitude damping
