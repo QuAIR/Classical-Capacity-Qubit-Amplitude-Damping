@@ -190,11 +190,24 @@ it does not mean that the corresponding result is merely assumed.
   `woottersKernelUpperBound` (the `≥` direction is proved in
   `Concurrence.lean`), giving the corner identity in diagonal-entry and
   kernel-vector phrasings for the gauge-fixed setting of Theorem 6.
+- [x] Entanglement of formation as a convex roof over finite pure-state
+  decompositions, the kernel-state lower bound, rank-two product-kernel
+  support for two-qubit states, and subadditivity under reassociated tensor
+  products (Corollary 7, `≤` direction).
+- [x] Theorem 6 (gauge-fixed): `E_F(ρ_AB) + E_F(σ_A'B') ≤ E_F(Ω)` whenever
+  the two-qubit marginal has vanishing `|01⟩` population.  Pure case via the
+  coefficient-matrix block factorization, the triangular block entropy
+  inequality, the Wootters corner hypothesis, and Cauchy–Schwarz on the
+  coherence; mixed case by branchwise propagation of the gauge condition to
+  every positive-weight branch and finite-Jensen convexity of `E_F`.
 
 ## Open proof obligations
 
-- [ ] Entanglement-of-formation convex roof, product-kernel support theorem,
-  Choi-state cost formula, and the two-Kraus qubit-channel corollary.
+- [ ] Local-unitary reduction of Theorem 6's gauge condition (product-kernel
+  corner vector to vanishing `|01⟩` population by local phases).
+- [ ] MSW Stinespring roof identity, Corollary 7's `≥` direction, the
+  Choi-state cost formula (eq 31), and the two-Kraus qubit-channel corollary
+  (Corollary 8).
 
 ## Trust boundary
 

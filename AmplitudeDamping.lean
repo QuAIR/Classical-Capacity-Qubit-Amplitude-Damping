@@ -37,6 +37,7 @@ import AmplitudeDamping.Triangular.Rectangular
 import AmplitudeDamping.Triangular.AmplitudeSpecialization
 import AmplitudeDamping.Wootters
 import AmplitudeDamping.ExcitationConstraint
+import AmplitudeDamping.EntanglementSSA
 
 /-!
 # Formalization of strong additivity for amplitude damping
