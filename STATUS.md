@@ -200,14 +200,24 @@ it does not mean that the corresponding result is merely assumed.
   inequality, the Wootters corner hypothesis, and Cauchy–Schwarz on the
   coherence; mixed case by branchwise propagation of the gauge condition to
   every positive-weight branch and finite-Jensen convexity of `E_F`.
+- [x] MSW Stinespring roof identity (manuscript eq (msw)): for every channel
+  `Φ` and input state `τ`, `roof(Φ, τ) = E_F(V τ V†)` for the canonical
+  Kraus-indexed Stinespring dilation state, with no hypotheses.  The
+  backward direction uses the full support argument (a branch vector outside
+  the kernel pulls back through `V†` to a valid preimage branch).
+- [x] Choi-state entanglement of formation (manuscript eq (31), elementary
+  route): the amplitude-damping Choi state `ω_p = ½(|ψ₊⟩⟨ψ₊| + |ψ₋⟩⟨ψ₋|)` has
+  a full 16-entry matrix computation, a vanishing `|01⟩` population,
+  `E_F(ω_p) = entanglementCurve(√(1-p)) = h₂((1+√p)/2)`, an explicit optimal
+  two-branch decomposition attaining the value (making the upper bound
+  unconditional), and the endpoints `E_F(ω_0) = 1`, `E_F(ω_1) = 0`.
 
 ## Open proof obligations
 
 - [ ] Local-unitary reduction of Theorem 6's gauge condition (product-kernel
   corner vector to vanishing `|01⟩` population by local phases).
-- [ ] MSW Stinespring roof identity, Corollary 7's `≥` direction, the
-  Choi-state cost formula (eq 31), and the two-Kraus qubit-channel corollary
-  (Corollary 8).
+- [ ] Corollary 7's `≥` direction (via the local-unitary-reduced Theorem 6)
+  and the two-Kraus qubit-channel corollary (Corollary 8).
 
 ## Trust boundary
 

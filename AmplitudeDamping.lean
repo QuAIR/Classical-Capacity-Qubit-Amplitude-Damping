@@ -38,6 +38,8 @@ import AmplitudeDamping.Triangular.AmplitudeSpecialization
 import AmplitudeDamping.Wootters
 import AmplitudeDamping.ExcitationConstraint
 import AmplitudeDamping.EntanglementSSA
+import AmplitudeDamping.StinespringEOF
+import AmplitudeDamping.ChoiState
 
 /-!
 # Formalization of strong additivity for amplitude damping
