@@ -221,13 +221,28 @@ it does not mean that the corresponding result is merely assumed.
   `u ↦ ‖u‖·|0⟩` (and `v ↦ ‖v‖·|1⟩` via the swap), the local-unitary
   image of `Ω` is gauge-fixed, and Theorem 6 (gauge-fixed) applies; E_F
   invariance transports the conclusion back.
+- [x] Corollary 7 (strong additivity of `E_F`): for a two-qubit `ρ` with a
+  nonzero product kernel vector and every bipartite `σ`,
+  `E_F((ρ · σ) reassociated to AA':BB') = E_F(ρ) + E_F(σ)`; in particular
+  for every two-qubit state of rank at most two.  The `≤` half is the
+  committed reassociation lemma; the `≥` half applies full-form Theorem 6
+  to the reassociated product.
+- [x] Entanglement cost layer (manuscript eq (ec-definition), (choi-cost)):
+  per-side reindex invariance of `E_F`; the `n`-copy identity
+  `E_F(ρ^⊗n) = n · E_F(ρ)` for product-kernel states; the regularized cost
+  `entanglementCost` defined as the infimum of `E_F(ρ^⊗n)/n` over `n ≥ 1`
+  (a disclosed design choice; the paper's limit form is supplied as a
+  `Tendsto` theorem on the constant sequence); `E_C(ρ) = E_F(ρ)` for
+  product-kernel and rank-at-most-two states; and the boxed Choi-state
+  conclusion `E_F(ω_p^⊗n) = n · h₂((1+√p)/2)` and
+  `E_C(ω_p) = h₂((1+√p)/2)` for all `p ∈ [0,1]`.
 
 ## Open proof obligations
 
-- [ ] Corollary 7's `≥` direction (via the full-form Theorem 6 on `ρ ⊗ σ`)
-  and the two-Kraus qubit-channel corollary (Corollary 8).
-- [ ] The `n`-copy / entanglement cost layer: `E_F(ρ^⊗n) = n E_F(ρ)` and
-  the regularized cost as the closure of the same statement.
+- [ ] The two-Kraus qubit-channel corollary (Corollary 8): the fixed-input
+  roof superadditivity `roof(N ⊗ M)(τ) ≥ roof(N)(τ_X) + roof(M)(τ_Y)` for
+  qubit channels `N` of Kraus rank at most two, the Holevo additivity
+  `χ(N ⊗ M) = χ(N) + χ(M)`, and the capacity collapse `C(N) = χ(N)`.
 
 ## Trust boundary
 

@@ -41,6 +41,8 @@ import AmplitudeDamping.EntanglementSSA
 import AmplitudeDamping.LocalUnitary
 import AmplitudeDamping.StinespringEOF
 import AmplitudeDamping.ChoiState
+import AmplitudeDamping.EntanglementAdditivity
+import AmplitudeDamping.EntanglementCost
 
 /-!
 # Formalization of strong additivity for amplitude damping
