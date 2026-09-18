@@ -211,13 +211,23 @@ it does not mean that the corresponding result is merely assumed.
   `E_F(ω_p) = entanglementCurve(√(1-p)) = h₂((1+√p)/2)`, an explicit optimal
   two-branch decomposition attaining the value (making the upper bound
   unconditional), and the endpoints `E_F(ω_0) = 1`, `E_F(ω_1) = 0`.
+- [x] Invariance of `E_F` under local isometries (`V ρ V†` for
+  `TwoQubit.LocalIsometry` pairs), proved for arbitrary rectangular
+  isometries: `≤` by decomposition pushforward, `≥` by a range-projection
+  pullback showing positive-weight branches of any decomposition of the
+  image lie in the isometry's range.
+- [x] Theorem 6, full form: a product kernel vector `u ⊗ v ∈ ker ρ_AB`
+  implies `E_F(ρ_AB) + E_F(σ_A'B') ≤ E_F(Ω)`.  The gauge unitary sends
+  `u ↦ ‖u‖·|0⟩` (and `v ↦ ‖v‖·|1⟩` via the swap), the local-unitary
+  image of `Ω` is gauge-fixed, and Theorem 6 (gauge-fixed) applies; E_F
+  invariance transports the conclusion back.
 
 ## Open proof obligations
 
-- [ ] Local-unitary reduction of Theorem 6's gauge condition (product-kernel
-  corner vector to vanishing `|01⟩` population by local phases).
-- [ ] Corollary 7's `≥` direction (via the local-unitary-reduced Theorem 6)
+- [ ] Corollary 7's `≥` direction (via the full-form Theorem 6 on `ρ ⊗ σ`)
   and the two-Kraus qubit-channel corollary (Corollary 8).
+- [ ] The `n`-copy / entanglement cost layer: `E_F(ρ^⊗n) = n E_F(ρ)` and
+  the regularized cost as the closure of the same statement.
 
 ## Trust boundary
 

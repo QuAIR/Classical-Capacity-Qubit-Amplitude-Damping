@@ -38,6 +38,7 @@ import AmplitudeDamping.Triangular.AmplitudeSpecialization
 import AmplitudeDamping.Wootters
 import AmplitudeDamping.ExcitationConstraint
 import AmplitudeDamping.EntanglementSSA
+import AmplitudeDamping.LocalUnitary
 import AmplitudeDamping.StinespringEOF
 import AmplitudeDamping.ChoiState
 
