@@ -254,26 +254,40 @@ it does not mean that the corresponding result is merely assumed.
   convention, regularization collapse, and `C(N) = χ(N)` for two-Kraus
   qubit channels.
 
-## Open proof obligations
+## Full-manuscript extension
 
-Manuscript §5 is fully formalized.  The remaining gap to an unconditional
-treatment is the single interface proposition `woottersKernelUpperBound`
-(Wootters' concurrence formula for general two-qubit states); see the
-trust boundary below.
+The numbered checklist above records the earlier manuscript revision; it is
+not a coverage claim for the expanded manuscript. The current label-by-label
+status and exact external hypotheses are in [PAPER_COVERAGE.md](PAPER_COVERAGE.md).
+
+New checked modules cover the optimal binary signal ensemble and endpoints,
+arbitrary-partner operational capacity additivity, the unique scalar optimizer
+and exact finite-block deficit, general single-excitation support SSA and
+Stinespring consequences, explicit binary instruments and correlated product
+bounds, the actual normalized channel Choi state, independently optimized
+channel formation, and its tensor-power/regularization consequences.
+
+`OperationalEntanglementCost.lean` defines finite-round LOCC protocols and
+resource-assisted state preparation / parallel simulation independently of
+formation. The classical state/channel regularization theorems remain explicit
+hypotheses. `UnifiedCost.lean` applies them to the proven formation results.
+The main entry points in `PaperTheorems.lean` discharge general subadditivity
+using the proved uniform-Kraus application. Remaining coverage details are
+tracked in the manuscript ledger.
 
 ## Trust boundary
 
-There are no `sorry` proof terms and no project-defined axioms.  The project
-uses Lean's standard logic together with the pinned Lean-QIT/mathlib
-dependencies.  Pending statements are represented as definitions of
-propositions and are listed above rather than being assumed.  The one such
-interface proposition currently in the tree is `woottersKernelUpperBound`
-(Wootters' concurrence formula for general two-qubit states, manuscript eq
-`(wootters)` and Appendix B); every downstream result invoking the corner
-identity takes it as an explicit hypothesis so the dependency is tracked.
-In §5 the consumers are Theorem 6 (both forms) and, through it, the
-`≥`/equality halves of Corollary 7, the entanglement-cost identities, and
-Corollary 8 (both the roof superadditivity and the Holevo/capacity
-conclusions).  The `≤` halves, the MSW identities, the Choi-state
-computation (with its optimal two-branch decomposition), and the
-regularization collapses are unconditional.
+Completed modules contain no `sorry` proof terms or project-defined axioms.
+Standard Lean axioms and pinned Lean-QIT/mathlib results are reused. A successful
+`#print axioms` audit does not certify that a theorem has no mathematical
+hypotheses: those are separately recorded in [PAPER_COVERAGE.md](PAPER_COVERAGE.md).
+
+The old `woottersKernelUpperBound` is a specialized corner upper bound, not
+the full Wootters formula. `CornerFromTwoExpectations.lean` now derives it from
+the exact two-Hermitian-expectation decomposition interface. The AD one-copy
+Choi formation formula has also been proved without either interface.
+
+The generic two-expectation decomposition, qubit channel/Choi formation identity,
+faithful relative-entropy equality condition, and operational regularization
+results are explicit classical interfaces. They are not asserted as axioms.
+Temporary development files are not counted as completed manuscript coverage.

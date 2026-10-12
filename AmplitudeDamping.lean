@@ -45,6 +45,37 @@ import AmplitudeDamping.EntanglementAdditivity
 import AmplitudeDamping.EntanglementCost
 import AmplitudeDamping.TwoKrausRoof
 import AmplitudeDamping.TwoKrausCapacity
+import AmplitudeDamping.OptimalSignals
+import AmplitudeDamping.CapacityAdditivity
+import AmplitudeDamping.ChannelChoi
+import AmplitudeDamping.ChannelFormation
+import AmplitudeDamping.ChannelFormationProduct
+import AmplitudeDamping.TwoExpectations
+import AmplitudeDamping.SupportedPureEntropy
+import AmplitudeDamping.SupportCriterion
+import AmplitudeDamping.SupportedMarginal
+import AmplitudeDamping.ChannelChoiRank
+import AmplitudeDamping.CornerFromTwoExpectations
+import AmplitudeDamping.ScalarOptimizer
+import AmplitudeDamping.FiniteBlockDeficit
+import AmplitudeDamping.SupportSSA
+import AmplitudeDamping.GenericHolevoAdditivity
+import AmplitudeDamping.SupportStinespring
+import AmplitudeDamping.BinaryInstrument
+import AmplitudeDamping.InstrumentProduct
+import AmplitudeDamping.ChannelFormationRegularization
+import AmplitudeDamping.OperationalEntanglementCost
+import AmplitudeDamping.UnifiedFormation
+import AmplitudeDamping.UnifiedCost
+
+import AmplitudeDamping.ProductSignalCoding
+import AmplitudeDamping.PureOutputSupport
+import AmplitudeDamping.PureOutputChoi
+import AmplitudeDamping.UniformKraus
+import AmplitudeDamping.ADDirectCost
+import AmplitudeDamping.SupportConsequences
+import AmplitudeDamping.PaperTheorems
+import AmplitudeDamping.TriangleEquality
 
 /-!
 # Formalization of strong additivity for amplitude damping
