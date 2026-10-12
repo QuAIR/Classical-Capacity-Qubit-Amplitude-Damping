@@ -7,8 +7,8 @@ import AmplitudeDamping.GenericHolevoAdditivity
 
 The hypothesis is range containment of a concrete Stinespring isometry after
 local coordinate isometries on output and environment. No restriction is
-placed on the input dimension, Kraus count, or auxiliary channel. The only
-external classical input is the two-expectation decomposition theorem.
+placed on the input dimension, Kraus count, or auxiliary channel. The
+two-expectation decomposition theorem is proved in this library.
 -/
 
 open scoped BigOperators ComplexConjugate ComplexOrder MatrixOrder Matrix NNReal Kronecker
@@ -51,7 +51,6 @@ theorem supported_isometryImageState
 Kraus stack. The Kraus representation and its range condition are concrete;
 the conclusion is obtained from state SSA and the generic MSW identity. -/
 theorem outputEntropyRoof_prod_ge_of_supported_kraus
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (N : Channel x o) (K : e → Matrix o x ℂ)
     (hN : N.map = MatrixMap.ofKraus K)
     (L : TwoQubit.LocalIsometry o (a ⊕ Unit) e (Unit ⊕ b))
@@ -89,7 +88,7 @@ theorem outputEntropyRoof_prod_ge_of_supported_kraus
   have hB : ((isometryImageState U hU τ).reindex prodReassoc).marginalB =
       isometryImageState R hR' τ.marginalB :=
     isometryImageState_krausProduct_reindex_marginalB K hK M.kraus hJ τ
-  have h := support_criterion_of_local_coordinates hclassical L (isometryImageState U hU τ)
+  have h := support_criterion_of_local_coordinates L (isometryImageState U hU τ)
     (by rw [hA]; exact supported_isometryImageState S hS L hR τ.marginalA)
   rw [hA, hB] at h
   rw [outputEntropyRoof_eq_entanglementOfFormation_of_isometry N S hS hchanS,
@@ -106,7 +105,6 @@ def StinespringRealizes (N : Channel x o) (V : Matrix (o × e) x ℂ) : Prop :=
 Every finite-dimensional dilation can be reshaped as a Kraus stack, so no
 restriction to a chosen canonical environment is imposed. -/
 theorem outputEntropyRoof_prod_ge_of_supported_stinespring
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (N : Channel x o) (V : Matrix (o × e) x ℂ)
     (_hV : V.conjTranspose * V = 1) (hN : StinespringRealizes N V)
     (L : TwoQubit.LocalIsometry o (a ⊕ Unit) e (Unit ⊕ b))
@@ -121,7 +119,7 @@ theorem outputEntropyRoof_prod_ge_of_supported_stinespring
     have he := MatrixMap.partialTraceB_krausStinespringMatrix K X
     rw [hstack, hN X] at he
     exact congrFun (congrFun he i) j
-  exact outputEntropyRoof_prod_ge_of_supported_kraus hclassical N K hmap L
+  exact outputEntropyRoof_prod_ge_of_supported_kraus N K hmap L
     (by rwa [hstack]) M τ
 
 
@@ -136,7 +134,6 @@ variable [Nonempty x]
 
 /-- A supported Stinespring range makes the channel strongly Holevo additive. -/
 theorem supported_stinespring_strongHolevoAdditive
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (N : Channel x o) (V : Matrix (o × e) x ℂ)
     (hV : V.conjTranspose * V = 1) (hN : StinespringRealizes N V)
     (L : TwoQubit.LocalIsometry o (a ⊕ Unit) e (Unit ⊕ b))
@@ -144,12 +141,11 @@ theorem supported_stinespring_strongHolevoAdditive
     CapacityAdditivity.StrongHolevoAdditive N := by
   intro y z _ _ _ _ _ M
   exact generic_holevoInformation_prod_eq N M
-    (outputEntropyRoof_prod_ge_of_supported_stinespring hclassical N V hV hN L hR M)
+    (outputEntropyRoof_prod_ge_of_supported_stinespring N V hV hN L hR M)
 
 /-- No regularization is needed for the classical capacity of a channel with
 a supported Stinespring range. Operational capacity is the actual HSW API. -/
 theorem supported_stinespring_classicalCapacity_eq_holevoInformation [Nonempty o]
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (N : Channel x o) (V : Matrix (o × e) x ℂ)
     (hV : V.conjTranspose * V = 1) (hN : StinespringRealizes N V)
     (L : TwoQubit.LocalIsometry o (a ⊕ Unit) e (Unit ⊕ b))
@@ -157,12 +153,11 @@ theorem supported_stinespring_classicalCapacity_eq_holevoInformation [Nonempty o
     Channel.classicalCapacity.{0,0,0} N = Channel.holevoInformation.{0,0,0} N := by
   rw [Channel.classicalCapacity_eq_regularizedHolevoInformation]
   exact CapacityAdditivity.regularizedHolevoInformation_eq N
-    (supported_stinespring_strongHolevoAdditive hclassical N V hV hN L hR)
+    (supported_stinespring_strongHolevoAdditive N V hV hN L hR)
 
 /-- Operational capacity is additive against any finite-dimensional partner,
 without assuming that the partner itself has a single-letter capacity. -/
 theorem supported_stinespring_classicalCapacity_prod_eq [Nonempty o]
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (N : Channel x o) (V : Matrix (o × e) x ℂ)
     (hV : V.conjTranspose * V = 1) (hN : StinespringRealizes N V)
     (L : TwoQubit.LocalIsometry o (a ⊕ Unit) e (Unit ⊕ b))
@@ -172,7 +167,7 @@ theorem supported_stinespring_classicalCapacity_prod_eq [Nonempty o]
     Channel.classicalCapacity.{0,0,0} (N.prod M) =
       Channel.classicalCapacity.{0,0,0} N + Channel.classicalCapacity.{0,0,0} M := by
   exact CapacityAdditivity.classicalCapacity_prod_eq N
-    (supported_stinespring_strongHolevoAdditive hclassical N V hV hN L hR) M
+    (supported_stinespring_strongHolevoAdditive N V hV hN L hR) M
 
 end OperationalCapacity
 end AmplitudeDamping

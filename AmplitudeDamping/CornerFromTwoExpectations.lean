@@ -57,11 +57,9 @@ theorem entryImagObservable_expectation (rho : State a) (i j : a) :
 
 /-- The existing corner interface follows from the standard two-expectation
 decomposition theorem, without importing the full Wootters formula. -/
-theorem woottersKernelUpperBound_of_twoExpectations
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit)) :
-    woottersKernelUpperBound := by
+theorem woottersKernelUpperBound_of_twoExpectations : woottersKernelUpperBound := by
   intro rho hzero
-  obtain ⟨E, hE, hcomponents⟩ := hclassical rho
+  obtain ⟨E, hE, hcomponents⟩ := twoExpectationDecomposition _ rho
     (entryRealObservable (0,0) (1,1)) (entryImagObservable (0,0) (1,1))
     (entryRealObservable_isHermitian _ _) (entryImagObservable_isHermitian _ _)
   have hcoh (j : Fin E.card) :

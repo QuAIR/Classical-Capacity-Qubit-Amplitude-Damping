@@ -1,12 +1,16 @@
 import AmplitudeDamping.EntanglementFormation
+import AmplitudeDamping.TwoExpectationPerturbation
+import AmplitudeDamping.PureDecompositionSupport
 
 /-!
-# The two fixed expectation decomposition interface
+# The two fixed expectation decomposition theorem
 
-The Leka–Petz finite-dimensional decomposition theorem is isolated as an
-explicit classical hypothesis. It concerns two arbitrary Hermitian matrices,
-not the support criterion or an entanglement bound. The convex-roof consequence
-below is proved from this interface and the finite-decomposition definition.
+The finite-dimensional Leka–Petz decomposition theorem is proved using the
+compact convex slice of density matrices with two fixed expectations. A
+four-dimensional supported Hermitian perturbation shows that every extreme
+point has rank one. Compactness and Carathéodory's theorem then give a finite
+decomposition with strictly positive weights. Support containment follows
+from positivity of the summands.
 -/
 
 open scoped BigOperators NNReal ComplexConjugate
@@ -26,8 +30,8 @@ def pureVectorInStateSupport {a : Type u} [Fintype a] [DecidableEq a]
   ∀ z : a → ℂ, ρ.matrix.mulVec z = 0 →
     (∑ i, star (z i) * ψ.amp i) = 0
 
-/-- Exact finite-dimensional Leka–Petz theorem, retained as an explicit
-classical input: strictly positive finite probabilities, support containment,
+/-- Exact finite-dimensional Leka–Petz decomposition property:
+strictly positive finite probabilities, support containment,
 and preservation of two (possibly noncommuting) Hermitian expectations. -/
 def TwoExpectationDecomposition (a : Type u) [Fintype a] [DecidableEq a] : Prop :=
   ∀ (ρ : State a) (F G : Matrix a a ℂ), F.IsHermitian → G.IsHermitian →
@@ -37,13 +41,26 @@ def TwoExpectationDecomposition (a : Type u) [Fintype a] [DecidableEq a] : Prop 
         operatorExpectation F (E.vectors j).state = operatorExpectation F ρ ∧
         operatorExpectation G (E.vectors j).state = operatorExpectation G ρ
 
+/-- Every finite-dimensional density state admits a finite pure decomposition
+whose positive-weight vectors lie in its support and preserve two Hermitian
+expectations exactly. -/
+theorem twoExpectationDecomposition (a : Type u) [Fintype a] [DecidableEq a] :
+    TwoExpectationDecomposition a := by
+  intro ρ F G _ _
+  obtain ⟨E, hE, hcomponents⟩ := exists_pureDecomposition_of_extreme_rank_le_one ρ F G
+    (rank_le_one_of_extreme_twoExpectationSlice ρ F G)
+  refine ⟨E, hE, fun j => ⟨(hcomponents j).1, ?_,
+    (hcomponents j).2.1, (hcomponents j).2.2⟩⟩
+  intro z hz
+  apply E.component_orthogonal_kernel j (hcomponents j).1 z
+  simpa only [hE] using hz
+
 /-- If the entropy of every supported pure vector depends only on two
 expectations, a fixed-expectation decomposition gives the corresponding upper
 bound on the literal entanglement-of-formation convex roof. -/
 theorem entanglementOfFormation_le_of_two_expectations
     {a : Type u} {b : Type v} [Fintype a] [DecidableEq a]
     [Fintype b] [DecidableEq b]
-    (hclassical : TwoExpectationDecomposition (a × b))
     (ρ : State (a × b)) (F G : Matrix (a × b) (a × b) ℂ)
     (hF : F.IsHermitian) (hG : G.IsHermitian) (f : ℝ → ℝ → ℝ)
     (hpure : ∀ ψ : PureVector (a × b), pureVectorInStateSupport ψ ρ →
@@ -51,7 +68,7 @@ theorem entanglementOfFormation_le_of_two_expectations
         f (operatorExpectation F ψ.state) (operatorExpectation G ψ.state)) :
     entanglementOfFormation ρ ≤
       f (operatorExpectation F ρ) (operatorExpectation G ρ) := by
-  obtain ⟨E, hE, hcomponents⟩ := hclassical ρ F G hF hG
+  obtain ⟨E, hE, hcomponents⟩ := twoExpectationDecomposition (a × b) ρ F G hF hG
   have hw : ∑ i, (E.probs i : ℝ) = 1 := by
     exact_mod_cast E.weights_sum
   calc

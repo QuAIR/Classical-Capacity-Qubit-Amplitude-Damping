@@ -150,17 +150,15 @@ theorem twoKraus_has_pure_output
 
 /-- Pure-output qubit channels are strongly additive for channel formation. -/
 theorem pure_output_strongFormation
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit))
     (hqubit : QubitChannelFormationIdentity)
     (hsub : GeneralChannelFormationSubadditivity)
     (N : Channel Qubit Qubit) (hp : HasPureQubitOutput N) :
     FormationRegularization.StrongFormationAdditive N := by
   obtain ⟨u, v, hu, hv, hk⟩ := pure_output_has_choi_product_kernel N hp
-  exact strongFormation_of_productKernel hclassical hqubit hsub N u v hu hv hk
+  exact strongFormation_of_productKernel hqubit hsub N u v hu hv hk
 
 /-- Pure-output extension of the operational channel and Choi-state cost identities. -/
 theorem pure_output_unified_cost
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit))
     (hqubit : QubitChannelFormationIdentity)
     (hsub : GeneralChannelFormationSubadditivity)
     (hstate : StateCostRegularization) (hparallel : ParallelCostRegularization)
@@ -169,11 +167,10 @@ theorem pure_output_unified_cost
     operationalStateCost (channelChoiState N) = entanglementOfFormation (channelChoiState N) ∧
     channelEntanglementOfFormation N = entanglementOfFormation (channelChoiState N) := by
   obtain ⟨u, v, hu, hv, hk⟩ := pure_output_has_choi_product_kernel N hp
-  exact unified_cost_of_productKernel hclassical hqubit hsub hstate hparallel N u v hu hv hk
+  exact unified_cost_of_productKernel hqubit hsub hstate hparallel N u v hu hv hk
 
 /-- Operational parallel channel cost is additive with every finite partner. -/
 theorem pure_output_parallelCost_prod_eq
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit))
     (hqubit : QubitChannelFormationIdentity)
     (hsub : GeneralChannelFormationSubadditivity)
     (hparallel : ParallelCostRegularization)
@@ -183,7 +180,7 @@ theorem pure_output_parallelCost_prod_eq
     parallelEntanglementCost (N.prod M) =
       parallelEntanglementCost N + parallelEntanglementCost M :=
   parallelEntanglementCost_prod_eq_of_strong hparallel N
-    (pure_output_strongFormation hclassical hqubit hsub N hp) M
+    (pure_output_strongFormation hqubit hsub N hp) M
 
 end
 end AmplitudeDamping

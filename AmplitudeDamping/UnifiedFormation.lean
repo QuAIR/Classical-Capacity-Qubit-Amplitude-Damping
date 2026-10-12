@@ -19,7 +19,6 @@ def GeneralChannelFormationSubadditivity : Prop :=
 /-- A product vector in the Choi kernel implies strong channel formation
 additivity, using only the displayed classical interfaces. -/
 theorem strongFormation_of_productKernel
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit))
     (hqubit : QubitChannelFormationIdentity)
     (hsub : GeneralChannelFormationSubadditivity)
     (N : Channel Qubit Qubit) (u v : Qubit → ℂ)
@@ -28,23 +27,21 @@ theorem strongFormation_of_productKernel
     FormationRegularization.StrongFormationAdditive N := by
   intro c d _ _ _ _ _ M
   exact channelFormation_prod_eq_of_productKernel
-    (woottersKernelUpperBound_of_twoExpectations hclassical) hqubit hsub N M u v hu hv hk
+    woottersKernelUpperBound_of_twoExpectations hqubit hsub N M u v hu hv hk
 
 /-- Rank at most two suffices for every finite partner channel. -/
 theorem strongFormation_of_twoKraus
     {κ : Type*} [Fintype κ]
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit))
     (hqubit : QubitChannelFormationIdentity)
     (hsub : GeneralChannelFormationSubadditivity)
     (N : Channel Qubit Qubit) (K : κ → Matrix Qubit Qubit ℂ)
     (hN : N.map = MatrixMap.ofKraus K) (hcard : Fintype.card κ ≤ 2) :
     FormationRegularization.StrongFormationAdditive N := by
   obtain ⟨u,v,hu,hv,hk⟩ := channelChoiState_product_kernel_of_twoKraus N K hN hcard
-  exact strongFormation_of_productKernel hclassical hqubit hsub N u v hu hv hk
+  exact strongFormation_of_productKernel hqubit hsub N u v hu hv hk
 
 /-- Both independently defined tensor-power formation quantities coincide. -/
 theorem formation_powers_of_productKernel
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit))
     (hqubit : QubitChannelFormationIdentity)
     (hsub : GeneralChannelFormationSubadditivity)
     (N : Channel Qubit Qubit) (u v : Qubit → ℂ)
@@ -56,25 +53,23 @@ theorem formation_powers_of_productKernel
       n * entanglementOfFormation (channelChoiState N) := by
   constructor
   · rw [FormationRegularization.formation_tensorPower N
-      (strongFormation_of_productKernel hclassical hqubit hsub N u v hu hv hk), hqubit]
+      (strongFormation_of_productKernel hqubit hsub N u v hu hv hk), hqubit]
   · exact entanglementOfFormation_tensorPowerBipartite_eq
-      (woottersKernelUpperBound_of_twoExpectations hclassical) _ u v hu hv hk n
+      woottersKernelUpperBound_of_twoExpectations _ u v hu hv hk n
 
 /-- AD has strong channel formation additivity, including its endpoints. -/
 theorem amplitudeDamping_strongFormation
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit))
     (hqubit : QubitChannelFormationIdentity)
     (hsub : GeneralChannelFormationSubadditivity)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     FormationRegularization.StrongFormationAdditive (amplitudeDamping p hp0 hp1) := by
-  apply strongFormation_of_productKernel hclassical hqubit hsub _
+  apply strongFormation_of_productKernel hqubit hsub _
     qubitKet0 qubitKet1 qubitKet0_ne_zero qubitKet1_ne_zero
   rw [channelChoiState_amplitudeDamping]
   exact choiState_matrix_mulVec_qubitKet0_qubitKet1 p hp0 hp1
 
 /-- Exact AD channel and Choi-state formation at every block length. -/
 theorem amplitudeDamping_formation_powers
-    (hclassical : TwoExpectationDecomposition (Qubit × Qubit))
     (hqubit : QubitChannelFormationIdentity)
     (hsub : GeneralChannelFormationSubadditivity)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (n : ℕ) :
@@ -85,10 +80,10 @@ theorem amplitudeDamping_formation_powers
       n * binaryEntropy ((1 + Real.sqrt p) / 2) := by
   constructor
   · rw [FormationRegularization.formation_tensorPower _
-      (amplitudeDamping_strongFormation hclassical hqubit hsub p hp0 hp1),
+      (amplitudeDamping_strongFormation hqubit hsub p hp0 hp1),
       amplitudeDamping_channelEntanglementOfFormation hqubit]
   · rw [channelChoiState_amplitudeDamping]
     exact choiState_entanglementOfFormation_tensorPowerBipartite
-      (woottersKernelUpperBound_of_twoExpectations hclassical) p hp0 hp1 n
+      woottersKernelUpperBound_of_twoExpectations p hp0 hp1 n
 end
 end AmplitudeDamping

@@ -5,7 +5,7 @@ import AmplitudeDamping.TwoExpectations
 /-!
 # The supported marginal formation bound
 
-The only classical input is the exact two-expectation decomposition theorem.
+The exact two-expectation decomposition theorem is proved in `TwoExpectations`.
 The sector projectors, their expectations, support inheritance and the
 formation upper bound are proved for arbitrary finite sector dimensions.
 -/
@@ -66,11 +66,10 @@ theorem supportProjectorB_pure_expectation (psi : PureVector ((a ⊕ Unit) × (U
 
 /-- The manuscript's scalar upper bound for a supported mixed marginal. -/
 theorem supported_marginal_formation_upper_bound
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (rho : State ((a ⊕ Unit) × (Unit ⊕ b))) (hs : HasSingleExcitationSupport rho) :
     entanglementOfFormation rho ≤ entanglementCurve (2 * Real.sqrt
       (operatorExpectation supportProjectorA rho * operatorExpectation supportProjectorB rho)) := by
-  obtain ⟨E, hE, hcomponents⟩ := hclassical rho supportProjectorA supportProjectorB
+  obtain ⟨E, hE, hcomponents⟩ := twoExpectationDecomposition _ rho supportProjectorA supportProjectorB
     supportProjectorA_isHermitian supportProjectorB_isHermitian
   have hbranch (j : Fin E.card) : (E.vectors j).state.marginalA.vonNeumann =
       entanglementCurve (2 * Real.sqrt (operatorExpectation supportProjectorA rho *

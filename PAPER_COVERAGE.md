@@ -12,9 +12,9 @@ The source is outside this Git repository; labels below identify statements
 independently of theorem-number changes. Base revision: `8e870f4`.
 
 The 18 active numbered statements have corresponding Lean statements. The
-remaining 16 conclusions are proved (with the classical interfaces
-listed below where needed); the two numbered classical lemmas, two-expectation
-decomposition and uniform Kraus representation, are deliberately interfaces.
+17 proved conclusions use only the classical interfaces listed below where
+needed; uniform Kraus representation is the one remaining numbered interface.
+The two-expectation decomposition and fixed-signal HSW theorem are proved here.
 Independent review checked quantifiers, endpoints, arbitrary partners,
 operational definitions, and the literal four-unitary normal-form clause.
 
@@ -22,19 +22,19 @@ operational definitions, and the literal four-unitary normal-form clause.
 
 | Manuscript label | Required conclusion | Current evidence / remaining work |
 | --- | --- | --- |
-| `thm:support` | Arbitrary finite-dimensional support SSA, state additivity and state cost | `SupportSSA` and `SupportConsequences` prove arbitrary finite support SSA, product additivity, tensor powers and operational state cost in original coordinates. An exact intrinsic projector-support ↔ explicit-coordinate equivalence is proved. Two-expectation and state regularization interfaces are explicit. |
+| `thm:support` | Arbitrary finite-dimensional support SSA, state additivity and state cost | `SupportSSA` and `SupportConsequences` prove arbitrary finite support SSA, product additivity, tensor powers and operational state cost in original coordinates. An exact intrinsic projector-support ↔ explicit-coordinate equivalence is proved. Only operational state regularization remains an external interface. |
 | `thm:triangle` | Arbitrary rectangular block inequality including zero weights | Existing `triangularBlockEntropyInequality`, checked. |
-| `lem:two-moments` | Finite pure decomposition preserving two Hermitian expectations, inside support | Exact `TwoExpectationDecomposition` classical interface in `TwoExpectations.lean`; its general proof is deliberately deferred. |
+| `lem:two-moments` | Finite pure decomposition preserving two Hermitian expectations, inside support | `twoExpectationDecomposition` in `TwoExpectations.lean` proves the exact original interface in every finite dimension, with positive weights and support membership. |
 | `cor:state-examples` | Product-kernel and rank-at-most-two two-qubit state results, corner formula | Product-kernel/rank-two state additivity and powers proved. `CornerFromTwoExpectations` derives the corner interface without full Wootters; `StateCostRegularization` connects operational cost. |
 | `cor:stinespring` | General support roof SSA, strong Holevo and capacity additivity | `SupportStinespring` proves roof SSA, strong Holevo, own capacity collapse and arbitrary-partner capacity additivity from actual supported dilation range. |
 | `lem:pure-output-stinespring` | Pure output iff suitable Stinespring support, with arbitrary environment | `PureOutputSupport` proves pure output iff explicit support coordinates for any finite environment. |
-| `cor:two-kraus` | Pure output and communication consequences | Roof/Holevo/own capacity and arbitrary-partner capacity complete under the two-expectation interface; `twoKraus_has_pure_output` supplies the pure-output witness unconditionally. |
+| `cor:two-kraus` | Pure output and communication consequences | Roof/Holevo/own capacity and arbitrary-partner capacity proved without extra classical interfaces; `twoKraus_has_pure_output` supplies the pure-output witness unconditionally. |
 | `lem:flat-roof` | Exact roof at every physical input including endpoints | Existing `outputEntropyRoof_eq_dampingEntropyCurve`, checked. |
-| `thm:damping-capacity` | Scalar max, binary optimum, product-codeword achievability, strong capacity additivity and endpoints | Scalar maximum, unique optimizer, exact binary ensemble, endpoints and arbitrary-partner capacity additivity proved. `ProductSignalCoding` retains exact binary-product-codeword witnesses under the standard fixed-ensemble `ProductSignalHSW` interface. |
+| `thm:damping-capacity` | Scalar max, binary optimum, product-codeword achievability, strong capacity additivity and endpoints | Scalar maximum, unique optimizer, exact binary ensemble, endpoints and arbitrary-partner capacity additivity proved. `ProductSignalCoding` retains exact binary-product-codeword witnesses using the proved fixed-ensemble `productSignalHSW` theorem, with no coding hypothesis. |
 | `prop:deficit` | Exact three-term deficit, information radius, unique optimal average input for p<1 | `ScalarOptimizer` and `FiniteBlockDeficit`: exact three-term decomposition, nonnegative terms, information radius, optimizer and uniqueness. Uniqueness alone uses explicit generic `FaithfulRelativeEntropyEquality`. |
 | `thm:two-kraus-unified` | Strong channel formation and parallel cost additivity, all state/channel equalities and powers | `UnifiedFormation` / `UnifiedCost` prove formation, powers, operational state/channel equalities and strong parallel cost additivity. `PaperTheorems` discharges general subadditivity using only the exact classical uniform-Kraus interface. |
 | `cor:pure-output` | Unified conclusions for all pure-output qubit channels | `PureOutputChoi` proves pure output iff Choi product kernel; `Paper.pure_output_additivity` and `Paper.pure_output_single_letter_and_powers` cover all conclusions, with no Kraus rank restriction. |
-| `thm:ad-cost` | AD state/channel formation and parallel cost formulas, powers and arbitrary partners | Actual Choi bridge and unconditional one-copy E_F formula proved. `amplitudeDamping_formation_powers` and `amplitudeDamping_operational_costs` cover powers and operational costs with displayed classical interfaces; `ADDirectCost` proves own powers/costs without uniform Kraus or qubit-identity premises; only two-expectation and operational regularization remain. Arbitrary-partner additivity uses uniform Kraus. |
+| `thm:ad-cost` | AD state/channel formation and parallel cost formulas, powers and arbitrary partners | Actual Choi bridge and unconditional one-copy E_F formula proved. `amplitudeDamping_formation_powers` and `amplitudeDamping_operational_costs` cover powers and operational costs with displayed classical interfaces; `ADDirectCost` proves own powers/costs without uniform Kraus or qubit-identity premises; only operational regularization remains. Arbitrary-partner additivity uses uniform Kraus. |
 | `prop:binary-instrument` | Explicit two-Kraus instrument maximum and uniform correlated-block bound | `BinaryInstrument` proves exact maximum; `InstrumentProduct` proves every block length for arbitrary correlated inputs, from generic product-instrument entropy bound. |
 | `lem:logdet` | Logdet convexity | Existing `skewLogDetIncrement_convexOn_posDef`, checked. |
 | `prop:triangle-equality` | Necessary/sufficient equality conditions with invertible middle block | `TriangleEquality` proves strict skew-logdet/entropy convexity and the necessary/sufficient Gram conditions without external hypotheses. `square_triangular_entropy_equality_iff_four_unitaries` also proves the literal Kronecker normal-form equivalence with arbitrary row and column block unitaries. |
@@ -45,16 +45,16 @@ operational definitions, and the literal four-unitary normal-form clause.
 
 - HSW capacity characterization: already supplied by pinned Lean-QIT;
   no need to re-formalize. Checked AD capacity theorem has only standard
-  Lean axioms. The product-codeword clause is handled by the separate
-  `ProductSignalHSW` interface below.
+  Lean axioms. The product-codeword clause is proved by `productSignalHSW`,
+  retaining the input words through packing and maximal-error expurgation.
 - State operational entanglement-cost regularization and parallel channel
   simulation regularization: permitted external classical theorems, not
   definitions of operational quantities. `OperationalEntanglementCost` defines actual resource-assisted finite-round LOCC protocols, vanishing trace/diamond error and asymptotic resource rates; both regularization interfaces are explicit.
 - Wootters: existing `woottersKernelUpperBound` is a specialized corner
-  conclusion, not the general Wootters formula. `woottersKernelUpperBound_of_twoExpectations` now proves it from the two-expectation interface. The AD one-copy Choi formula is unconditional.
-- Two-expectation decomposition (Leka–Petz): exact classical statement is
-  supplied as a hypothesis; sector entropy, corner specialization and all SSA
-  applications are proved here.
+  conclusion, not the general Wootters formula. `woottersKernelUpperBound_of_twoExpectations` now proves it using the proved two-expectation theorem. The AD one-copy Choi formula is unconditional.
+- Two-expectation decomposition (Leka–Petz): `twoExpectationDecomposition`
+  proves the exact finite statement via compact convex geometry and supported
+  Hermitian perturbations. T parameters are removed from downstream theorems.
 - `QubitChannelFormationIdentity`: standard all-qubit-channel identity
   E_ch(N)=E_F(J_N), cited in the manuscript as BBCW Eqs. (76)–(77).
   Channel formation is independently defined by optimization over pure
@@ -66,10 +66,9 @@ operational definitions, and the literal four-unitary normal-form clause.
 - `GeneralUniformKrausRepresentation`: standard finite uniform near-optimal
   Kraus/minimax statement (BBCW Lemma 14). `UniformKraus` proves the
   correlated product-instrument bound and discharges channel subadditivity.
-- `ProductSignalHSW`: standard fixed-ensemble HSW achievability, retaining
-  exact tensor-product encoder membership and collective POVMs. The public
-  upstream capacity predicate forgets that membership; its generic statement
-  is explicit here rather than assuming an AD-specific coding conclusion.
+- `ProductSignalHSW` is now proved by `productSignalHSW`. The general proof
+  retains exact tensor-product encoder membership and collective POVMs;
+  both binary-signal corollaries have no H parameter.
 
 ## Minimal additional hypotheses of principal results
 
@@ -83,30 +82,31 @@ it does not omit physical parameter or dimension conditions.
 | AD explicit binary instrument and correlated n-block upper bound | None |
 | Triangular inequality, strictness, Gram equality and unitary normal form | None |
 | Pure-output ↔ supported dilation ↔ Choi product kernel | None |
-| General support SSA, state formation additivity and powers | Two-expectation decomposition |
-| AD exact channel/Choi formation powers | Two-expectation decomposition |
-| AD operational parallel cost | Two-expectation decomposition + parallel regularization |
-| Operational supported-state cost | Two-expectation decomposition + state regularization |
-| Pure-output communication additivity | Two-expectation decomposition |
-| General pure-output channel formation additivity | Two-expectation + qubit-channel identity + uniform Kraus |
+| General support SSA, state formation additivity and powers | None |
+| AD exact channel/Choi formation powers | None |
+| AD operational parallel cost | Parallel regularization |
+| Operational supported-state cost | State regularization |
+| Pure-output communication additivity | None |
+| General pure-output channel formation additivity | Qubit-channel identity + uniform Kraus |
 | General pure-output parallel-cost additivity | Previous row + parallel regularization |
-| Binary-product-codeword achievability | Product-signal HSW |
+| Binary-product-codeword achievability | None |
 | Exact deficit, nonnegative terms and information radius | None |
 | Uniqueness of the optimal block-average input | Faithful relative-entropy equality |
 
 `woottersKernelUpperBound` and `GeneralChannelFormationSubadditivity` remain
 useful low-level propositions, but are discharged in the main entry points.
-They are not additional unproved mathematical inputs there. There are seven
-explicit classical interfaces in the current development, with state and
+They are not additional unproved mathematical inputs there. There are five
+unproved classical interfaces in the current development, with state and
 channel operational regularization counted separately.
 
 ## Verification
 
-The complete public root passes `lake build` (3662 jobs), with no new
+The complete public root passes `lake build` (3673 jobs), with no new
 warnings. `lake env lean Audit.lean` audits every public project theorem's
-transitive axioms (1433 theorems in this revision) and rejects anything outside
+transitive axioms (1463 theorems in this revision) and rejects anything outside
 `propext`, `Classical.choice`
-and `Quot.sound`. No project-defined axioms or `sorry` proof terms were added.
+and `Quot.sound`. It also rejects T/H interface names in theorem hypotheses.
+No project-defined axioms or `sorry` proof terms were added.
 `git diff --check` passes. Old foundation modules retain their pre-existing
 style warnings.
 

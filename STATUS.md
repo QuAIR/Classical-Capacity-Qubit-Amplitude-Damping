@@ -284,10 +284,13 @@ hypotheses: those are separately recorded in [PAPER_COVERAGE.md](PAPER_COVERAGE.
 
 The old `woottersKernelUpperBound` is a specialized corner upper bound, not
 the full Wootters formula. `CornerFromTwoExpectations.lean` now derives it from
-the exact two-Hermitian-expectation decomposition interface. The AD one-copy
+the proved two-Hermitian-expectation decomposition theorem. The AD one-copy
 Choi formation formula has also been proved without either interface.
 
-The generic two-expectation decomposition, qubit channel/Choi formation identity,
-faithful relative-entropy equality condition, and operational regularization
-results are explicit classical interfaces. They are not asserted as axioms.
+The two-expectation decomposition and fixed-signal HSW theorem are now proved,
+and their hypothesis parameters have been removed from downstream results.
+Five unproved classical interfaces remain: the qubit channel/Choi formation
+identity, uniform Kraus representation, faithful relative-entropy equality,
+state cost regularization, and parallel channel cost regularization. These
+are explicit hypotheses, not project-defined axioms.
 Temporary development files are not counted as completed manuscript coverage.

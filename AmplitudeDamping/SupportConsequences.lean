@@ -14,7 +14,6 @@ variable [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
 /-- Product additivity concerns the original state, for arbitrary supplied
 local coordinates witnessing the single-excitation support. -/
 theorem support_product_additivity_of_local_coordinates
-    (hc : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (V : TwoQubit.LocalIsometry p (a ⊕ Unit) q (Unit ⊕ b))
     (ρ : State (p × q)) (hs : HasSingleExcitationSupport (V.applyState ρ))
     {c : Type y} {d : Type z} [Fintype c] [DecidableEq c] [Fintype d] [DecidableEq d]
@@ -22,14 +21,13 @@ theorem support_product_additivity_of_local_coordinates
     entanglementOfFormation ((ρ.prod σ).reindex prodReassoc) =
       entanglementOfFormation ρ + entanglementOfFormation σ := by
   apply le_antisymm (entanglementOfFormation_prod_reassoc_le ρ σ)
-  have h := support_criterion_of_local_coordinates hc V
+  have h := support_criterion_of_local_coordinates V
     ((ρ.prod σ).reindex prodReassoc) (by
       rwa [reindex_prodReassoc_prodReassoc, prod_marginalA])
   simpa only [reindex_prodReassoc_prodReassoc, prod_marginalA, prod_marginalB] using h
 
 /-- Exact finite-copy formation in the original basis. -/
 theorem support_tensorPower_formation_of_local_coordinates
-    (hc : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (V : TwoQubit.LocalIsometry p (a ⊕ Unit) q (Unit ⊕ b))
     (ρ : State (p × q)) (hs : HasSingleExcitationSupport (V.applyState ρ))
     (n : ℕ) : entanglementOfFormation (ρ.tensorPowerBipartite n) =
@@ -41,12 +39,11 @@ theorem support_tensorPower_formation_of_local_coordinates
         entanglementOfFormation ((ρ.prod (ρ.tensorPowerBipartite n)).reindex prodReassoc) := by
       rw [tensorPowerBipartite_succ]
       rfl
-    rw [he, support_product_additivity_of_local_coordinates hc V ρ hs, ih, Nat.cast_succ]
+    rw [he, support_product_additivity_of_local_coordinates V ρ hs, ih, Nat.cast_succ]
     ring
 
 /-- Regularized formation in the original basis. -/
 theorem support_regularized_cost_of_local_coordinates
-    (hc : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (V : TwoQubit.LocalIsometry p (a ⊕ Unit) q (Unit ⊕ b))
     (ρ : State (p × q)) (hs : HasSingleExcitationSupport (V.applyState ρ)) :
     entanglementCost ρ = entanglementOfFormation ρ := by
@@ -56,24 +53,23 @@ theorem support_regularized_cost_of_local_coordinates
     ext r
     constructor
     · rintro ⟨n, hn, rfl⟩
-      rw [support_tensorPower_formation_of_local_coordinates hc V ρ hs n,
+      rw [support_tensorPower_formation_of_local_coordinates V ρ hs n,
         mul_div_cancel_left₀ _ (Nat.cast_pos.mpr hn).ne']
       exact Set.mem_singleton _
     · rintro rfl
       refine ⟨1, Nat.one_pos, ?_⟩
-      simp [support_tensorPower_formation_of_local_coordinates hc V ρ hs 1]
+      simp [support_tensorPower_formation_of_local_coordinates V ρ hs 1]
   rw [entanglementCost, he, csInf_singleton]
 
 /-- Operational state cost in the original basis, using only the displayed
 standard operational regularization theorem. -/
 theorem support_operational_cost_of_local_coordinates
     {p q : Type} [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
-    (hc : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (hstate : StateCostRegularization)
     (V : TwoQubit.LocalIsometry p (a ⊕ Unit) q (Unit ⊕ b))
     (ρ : State (p × q)) (hs : HasSingleExcitationSupport (V.applyState ρ)) :
     operationalStateCost ρ = entanglementOfFormation ρ := by
-  rw [hstate.eq_regularized, support_regularized_cost_of_local_coordinates hc V ρ hs]
+  rw [hstate.eq_regularized, support_regularized_cost_of_local_coordinates V ρ hs]
 
 
 /-- The forbidden subspace is the tensor product of the two orthogonal
@@ -137,7 +133,6 @@ theorem singleExcitationDirections_iff_coordinates (ρ : State (p × q))
 
 /-- General support SSA with intrinsic distinguished-vector support. -/
 theorem support_criterion_of_distinguished_vectors
-    (hc : TwoExpectationDecomposition ((p ⊕ Unit) × (Unit ⊕ q)))
     (u : PureVector p) (v : PureVector q)
     {c : Type y} {d : Type z} [Fintype c] [DecidableEq c] [Fintype d] [DecidableEq d]
     (Ω : State ((p × c) × (q × d)))
@@ -145,40 +140,37 @@ theorem support_criterion_of_distinguished_vectors
     entanglementOfFormation (Ω.reindex prodReassoc).marginalA +
       entanglementOfFormation (Ω.reindex prodReassoc).marginalB ≤
     entanglementOfFormation Ω :=
-  support_criterion_of_local_coordinates hc (distinguishedSupportCoordinates u v) Ω
+  support_criterion_of_local_coordinates (distinguishedSupportCoordinates u v) Ω
     ((singleExcitationDirections_iff_coordinates _ u v).mp hs)
 
 
 /-- Intrinsic distinguished-vector support gives strong product additivity. -/
 theorem support_product_additivity_of_distinguished_vectors
-    (hc : TwoExpectationDecomposition ((p ⊕ Unit) × (Unit ⊕ q)))
     (ρ : State (p × q)) (u : PureVector p) (v : PureVector q)
     (hs : HasSingleExcitationDirections ρ u v)
     {c : Type y} {d : Type z} [Fintype c] [DecidableEq c] [Fintype d] [DecidableEq d]
     (σ : State (c × d)) :
     entanglementOfFormation ((ρ.prod σ).reindex prodReassoc) =
       entanglementOfFormation ρ + entanglementOfFormation σ :=
-  support_product_additivity_of_local_coordinates hc (distinguishedSupportCoordinates u v) ρ
+  support_product_additivity_of_local_coordinates (distinguishedSupportCoordinates u v) ρ
     ((singleExcitationDirections_iff_coordinates _ u v).mp hs) σ
 
 /-- Intrinsic distinguished-vector support identifies regularized state cost. -/
 theorem support_regularized_cost_of_distinguished_vectors
-    (hc : TwoExpectationDecomposition ((p ⊕ Unit) × (Unit ⊕ q)))
     (ρ : State (p × q)) (u : PureVector p) (v : PureVector q)
     (hs : HasSingleExcitationDirections ρ u v) :
     entanglementCost ρ = entanglementOfFormation ρ :=
-  support_regularized_cost_of_local_coordinates hc (distinguishedSupportCoordinates u v) ρ
+  support_regularized_cost_of_local_coordinates (distinguishedSupportCoordinates u v) ρ
     ((singleExcitationDirections_iff_coordinates _ u v).mp hs)
 
 /-- Full operational cost conclusion for arbitrary distinguished vectors. -/
 theorem support_operational_cost_of_distinguished_vectors
     {p q : Type} [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
-    (hc : TwoExpectationDecomposition ((p ⊕ Unit) × (Unit ⊕ q)))
     (hstate : StateCostRegularization)
     (ρ : State (p × q)) (u : PureVector p) (v : PureVector q)
     (hs : HasSingleExcitationDirections ρ u v) :
     operationalStateCost ρ = entanglementOfFormation ρ := by
-  rw [hstate.eq_regularized, support_regularized_cost_of_distinguished_vectors hc ρ u v hs]
+  rw [hstate.eq_regularized, support_regularized_cost_of_distinguished_vectors ρ u v hs]
 
 end
 end AmplitudeDamping

@@ -1,39 +1,32 @@
 import AmplitudeDamping.OptimalSignals
+import AmplitudeDamping.ProductSignalHSW
 
 /-!
 # Product-signal achievability
 
 The public Lean-QIT HSW theorem forgets encoder membership when exporting
-`IsAchievableClassicalRate`. The standard fixed-ensemble product-state coding
-theorem is therefore stated explicitly here as a classical interface. It
+`IsAchievableClassicalRate`. The fixed-ensemble product-state coding theorem is proved in
+`ProductSignalHSW.lean` by retaining the input words through packing and expurgation. It
 retains the actual encoder states and collective decoder, not just a number
 called capacity. Its specialization to the paper's two explicit signals is
-proved below. No AD-specific coding conclusion is assumed.
+proved below. No coding hypothesis is required.
 -/
 namespace AmplitudeDamping
 open QIT
 noncomputable section
 
-/-- Achievability while every codeword is a tensor product of the specified
-signal states. The decoder is an unrestricted collective block POVM. -/
-def IsAchievableWithSignals
-    {a b ι : Type} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
-    (N : Channel a b) (signals : ι → State a) (R : ℝ) : Prop :=
-  ∀ δ : ℝ, 0 < δ → ∀ ε : ℝ, 0 < ε →
-    ∃ n₀ : ℕ, ∀ n : ℕ, n ≥ n₀ →
-      ∃ (M : Type) (_ : Fintype M) (_ : DecidableEq M) (_ : Nonempty M)
-        (C : HSWClassicalCode N n M),
-        C.rate ≥ R - δ ∧ C.maxErrorAtMost ε ∧
-        ∀ m : M, ∃ word : Fin n → ι,
-          C.encoder m = productState (fun i => signals (word i))
-
 /-- The standard HSW direct theorem for a fixed finite ensemble, retaining
-its product-codeword witnesses. This proposition is an external classical
-hypothesis; unrestricted HSW capacity itself is already proved upstream. -/
+its product-codeword witnesses. The proposition is proved below using the
+fixed-ensemble packing construction. -/
 def ProductSignalHSW : Prop :=
   ∀ {a b ι : Type} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
     [Fintype ι] [DecidableEq ι] (N : Channel a b) (E : Ensemble ι a),
     IsAchievableWithSignals N E.states (N.hswHolevoRate E)
+
+/-- Fixed-ensemble product-signal coding follows from HSW packing and expurgation. -/
+theorem productSignalHSW : ProductSignalHSW := by
+  intro a b ι _ _ _ _ _ _ N E
+  exact fixedEnsemble_product_code_achievable N E
 
 /-- The restricted notion implies the usual operational coding predicate. -/
 theorem IsAchievableWithSignals.unrestricted
@@ -64,13 +57,12 @@ theorem IsAchievableWithSignals.mono
 /-- The paper's explicit two signals admit tensor-product encoders attaining
 exactly their one-use Holevo rate. -/
 theorem binarySignal_product_code_achievable
-    (hHSW : ProductSignalHSW)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (q : ℝ) (hq0 : 0 ≤ q) (hq1 : q ≤ 1) :
     IsAchievableWithSignals (amplitudeDamping p hp0 hp1)
       (binarySignalEnsemble q hq0 hq1).states
       (amplitudeDampingScalarInformation p q) := by
-  have h := hHSW (amplitudeDamping p hp0 hp1) (binarySignalEnsemble q hq0 hq1)
+  have h := productSignalHSW (amplitudeDamping p hp0 hp1) (binarySignalEnsemble q hq0 hq1)
   have he : (amplitudeDamping p hp0 hp1).hswHolevoRate
       (binarySignalEnsemble q hq0 hq1) = amplitudeDampingScalarInformation p q :=
     binarySignalEnsemble_holevoAfter p hp0 hp1 q hq0 hq1
@@ -79,7 +71,6 @@ theorem binarySignal_product_code_achievable
 /-- At an optimal excitation the operational capacity is attainable using
 only tensor products of the two explicit pure signals. -/
 theorem binarySignal_optimal_product_code_achievable
-    (hHSW : ProductSignalHSW)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (q : ℝ) (hq0 : 0 ≤ q) (hq1 : q ≤ 1)
     (hmax : IsMaxOn (amplitudeDampingScalarInformation p) (Set.Icc 0 1) q) :
@@ -89,6 +80,6 @@ theorem binarySignal_optimal_product_code_achievable
   rw [amplitudeDamping_classicalCapacity_eq_holevoInformation,
     ← binarySignalEnsemble_optimal_of_isMaxOn p hp0 hp1 q hq0 hq1 hmax,
     binarySignalEnsemble_holevoAfter]
-  exact binarySignal_product_code_achievable hHSW p hp0 hp1 q hq0 hq1
+  exact binarySignal_product_code_achievable p hp0 hp1 q hq0 hq1
 end
 end AmplitudeDamping

@@ -4,8 +4,8 @@ import AmplitudeDamping.EntanglementCost
 /-!
 # The arbitrary-dimensional support criterion
 
-The only external classical input is the exact two-Hermitian-expectation
-finite pure decomposition theorem. The entropy formula for supported pure
+The exact two-Hermitian-expectation finite pure decomposition theorem
+is proved in `TwoExpectations`. The entropy formula for supported pure
 states, rectangular triangular inequality, auxiliary local-discard bound,
 and mixed-state convex-roof propagation are all proved in imported modules.
 Local sectors may have dimension zero.
@@ -22,13 +22,12 @@ variable [Fintype c] [DecidableEq c] [Fintype d] [DecidableEq d]
 
 /-- Pure-extension support criterion, with no two-qubit restriction. -/
 theorem supported_pure_entanglement_superadditive
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (ψ : PureVector (((a ⊕ Unit) × c) × ((Unit ⊕ b) × d)))
     (hs : HasSingleExcitationAmplitudes ψ) :
     entanglementOfFormation (ψ.state.reindex prodReassoc).marginalA +
       entanglementOfFormation (ψ.state.reindex prodReassoc).marginalB ≤
     ψ.state.marginalA.vonNeumann := by
-  have hρ := supported_marginal_formation_upper_bound hclassical
+  have hρ := supported_marginal_formation_upper_bound
     (ψ.state.reindex prodReassoc).marginalA ((pure_support_iff_amplitudes ψ).mpr hs)
   rw [supportProjectorA_extension_expectation, supportProjectorB_extension_expectation] at hρ
   have hσ := supported_auxiliary_entanglement_bound ψ hs
@@ -41,25 +40,23 @@ first marginal is supported on `C|00⟩ ⊕ A₁|0⟩ ⊕ |0⟩B₁`.
 The basis ordering is `A₁ ⊕ C|0_A⟩` and `C|0_B⟩ ⊕ B₁`; arbitrary finite
 sector and auxiliary dimensions, including empty sectors, are permitted. -/
 theorem supported_entanglementOfFormation_superadditive
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (Ω : State (((a ⊕ Unit) × c) × ((Unit ⊕ b) × d)))
     (hs : HasSingleExcitationSupport (Ω.reindex prodReassoc).marginalA) :
     entanglementOfFormation (Ω.reindex prodReassoc).marginalA +
       entanglementOfFormation (Ω.reindex prodReassoc).marginalB ≤
     entanglementOfFormation Ω :=
   supported_superadditivity_of_pure
-    (supported_pure_entanglement_superadditive hclassical) Ω hs
+    supported_pure_entanglement_superadditive Ω hs
 
 /-- Strong product additivity for every supported state and every arbitrary
 finite-dimensional auxiliary bipartite state. -/
 theorem supported_entanglementOfFormation_product_additive
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (ρ : State ((a ⊕ Unit) × (Unit ⊕ b))) (hs : HasSingleExcitationSupport ρ)
     (σ : State (c × d)) :
     entanglementOfFormation ((ρ.prod σ).reindex prodReassoc) =
       entanglementOfFormation ρ + entanglementOfFormation σ := by
   apply le_antisymm (entanglementOfFormation_prod_reassoc_le ρ σ)
-  have h := supported_entanglementOfFormation_superadditive hclassical
+  have h := supported_entanglementOfFormation_superadditive
     ((ρ.prod σ).reindex prodReassoc) (by
       rwa [reindex_prodReassoc_prodReassoc, prod_marginalA])
   simpa only [reindex_prodReassoc_prodReassoc, prod_marginalA, prod_marginalB] using h
@@ -68,7 +65,6 @@ theorem supported_entanglementOfFormation_product_additive
 
 /-- Every tensor power has exactly the additive formation cost. -/
 theorem supported_tensorPower_formation
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (ρ : State ((a ⊕ Unit) × (Unit ⊕ b))) (hs : HasSingleExcitationSupport ρ)
     (n : ℕ) :
     entanglementOfFormation (ρ.tensorPowerBipartite n) =
@@ -80,14 +76,13 @@ theorem supported_tensorPower_formation
         entanglementOfFormation ((ρ.prod (ρ.tensorPowerBipartite n)).reindex prodReassoc) := by
       rw [tensorPowerBipartite_succ]
       rfl
-    rw [he, supported_entanglementOfFormation_product_additive hclassical ρ hs,
+    rw [he, supported_entanglementOfFormation_product_additive ρ hs,
       ih, Nat.cast_succ]
     ring
 
 /-- The regularized formation cost equals the single-copy formation cost.
 This uses the repository's explicit regularization definition of state cost. -/
 theorem supported_regularized_entanglementCost_eq
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (ρ : State ((a ⊕ Unit) × (Unit ⊕ b))) (hs : HasSingleExcitationSupport ρ) :
     entanglementCost ρ = entanglementOfFormation ρ := by
   have hset : {r | ∃ n : ℕ, 0 < n ∧
@@ -96,13 +91,13 @@ theorem supported_regularized_entanglementCost_eq
     ext r
     constructor
     · rintro ⟨n, hn, rfl⟩
-      rw [supported_tensorPower_formation hclassical ρ hs n,
+      rw [supported_tensorPower_formation ρ hs n,
         mul_div_cancel_left₀ _ (Nat.cast_pos.mpr hn).ne']
       exact Set.mem_singleton _
     · intro hr
       rcases Set.mem_singleton_iff.mp hr with rfl
       refine ⟨1, Nat.one_pos, ?_⟩
-      simp [supported_tensorPower_formation hclassical ρ hs 1]
+      simp [supported_tensorPower_formation ρ hs 1]
   rw [entanglementCost, hset, csInf_singleton]
 
 
@@ -187,14 +182,13 @@ isometries are concrete coordinate maps into `A₁ ⊕ C|0_A⟩` and
 bases are admitted; the conclusion concerns the original untransformed state.
 No positivity of either sector dimension is required. -/
 theorem support_criterion_of_local_coordinates
-    (hclassical : TwoExpectationDecomposition ((a ⊕ Unit) × (Unit ⊕ b)))
     (V : TwoQubit.LocalIsometry p (a ⊕ Unit) q (Unit ⊕ b))
     (Ω : State ((p × c) × (q × d)))
     (hs : HasSingleExcitationSupport (V.applyState (Ω.reindex prodReassoc).marginalA)) :
     entanglementOfFormation (Ω.reindex prodReassoc).marginalA +
       entanglementOfFormation (Ω.reindex prodReassoc).marginalB ≤
     entanglementOfFormation Ω := by
-  have h := supported_entanglementOfFormation_superadditive hclassical
+  have h := supported_entanglementOfFormation_superadditive
     ((fourfoldLocalIsometry V).applyState Ω) (by
       rw [fourfoldLocalIsometry_marginalA]
       exact hs)

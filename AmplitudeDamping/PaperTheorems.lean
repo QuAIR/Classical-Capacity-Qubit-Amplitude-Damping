@@ -20,20 +20,24 @@ noncomputable section
 def GeneralTwoExpectationDecomposition : Prop :=
   ∀ (a : Type) [Fintype a] [DecidableEq a], TwoExpectationDecomposition a
 
+/-- The two-expectation theorem is available in every finite dimension. -/
+theorem generalTwoExpectationDecomposition : GeneralTwoExpectationDecomposition := by
+  intro a _ _
+  exact twoExpectationDecomposition a
+
 namespace Paper
 
 /-- The general support criterion also identifies the operational state cost. -/
 theorem supported_state_cost
     {a b : Type} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
-    (hdecomp : GeneralTwoExpectationDecomposition) (hstate : StateCostRegularization)
+    (hstate : StateCostRegularization)
     (rho : State ((a ⊕ Unit) × (Unit ⊕ b))) (hs : HasSingleExcitationSupport rho) :
     operationalStateCost rho = entanglementOfFormation rho := by
-  rw [hstate.eq_regularized, supported_regularized_entanglementCost_eq (hdecomp _) rho hs]
+  rw [hstate.eq_regularized, supported_regularized_entanglementCost_eq rho hs]
 
 /-- All four arbitrary-partner additivity identities for a pure-output qubit
 channel. The partner's own regularization is unrestricted. -/
 theorem pure_output_additivity
-    (hdecomp : GeneralTwoExpectationDecomposition)
     (hqubit : QubitChannelFormationIdentity) (huniform : GeneralUniformKrausRepresentation)
     (hparallel : ParallelCostRegularization)
     (N : Channel Qubit Qubit) (hpure : HasPureQubitOutput N)
@@ -47,16 +51,15 @@ theorem pure_output_additivity
       channelEntanglementOfFormation N + channelEntanglementOfFormation M ∧
     parallelEntanglementCost (N.prod M) =
       parallelEntanglementCost N + parallelEntanglementCost M := by
-  have hf : FormationRegularization.StrongFormationAdditive N := pure_output_strongFormation (hdecomp _) hqubit
+  have hf : FormationRegularization.StrongFormationAdditive N := pure_output_strongFormation hqubit
     (generalChannelFormationSubadditivity_of_uniformKraus huniform) N hpure
-  exact ⟨pure_output_strongHolevoAdditive (hdecomp _) N hpure M,
-    pure_output_classicalCapacity_prod_eq (hdecomp _) N hpure M,
+  exact ⟨pure_output_strongHolevoAdditive N hpure M,
+    pure_output_classicalCapacity_prod_eq N hpure M,
     hf M, parallelEntanglementCost_prod_eq_of_strong hparallel N hf M⟩
 
 /-- Own capacity, state/channel cost and all finite-copy identities for the
 pure-output class, with standard regularization theorems kept explicit. -/
 theorem pure_output_single_letter_and_powers
-    (hdecomp : GeneralTwoExpectationDecomposition)
     (hqubit : QubitChannelFormationIdentity) (huniform : GeneralUniformKrausRepresentation)
     (hstate : StateCostRegularization) (hparallel : ParallelCostRegularization)
     (N : Channel Qubit Qubit) (hpure : HasPureQubitOutput N) :
@@ -71,16 +74,15 @@ theorem pure_output_single_letter_and_powers
         n * entanglementOfFormation (channelChoiState N) := by
   obtain ⟨u,v,hu,hv,hk⟩ := pure_output_has_choi_product_kernel N hpure
   have hsub : GeneralChannelFormationSubadditivity := generalChannelFormationSubadditivity_of_uniformKraus huniform
-  obtain ⟨hp,hs,hq⟩ := unified_cost_of_productKernel (hdecomp _) hqubit hsub
+  obtain ⟨hp,hs,hq⟩ := unified_cost_of_productKernel hqubit hsub
     hstate hparallel N u v hu hv hk
-  exact ⟨pure_output_classicalCapacity_eq_holevoInformation (hdecomp _) N hpure,
-    hp,hs,hq,fun n => formation_powers_of_productKernel (hdecomp _) hqubit hsub
+  exact ⟨pure_output_classicalCapacity_eq_holevoInformation N hpure,
+    hp,hs,hq,fun n => formation_powers_of_productKernel hqubit hsub
       N u v hu hv hk n⟩
 
 /-- AD strong formation additivity uses its direct binary-instrument
 certificate, so the general qubit-channel identity is unnecessary here. -/
 theorem amplitudeDamping_strongFormation
-    (hdecomp : TwoExpectationDecomposition (Qubit × Qubit))
     (huniform : GeneralUniformKrausRepresentation)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     FormationRegularization.StrongFormationAdditive (amplitudeDamping p hp0 hp1) := by
@@ -93,14 +95,13 @@ theorem amplitudeDamping_strongFormation
   · intro sigma
     rw [channelChoiState_amplitudeDamping]
     exact entanglementOfFormation_prod_eq
-      (woottersKernelUpperBound_of_twoExpectations hdecomp) _
+      woottersKernelUpperBound_of_twoExpectations _
       qubitKet0 qubitKet1 qubitKet0_ne_zero qubitKet1_ne_zero
       (choiState_matrix_mulVec_qubitKet0_qubitKet1 p hp0 hp1) sigma
 
 /-- All four AD formation/cost quantities equal the explicit binary entropy,
 without a general qubit-channel identity or uniform-Kraus hypothesis. -/
 theorem amplitudeDamping_cost_formula
-    (hdecomp : TwoExpectationDecomposition (Qubit × Qubit))
     (hstate : StateCostRegularization) (hparallel : ParallelCostRegularization)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     parallelEntanglementCost (amplitudeDamping p hp0 hp1) =
@@ -111,22 +112,20 @@ theorem amplitudeDamping_cost_formula
       binaryEntropy ((1 + Real.sqrt p) / 2) ∧
     channelEntanglementOfFormation (amplitudeDamping p hp0 hp1) =
       binaryEntropy ((1 + Real.sqrt p) / 2) :=
-  amplitudeDamping_operational_costs_direct hdecomp hstate hparallel p hp0 hp1
+  amplitudeDamping_operational_costs_direct hstate hparallel p hp0 hp1
 
 /-- Exact finite-copy channel and Choi formation identities for AD. -/
 theorem amplitudeDamping_powers
-    (hdecomp : TwoExpectationDecomposition (Qubit × Qubit))
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (n : ℕ) :
     channelEntanglementOfFormation ((amplitudeDamping p hp0 hp1).tensorPower n) =
       n * binaryEntropy ((1 + Real.sqrt p) / 2) ∧
     entanglementOfFormation
       ((channelChoiState (amplitudeDamping p hp0 hp1)).tensorPowerBipartite n) =
       n * binaryEntropy ((1 + Real.sqrt p) / 2) :=
-  amplitudeDamping_formation_powers_direct hdecomp p hp0 hp1 n
+  amplitudeDamping_formation_powers_direct p hp0 hp1 n
 
 /-- AD arbitrary-partner formation and operational parallel-cost additivity. -/
 theorem amplitudeDamping_cost_additivity
-    (hdecomp : TwoExpectationDecomposition (Qubit × Qubit))
     (huniform : GeneralUniformKrausRepresentation) (hparallel : ParallelCostRegularization)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     {c d : Type} [Fintype c] [DecidableEq c] [Fintype d] [DecidableEq d]
@@ -137,12 +136,11 @@ theorem amplitudeDamping_cost_additivity
     parallelEntanglementCost ((amplitudeDamping p hp0 hp1).prod M) =
       parallelEntanglementCost (amplitudeDamping p hp0 hp1) + parallelEntanglementCost M := by
   have h : FormationRegularization.StrongFormationAdditive (amplitudeDamping p hp0 hp1) :=
-    amplitudeDamping_strongFormation hdecomp huniform p hp0 hp1
+    amplitudeDamping_strongFormation huniform p hp0 hp1
   exact ⟨h M, parallelEntanglementCost_prod_eq_of_strong hparallel _ h M⟩
 /-- The two-Kraus theorem follows from the proven pure-output witness. -/
 theorem twoKraus_additivity
     {κ : Type*} [Fintype κ]
-    (hdecomp : GeneralTwoExpectationDecomposition)
     (hqubit : QubitChannelFormationIdentity) (huniform : GeneralUniformKrausRepresentation)
     (hparallel : ParallelCostRegularization)
     (N : Channel Qubit Qubit) (K : κ → Matrix Qubit Qubit ℂ)
@@ -157,13 +155,12 @@ theorem twoKraus_additivity
       channelEntanglementOfFormation N + channelEntanglementOfFormation M ∧
     parallelEntanglementCost (N.prod M) =
       parallelEntanglementCost N + parallelEntanglementCost M :=
-  pure_output_additivity hdecomp hqubit huniform hparallel N
+  pure_output_additivity hqubit huniform hparallel N
     (twoKraus_has_pure_output N K hN hcard) M
 
 /-- Capacity, operational costs and every tensor power for at most two Kraus operators. -/
 theorem twoKraus_single_letter_and_powers
     {κ : Type*} [Fintype κ]
-    (hdecomp : GeneralTwoExpectationDecomposition)
     (hqubit : QubitChannelFormationIdentity) (huniform : GeneralUniformKrausRepresentation)
     (hstate : StateCostRegularization) (hparallel : ParallelCostRegularization)
     (N : Channel Qubit Qubit) (K : κ → Matrix Qubit Qubit ℂ)
@@ -177,7 +174,7 @@ theorem twoKraus_single_letter_and_powers
         n * entanglementOfFormation (channelChoiState N) ∧
       entanglementOfFormation ((channelChoiState N).tensorPowerBipartite n) =
         n * entanglementOfFormation (channelChoiState N) :=
-  pure_output_single_letter_and_powers hdecomp hqubit huniform hstate hparallel N
+  pure_output_single_letter_and_powers hqubit huniform hstate hparallel N
     (twoKraus_has_pure_output N K hN hcard)
 
 end Paper

@@ -389,8 +389,6 @@ theorem canonical_stinespring_realizes (N : Channel Qubit Qubit) :
 /-- Pure-output qubit channels obey roof SSA against arbitrary partners.
 The canonical environment is finite but has no Kraus-rank-two restriction. -/
 theorem pure_output_outputEntropyRoof_prod_ge
-    (hclassical : TwoExpectationDecomposition
-      ((Unit ⊕ Unit) × (Unit ⊕ (Qubit × Qubit))))
     (N : Channel Qubit Qubit) (hpure : HasPureQubitOutput N)
     {y z : Type*} [Fintype y] [DecidableEq y] [Fintype z] [DecidableEq z]
     (M : Channel y z) (τ : State (Qubit × y)) :
@@ -401,41 +399,35 @@ theorem pure_output_outputEntropyRoof_prod_ge
     N.kraus N.krausAdjoint_one
   obtain ⟨L, hL⟩ := pure_output_exists_supported_stinespring_coordinates N
     (MatrixMap.krausStinespringMatrix N.kraus) hV (canonical_stinespring_realizes N) ψ φ hφ
-  exact outputEntropyRoof_prod_ge_of_supported_stinespring hclassical N _ hV
+  exact outputEntropyRoof_prod_ge_of_supported_stinespring N _ hV
     (canonical_stinespring_realizes N) L hL M τ
 
 /-- Strong Holevo additivity for the full pure-output qubit-channel class. -/
 theorem pure_output_strongHolevoAdditive
-    (hclassical : TwoExpectationDecomposition
-      ((Unit ⊕ Unit) × (Unit ⊕ (Qubit × Qubit))))
     (N : Channel Qubit Qubit) (hpure : HasPureQubitOutput N) :
     CapacityAdditivity.StrongHolevoAdditive N := by
   intro y z _ _ _ _ _ M
   exact generic_holevoInformation_prod_eq N M
-    (pure_output_outputEntropyRoof_prod_ge hclassical N hpure M)
+    (pure_output_outputEntropyRoof_prod_ge N hpure M)
 
 /-- Pure-output qubit channels have a single-letter operational capacity. -/
 theorem pure_output_classicalCapacity_eq_holevoInformation
-    (hclassical : TwoExpectationDecomposition
-      ((Unit ⊕ Unit) × (Unit ⊕ (Qubit × Qubit))))
     (N : Channel Qubit Qubit) (hpure : HasPureQubitOutput N) :
     Channel.classicalCapacity.{0,0,0} N = Channel.holevoInformation.{0,0,0} N := by
   rw [Channel.classicalCapacity_eq_regularizedHolevoInformation]
   exact CapacityAdditivity.regularizedHolevoInformation_eq N
-    (pure_output_strongHolevoAdditive hclassical N hpure)
+    (pure_output_strongHolevoAdditive N hpure)
 
 /-- Their operational capacity is additive against every arbitrary finite
 partner, including partners whose own capacity requires regularization. -/
 theorem pure_output_classicalCapacity_prod_eq
-    (hclassical : TwoExpectationDecomposition
-      ((Unit ⊕ Unit) × (Unit ⊕ (Qubit × Qubit))))
     (N : Channel Qubit Qubit) (hpure : HasPureQubitOutput N)
     {y z : Type} [Fintype y] [DecidableEq y] [Fintype z] [DecidableEq z]
     [Nonempty y] [Nonempty z] (M : Channel y z) :
     Channel.classicalCapacity.{0,0,0} (N.prod M) =
       Channel.classicalCapacity.{0,0,0} N + Channel.classicalCapacity.{0,0,0} M :=
   CapacityAdditivity.classicalCapacity_prod_eq N
-    (pure_output_strongHolevoAdditive hclassical N hpure) M
+    (pure_output_strongHolevoAdditive N hpure) M
 
 end
 end AmplitudeDamping
