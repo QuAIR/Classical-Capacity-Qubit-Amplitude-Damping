@@ -6,9 +6,7 @@ and matrix entropy inequalities, built on Lean-QIT and mathlib.
 
 **Coverage:** all 18 active numbered manuscript statements have Lean
 counterparts with proofs, conditional on the three classical interfaces
-**Q, S, P** where indicated below. The two-expectation decomposition,
-fixed-signal HSW theorem, uniform-Kraus theorem and faithful relative-entropy
-equality case are proved in this library.
+**Q, S, P** where indicated below.
 
 ## Reading the status table
 
@@ -21,7 +19,6 @@ recorded in [PAPER_COVERAGE.md](PAPER_COVERAGE.md).
 ## Status of every manuscript result
 
 The remaining dependency codes **Q, S, P** are defined below.
-The formerly external **T, H, U, K** are now proved and discharged.
 
 | Manuscript label and result | Lean implementation / entry point | Status |
 | --- | --- | --- |
@@ -55,29 +52,6 @@ Their scopes are generic classical statements, not AD-specific conclusions.
 | **S** | [StateCostRegularization](AmplitudeDamping/OperationalEntanglementCost.lean) | Operational LOCC state preparation cost equals regularized state formation, including nonemptiness of achievable rates. |
 | **P** | [ParallelCostRegularization](AmplitudeDamping/OperationalEntanglementCost.lean) | Operational parallel LOCC channel simulation cost equals regularized channel formation, including nonemptiness of achievable rates. |
 
-The four former interfaces are now theorem certificates:
-
-- **T:** `twoExpectationDecomposition` proves `TwoExpectationDecomposition a`
-  for every finite type. The proof uses compact convex geometry, a Hermitian
-  perturbation excluding mixed extreme points, and positive-weight support inheritance.
-- **H:** `productSignalHSW` proves `ProductSignalHSW`, preserving the original
-  signal alphabet, tensor-product encoder states, maximal error and every
-  sufficiently large block length. It reuses Lean-QIT packing and typicality bounds.
-- **U:** [uniformKrausRepresentation](AmplitudeDamping/UniformKrausTheorem.lean)
-  proves the original uniform finite Kraus interface. The proof reconstructs
-  Kraus operators from faithful-input decompositions, covers singular inputs
-  by mixing, then uses finite minimax and weighted Kraus families.
-- **K:** [faithfulRelativeEntropyEquality](AmplitudeDamping/FiniteBlockDeficit.lean)
-  proves the original faithful-reference equality interface. The general proof
-  uses measurement data processing, strict classical relative-entropy equality,
-  and measurement in the eigenbasis of the state difference.
-
-Downstream T/H/U/K hypothesis parameters have been removed. The pinned Lean-QIT
-HSW capacity characterization is also reused. Full Wootters is not separately assumed:
-`woottersKernelUpperBound_of_twoExpectations` derives the legacy corner
-interface from the proved two-expectation theorem. Likewise, the main entry points discharge the generic
-`GeneralChannelFormationSubadditivity` premise using the proved **U** theorem.
-
 Operational costs are defined independently from finite-round LOCC protocols,
 maximally entangled resources and vanishing trace/diamond-distance error.
 They are not defined to equal the regularized formation quantities.
@@ -109,8 +83,7 @@ lake env lean Audit.lean
 
 The complete build passes (3683 jobs). The audit checks 1517 public project
 theorems and permits only `propext`, `Classical.choice` and `Quot.sound` as
-transitive axioms. It also rejects the retired T/H/U/K interface names in theorem
-hypotheses. There are no `sorry` proof terms or project-defined axioms.
+transitive axioms. There are no `sorry` proof terms or project-defined axioms.
 Existing foundation modules retain their style warnings; the new modules
 compile without warnings.
 
