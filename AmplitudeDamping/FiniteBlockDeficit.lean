@@ -1,3 +1,4 @@
+import AmplitudeDamping.RelativeEntropySeparation
 import AmplitudeDamping.ScalarOptimizer
 import QIT.Information.Renyi.RenyiDPI.TraceLogBridge
 import QIT.Channels.Diamond
@@ -7,9 +8,9 @@ import QIT.Channels.Diamond
 The exact deficit identity, nonnegativity of its three terms, the information-
 radius bound, and attainment by the optimal product average are proved for all
 blocklengths and correlated inputs. The real-valued relative entropy is identified
-with QIT's support-aware `EReal` definition. Uniqueness uses the explicit generic
-`FaithfulRelativeEntropyEquality` interface for the equality case of Klein's
-inequality, which is not available in the pinned QIT dependency.
+with QIT's support-aware `EReal` definition. Uniqueness uses the faithful-reference
+equality case proved in `RelativeEntropySeparation`; the original
+`FaithfulRelativeEntropyEquality` interface is discharged below.
 -/
 
 open scoped BigOperators ComplexOrder MatrixOrder
@@ -473,16 +474,18 @@ theorem amplitudeDamping_optimal_average_attains
     amplitudeDamping_classicalCapacity_eq_optimalExcitation p hp0 hp1]
 
 /-- Standard equality case of Klein's inequality for a faithful reference.
-This generic QIT interface is explicit because the pinned dependency currently
-provides nonnegativity but no zero-relative-entropy equality theorem. -/
+The original interface is proved by `faithfulRelativeEntropyEquality` below. -/
 def FaithfulRelativeEntropyEquality : Prop :=
   ∀ {a : Type} [Fintype a] [DecidableEq a] (ρ σ : State a),
     σ.matrix.PosDef → ρ.relativeEntropy σ = 0 → ρ = σ
 
-/-- Conditional only on the standard equality case of Klein's inequality,
-the unique optimal average input is the optimal IID diagonal state. -/
+/-- The faithful-reference equality case is proved in every finite dimension. -/
+theorem faithfulRelativeEntropyEquality : FaithfulRelativeEntropyEquality := by
+  intro a _ _ ρ σ hσ hz
+  exact faithful_relativeEntropy_eq_zero_imp_eq ρ σ hσ hz
+
+/-- The unique optimal average input is the optimal IID diagonal state. -/
 theorem amplitudeDamping_optimal_average_iff
-    (hKlein : FaithfulRelativeEntropyEquality)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p < 1)
     (n : ℕ) (τ : State (TensorPower Qubit n)) :
     (fixedInputHolevo (outputEntropyRoof ((amplitudeDamping p hp0 hp1.le).tensorPower n))
@@ -491,7 +494,7 @@ theorem amplitudeDamping_optimal_average_iff
     τ = (dampingOptimalInput p hp0 hp1).tensorPower n := by
   constructor
   · intro hopt
-    have hout := hKlein _ _ (dampingOptimalOutput_tensorPower_posDef p hp0 hp1 n)
+    have hout := faithfulRelativeEntropyEquality _ _ (dampingOptimalOutput_tensorPower_posDef p hp0 hp1 n)
       (amplitudeDamping_optimal_average_relativeEntropy_zero p hp0 hp1 n τ hopt)
     apply amplitudeDamping_tensorPower_applyState_injective p hp0 hp1 n
     rw [channel_applyState_tensorPower]

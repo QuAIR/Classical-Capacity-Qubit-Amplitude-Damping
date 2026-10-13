@@ -5,11 +5,10 @@ additivity results, amplitude-damping capacity and entanglement-cost formulas,
 and matrix entropy inequalities, built on Lean-QIT and mathlib.
 
 **Coverage:** all 18 active numbered manuscript statements have Lean
-counterparts. Seventeen have proofs, conditional on the classical interfaces
-listed below where indicated. The uniform-Kraus lemma remains an interface
-without a proof. The two-expectation decomposition and fixed-signal HSW theorem
-are now proved in this library. This is **not** a claim that all results have
-been proved without additional mathematical assumptions.
+counterparts with proofs, conditional on the three classical interfaces
+**Q, S, P** where indicated below. The two-expectation decomposition,
+fixed-signal HSW theorem, uniform-Kraus theorem and faithful relative-entropy
+equality case are proved in this library.
 
 ## Reading the status table
 
@@ -29,8 +28,8 @@ hypotheses of the main results are recorded there.
 
 ## Status of every manuscript result
 
-The remaining dependency codes **Q, U, S, P, K** are defined below.
-The formerly external **T** and **H** are now proved and discharged.
+The remaining dependency codes **Q, S, P** are defined below.
+The formerly external **T, H, U, K** are now proved and discharged.
 
 | Manuscript label and result | Lean implementation / entry point | Status and remaining classical dependencies |
 | --- | --- | --- |
@@ -43,15 +42,15 @@ The formerly external **T** and **H** are now proved and discharged.
 | `cor:two-kraus` — qubit channels with at most two Kraus operators | [PureOutputChoi](AmplitudeDamping/PureOutputChoi.lean): `twoKraus_has_pure_output`; [TwoKrausCapacity](AmplitudeDamping/TwoKrausCapacity.lean), [CapacityAdditivity](AmplitudeDamping/CapacityAdditivity.lean) | **Proved:** pure-output existence, roof/Holevo additivity, capacity collapse and arbitrary-partner capacity additivity. The legacy corner premise is supplied by the proved two-expectation theorem. |
 | `lem:flat-roof` — exact fixed-input AD entropy roof | [EqualExcitation](AmplitudeDamping/EqualExcitation.lean): `outputEntropyRoof_eq_dampingEntropyCurve` | **Proved:** all physical inputs and damping endpoints. |
 | `thm:damping-capacity` — AD scalar capacity and optimal binary signals | [ScalarCapacity](AmplitudeDamping/ScalarCapacity.lean), [ScalarOptimizer](AmplitudeDamping/ScalarOptimizer.lean), [OptimalSignals](AmplitudeDamping/OptimalSignals.lean), [CapacityAdditivity](AmplitudeDamping/CapacityAdditivity.lean), [ProductSignalCoding](AmplitudeDamping/ProductSignalCoding.lean) | **Proved:** scalar maximum, optimizer, explicit binary ensemble, endpoint capacities, arbitrary-partner capacity additivity and exact binary-product-codeword achievability. The fixed-ensemble HSW proof retains actual signal words through packing and maximal-error expurgation. |
-| `prop:deficit` — finite-block deficit, information radius and unique average input | [FiniteBlockDeficit](AmplitudeDamping/FiniteBlockDeficit.lean): `amplitudeDamping_exact_deficit_relativeEntropy`, `amplitudeDamping_relativeEntropy_radius_bound`, `amplitudeDamping_optimal_average_iff` | Exact three-term identity, all nonnegative terms, information radius and optimal-product attainment are **proved**. Uniqueness of the optimal average input for `p < 1` is **conditional on K**. |
-| `thm:two-kraus-unified` — unified communication, formation and cost results | [PaperTheorems](AmplitudeDamping/PaperTheorems.lean): `Paper.twoKraus_additivity`, `Paper.twoKraus_single_letter_and_powers` | Communication is **proved**. General channel formation additivity is **conditional on Q + U**; parallel operational cost also uses **P**, and operational Choi-state cost uses **S**. Exact finite-copy channel/state formation identities are included. |
+| `prop:deficit` — finite-block deficit, information radius and unique average input | [FiniteBlockDeficit](AmplitudeDamping/FiniteBlockDeficit.lean): `amplitudeDamping_exact_deficit_relativeEntropy`, `amplitudeDamping_relativeEntropy_radius_bound`, `amplitudeDamping_optimal_average_iff` | **Proved:** exact three-term identity, all nonnegative terms, information radius, optimal-product attainment and uniqueness of the optimal average input for `p < 1`. |
+| `thm:two-kraus-unified` — unified communication, formation and cost results | [PaperTheorems](AmplitudeDamping/PaperTheorems.lean): `Paper.twoKraus_additivity`, `Paper.twoKraus_single_letter_and_powers` | Communication is **proved**. General channel formation additivity is **conditional on Q**; parallel operational cost also uses **P**, and operational Choi-state cost uses **S**. Exact finite-copy channel/state formation identities are included. |
 | `cor:pure-output` — all pure-output qubit channels | [PaperTheorems](AmplitudeDamping/PaperTheorems.lean): `Paper.pure_output_additivity`, `Paper.pure_output_single_letter_and_powers` | Communication is **proved**; formation and operational conclusions have the same remaining dependencies as the unified two-Kraus row. Applies to every pure-output qubit channel and every finite-dimensional partner. |
-| `thm:ad-cost` — AD state/channel formation and operational costs | [ADDirectCost](AmplitudeDamping/ADDirectCost.lean), [PaperTheorems](AmplitudeDamping/PaperTheorems.lean): `Paper.amplitudeDamping_cost_formula`, `Paper.amplitudeDamping_powers`, `Paper.amplitudeDamping_cost_additivity` | **Proved:** one-copy Choi/channel formation formulas and exact powers. Own operational state/parallel costs are **conditional on S/P**, respectively. Arbitrary-partner formation additivity uses **U**, and parallel-cost additivity also uses **P**. **Q is unnecessary for AD; U is unnecessary for its own powers/cost formula.** |
+| `thm:ad-cost` — AD state/channel formation and operational costs | [ADDirectCost](AmplitudeDamping/ADDirectCost.lean), [PaperTheorems](AmplitudeDamping/PaperTheorems.lean): `Paper.amplitudeDamping_cost_formula`, `Paper.amplitudeDamping_powers`, `Paper.amplitudeDamping_cost_additivity` | **Proved:** one-copy Choi/channel formation formulas, exact powers and arbitrary-partner formation additivity. Own operational state/parallel costs are **conditional on S/P**, respectively; arbitrary-partner parallel-cost additivity uses **P**. **Q is unnecessary for AD.** |
 | `prop:binary-instrument` — explicit uniform binary Kraus bound | [BinaryInstrument](AmplitudeDamping/BinaryInstrument.lean), [InstrumentProduct](AmplitudeDamping/InstrumentProduct.lean), [UniformKraus](AmplitudeDamping/UniformKraus.lean): `amplitudeDamping_tensorPower_channelFormation_le` | **Proved:** exact one-use maximum, actual two-Kraus channel realization, and uniform bound for arbitrary correlated inputs at every block length. No uniform-Kraus interface is needed for this explicit construction. |
 | `lem:logdet` — skew log-determinant convexity | [Triangular/LogDetCalculus](AmplitudeDamping/Triangular/LogDetCalculus.lean): `skewLogDetIncrement_convexOn_posDef` | **Proved.** |
 | `prop:triangle-equality` — equality for invertible middle block | [TriangleEquality](AmplitudeDamping/TriangleEquality.lean): `square_triangular_entropy_equality_iff`, `square_triangular_entropy_equality_iff_four_unitaries` | **Proved:** necessary and sufficient Gram conditions and the literal Kronecker normal form with arbitrary block-diagonal row/column unitaries. Strict convexity is proved, not assumed. |
-| `lem:uniform-kraus` — uniform finite Kraus representation/minimax | [UniformKraus](AmplitudeDamping/UniformKraus.lean): `UniformKrausRepresentation`, `GeneralUniformKrausRepresentation` | **Interface only (U):** the manuscript's equivalent finite, uniformly ε-optimal representation statement is explicit. The general classical minimax proof is deferred. |
-| `lem:channel-subadditivity` — general channel formation subadditivity | [UniformKraus](AmplitudeDamping/UniformKraus.lean): `generalChannelFormationSubadditivity_of_uniformKraus` | **Conditional on U:** the Kraus pure-decomposition bound, correlated product-instrument entropy inequality and ε-limit application are proved here. Additivity itself is not assumed. |
+| `lem:uniform-kraus` — uniform finite Kraus representation/minimax | [UniformKrausTheorem](AmplitudeDamping/UniformKrausTheorem.lean): `uniformKrausRepresentation`, `generalUniformKrausRepresentation` | **Proved:** one finite Kraus representation is uniformly ε-optimal over all input states, via pointwise convex-roof approximation, compactness and finite minimax. Supports arbitrary finite dimensions and empty input spaces. |
+| `lem:channel-subadditivity` — general channel formation subadditivity | [UniformKraus](AmplitudeDamping/UniformKraus.lean): `generalChannelFormationSubadditivity_of_uniformKraus` | **Proved:** the uniform representation theorem, Kraus pure-decomposition bound, correlated product-instrument entropy inequality and ε-limit give the full arbitrary-channel inequality. |
 
 ## Classical interfaces that remain unproved
 
@@ -61,12 +60,10 @@ Their scopes are generic classical statements, not AD-specific conclusions.
 | Code | Exact Lean interface | What is assumed |
 | --- | --- | --- |
 | **Q** | [QubitChannelFormationIdentity](AmplitudeDamping/ChannelFormation.lean) | For every qubit-to-qubit channel, independently optimized channel formation equals the formation of its normalized Choi state. |
-| **U** | [GeneralUniformKrausRepresentation](AmplitudeDamping/UniformKraus.lean) | For every finite-dimensional channel and positive tolerance, one finite Kraus representation has entropy cost uniformly within that tolerance of channel formation (BBCW Lemma 14). |
 | **S** | [StateCostRegularization](AmplitudeDamping/OperationalEntanglementCost.lean) | Operational LOCC state preparation cost equals regularized state formation, including nonemptiness of achievable rates. |
 | **P** | [ParallelCostRegularization](AmplitudeDamping/OperationalEntanglementCost.lean) | Operational parallel LOCC channel simulation cost equals regularized channel formation, including nonemptiness of achievable rates. |
-| **K** | [FaithfulRelativeEntropyEquality](AmplitudeDamping/FiniteBlockDeficit.lean) | With a faithful reference state, zero quantum relative entropy implies equality of states. Used only for optimal-average uniqueness. |
 
-The two former interfaces are now theorem certificates:
+The four former interfaces are now theorem certificates:
 
 - **T:** `twoExpectationDecomposition` proves `TwoExpectationDecomposition a`
   for every finite type. The proof uses compact convex geometry, a Hermitian
@@ -75,11 +72,20 @@ The two former interfaces are now theorem certificates:
   signal alphabet, tensor-product encoder states, maximal error and every
   sufficiently large block length. It reuses Lean-QIT packing and typicality bounds.
 
-Downstream T/H hypothesis parameters have been removed. The pinned Lean-QIT
+- **U:** [uniformKrausRepresentation](AmplitudeDamping/UniformKrausTheorem.lean)
+  proves the original uniform finite Kraus interface. The proof reconstructs
+  Kraus operators from faithful-input decompositions, covers singular inputs
+  by mixing, then uses finite minimax and weighted Kraus families.
+- **K:** [faithfulRelativeEntropyEquality](AmplitudeDamping/FiniteBlockDeficit.lean)
+  proves the original faithful-reference equality interface. The general proof
+  uses measurement data processing, strict classical relative-entropy equality,
+  and measurement in the eigenbasis of the state difference.
+
+Downstream T/H/U/K hypothesis parameters have been removed. The pinned Lean-QIT
 HSW capacity characterization is also reused. Full Wootters is not separately assumed:
 `woottersKernelUpperBound_of_twoExpectations` derives the legacy corner
 interface from the proved two-expectation theorem. Likewise, the main entry points discharge the generic
-`GeneralChannelFormationSubadditivity` premise from **U**.
+`GeneralChannelFormationSubadditivity` premise using the proved **U** theorem.
 
 Operational costs are defined independently from finite-round LOCC protocols,
 maximally entangled resources and vanishing trace/diamond-distance error.
@@ -110,9 +116,9 @@ lake build
 lake env lean Audit.lean
 ```
 
-The complete build passes (3673 jobs). The audit checks 1463 public project
+The complete build passes (3683 jobs). The audit checks 1517 public project
 theorems and permits only `propext`, `Classical.choice` and `Quot.sound` as
-transitive axioms. It also rejects the retired T/H interface names in theorem
+transitive axioms. It also rejects the retired T/H/U/K interface names in theorem
 hypotheses. There are no `sorry` proof terms or project-defined axioms.
 Existing foundation modules retain their style warnings; the new modules
 compile without warnings.

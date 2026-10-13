@@ -287,10 +287,13 @@ the full Wootters formula. `CornerFromTwoExpectations.lean` now derives it from
 the proved two-Hermitian-expectation decomposition theorem. The AD one-copy
 Choi formation formula has also been proved without either interface.
 
-The two-expectation decomposition and fixed-signal HSW theorem are now proved,
-and their hypothesis parameters have been removed from downstream results.
-Five unproved classical interfaces remain: the qubit channel/Choi formation
-identity, uniform Kraus representation, faithful relative-entropy equality,
-state cost regularization, and parallel channel cost regularization. These
-are explicit hypotheses, not project-defined axioms.
+The two-expectation decomposition, fixed-signal HSW theorem, uniform Kraus
+representation and faithful relative-entropy equality case are now proved,
+and their T/H/U/K hypothesis parameters are removed from downstream results.
+The U proof includes faithful purification reconstruction, singular-input
+approximation, compactness, finite minimax and weighted Kraus mixing. The K
+proof uses measurement data processing and strict classical KL equality.
+Three unproved classical interfaces remain: the qubit channel/Choi formation
+identity (Q), state cost regularization (S), and parallel channel cost
+regularization (P). These are explicit hypotheses, not project-defined axioms.
 Temporary development files are not counted as completed manuscript coverage.
