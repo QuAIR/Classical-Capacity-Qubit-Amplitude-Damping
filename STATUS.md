@@ -293,7 +293,10 @@ and their T/H/U/K hypothesis parameters are removed from downstream results.
 The U proof includes faithful purification reconstruction, singular-input
 approximation, compactness, finite minimax and weighted Kraus mixing. The K
 proof uses measurement data processing and strict classical KL equality.
-Three unproved classical interfaces remain: the qubit channel/Choi formation
-identity (Q), state cost regularization (S), and parallel channel cost
-regularization (P). These are explicit hypotheses, not project-defined axioms.
+The qubit channel/Choi formation identity is also proved for every qubit
+channel. The proof uses attained concurrence roofs, flat optimal ensembles
+and exact local-filter factorization, with no Q premise downstream.
+Two unproved classical interfaces remain: state cost regularization (S) and
+parallel channel cost regularization (P). These are explicit hypotheses,
+not project-defined axioms.
 Temporary development files are not counted as completed manuscript coverage.

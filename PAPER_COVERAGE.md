@@ -12,9 +12,10 @@ The source is outside this Git repository; labels below identify statements
 independently of theorem-number changes. Base revision: `8e870f4`.
 
 All 18 active numbered statements have corresponding Lean proofs.
-The conclusions use only Q, S and P below where needed. The two-expectation
+The conclusions use only S and P below where needed. The two-expectation
 decomposition, fixed-signal HSW theorem, uniform Kraus representation and
-faithful relative-entropy equality case are proved here.
+faithful relative-entropy equality case and qubit channel/Choi formation
+identity are proved here.
 Independent review checked quantifiers, endpoints, arbitrary partners,
 operational definitions, and the literal four-unitary normal-form clause.
 
@@ -32,7 +33,7 @@ operational definitions, and the literal four-unitary normal-form clause.
 | `lem:flat-roof` | Exact roof at every physical input including endpoints | Existing `outputEntropyRoof_eq_dampingEntropyCurve`, checked. |
 | `thm:damping-capacity` | Scalar max, binary optimum, product-codeword achievability, strong capacity additivity and endpoints | Scalar maximum, unique optimizer, exact binary ensemble, endpoints and arbitrary-partner capacity additivity proved. `ProductSignalCoding` retains exact binary-product-codeword witnesses using the proved fixed-ensemble `productSignalHSW` theorem, with no coding hypothesis. |
 | `prop:deficit` | Exact three-term deficit, information radius, unique optimal average input for p<1 | `ScalarOptimizer` and `FiniteBlockDeficit`: exact three-term decomposition, nonnegative terms, information radius, optimizer and uniqueness. Uniqueness uses the proved `faithfulRelativeEntropyEquality` certificate, with no extra classical hypothesis. |
-| `thm:two-kraus-unified` | Strong channel formation and parallel cost additivity, all state/channel equalities and powers | `UnifiedFormation` / `UnifiedCost` prove formation, powers, operational state/channel equalities and strong parallel cost additivity. `PaperTheorems` discharges general subadditivity using the proved uniform-Kraus theorem; general channel formation still uses Q, and operational costs use S/P. |
+| `thm:two-kraus-unified` | Strong channel formation and parallel cost additivity, all state/channel equalities and powers | `UnifiedFormation` / `UnifiedCost` prove formation, powers, operational state/channel equalities and strong parallel cost additivity. `PaperTheorems` discharges general subadditivity using the proved uniform-Kraus theorem; channel formation is unconditional, and only operational costs use S/P. |
 | `cor:pure-output` | Unified conclusions for all pure-output qubit channels | `PureOutputChoi` proves pure output iff Choi product kernel; `Paper.pure_output_additivity` and `Paper.pure_output_single_letter_and_powers` cover all conclusions, with no Kraus rank restriction. |
 | `thm:ad-cost` | AD state/channel formation and parallel cost formulas, powers and arbitrary partners | Actual Choi bridge and unconditional one-copy E_F formula proved. `amplitudeDamping_formation_powers` and `amplitudeDamping_operational_costs` cover powers and operational costs with displayed classical interfaces; `ADDirectCost` proves own powers/costs without uniform Kraus or qubit-identity premises; only operational regularization remains. Arbitrary-partner formation additivity is now unconditional via the proved uniform-Kraus theorem; parallel-cost additivity still uses parallel regularization. |
 | `prop:binary-instrument` | Explicit two-Kraus instrument maximum and uniform correlated-block bound | `BinaryInstrument` proves exact maximum; `InstrumentProduct` proves every block length for arbitrary correlated inputs, from generic product-instrument entropy bound. |
@@ -55,10 +56,18 @@ operational definitions, and the literal four-unitary normal-form clause.
 - Two-expectation decomposition (Leka–Petz): `twoExpectationDecomposition`
   proves the exact finite statement via compact convex geometry and supported
   Hermitian perturbations. T parameters are removed from downstream theorems.
-- `QubitChannelFormationIdentity`: standard all-qubit-channel identity
+- `qubitChannelFormationIdentity` proves the original all-qubit-channel identity
   E_ch(N)=E_F(J_N), cited in the manuscript as BBCW Eqs. (76)–(77).
-  Channel formation is independently defined by optimization over pure
-  reference-input states; this identity is an explicit hypothesis only.
+  Channel formation remains independently defined by optimization over pure
+  reference-input states. `ConcurrenceRoof` independently defines concurrence
+  as a finite convex roof; `FiniteRoofMinimum` proves attainment. Positive
+  refinement, pair stationarity and a real sign-frame isometry produce flat
+  optimal ensembles (`ConcurrenceFlatRoof`), proving E_F=e(C).
+  `ConcurrenceFilter` proves exact local-filter scaling, including singular
+  filters, and pure-input channel factorization. Monotonicity then makes the
+  Bell input optimal. All Q premises are removed from downstream theorems.
+  This proves the required concurrence-roof identity; a closed formula in
+  spin-flip eigenvalues is not needed or asserted.
 
 - `FaithfulRelativeEntropyEquality` is proved by `faithfulRelativeEntropyEquality`.
   `RelativeEntropyEquality` proves strict classical KL equality;
@@ -91,8 +100,8 @@ it does not omit physical parameter or dimension conditions.
 | AD operational parallel cost | Parallel regularization |
 | Operational supported-state cost | State regularization |
 | Pure-output communication additivity | None |
-| General pure-output channel formation additivity | Qubit-channel identity |
-| General pure-output parallel-cost additivity | Previous row + parallel regularization |
+| General pure-output channel formation additivity | None |
+| General pure-output parallel-cost additivity | Parallel regularization |
 | Binary-product-codeword achievability | None |
 | Exact deficit, nonnegative terms and information radius | None |
 | Uniqueness of the optimal block-average input | None |
@@ -102,17 +111,17 @@ it does not omit physical parameter or dimension conditions.
 
 `woottersKernelUpperBound` and `GeneralChannelFormationSubadditivity` remain
 useful low-level propositions, but are discharged in the main entry points.
-They are not additional unproved mathematical inputs there. There are three
+They are not additional unproved mathematical inputs there. There are two
 unproved classical interfaces in the current development, with state and
 channel operational regularization counted separately.
 
 ## Verification
 
-The complete public root passes `lake build` (3683 jobs), with no new
+The complete public root passes `lake build` (3692 jobs), with no new
 warnings. `lake env lean Audit.lean` audits every public project theorem's
-transitive axioms (1517 theorems in this revision) and rejects anything outside
+transitive axioms (1648 theorems in this revision) and rejects anything outside
 `propext`, `Classical.choice`
-and `Quot.sound`. It also rejects T/H/U/K interface names in theorem hypotheses.
+and `Quot.sound`. It also rejects T/H/U/K/Q interface names in theorem hypotheses.
 No project-defined axioms or `sorry` proof terms were added.
 `git diff --check` passes. Old foundation modules retain their pre-existing
 style warnings.

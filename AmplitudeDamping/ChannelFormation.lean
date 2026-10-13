@@ -1,4 +1,5 @@
 import AmplitudeDamping.ChannelChoi
+import AmplitudeDamping.ConcurrenceFlatRoof
 
 /-!
 # Channel entanglement of formation
@@ -6,9 +7,9 @@ import AmplitudeDamping.ChannelChoi
 This is the supremum of the state entanglement of formation after a channel
 acts on one half of a pure input with an input-sized reference. It is not a
 Choi-state definition. The Bell-input lower bound is proved from that
-optimization. The standard qubit-channel identity is exposed separately as
-an explicit classical interface (Berta--Brandão--Christandl--Wehner,
-Eqs. (76)--(77), as cited in the manuscript).
+optimization. The qubit-channel identity is proved using the concurrence
+convex-roof formula and exact local-filter factorization
+(Berta--Brandão--Christandl--Wehner, Eqs. (76)--(77)).
 -/
 
 namespace AmplitudeDamping
@@ -73,20 +74,44 @@ theorem channelEntanglementOfFormation_nonneg [Nonempty a] (N : Channel a b) :
     0 ≤ channelEntanglementOfFormation N :=
   (entanglementOfFormation_nonneg _).trans (choi_entanglementOfFormation_le_channel N)
 
-/-- The standard qubit-channel identity. This is an explicit hypothesis,
-not an axiom and not an assumed additivity or simulation-cost statement.
-Its known proof uses Wootters' formula and concurrence factorization. -/
+/-- The qubit-channel identity, proved by `qubitChannelFormationIdentity`. -/
 def QubitChannelFormationIdentity : Prop :=
   ∀ N : Channel Qubit Qubit,
     channelEntanglementOfFormation N = entanglementOfFormation (channelChoiState N)
 
-/-- AD channel formation, conditional only on the standard qubit identity. -/
+/-- Exact formation at a pure reference input, via concurrence factorization. -/
+theorem qubit_channelFormationAt_eq (N : Channel Qubit Qubit)
+    (ψ : PureVector (Qubit × Qubit)) :
+    channelFormationAt N ψ =
+      entanglementCurve (pureConcurrence ψ * concurrence (channelChoiState N)) := by
+  unfold channelFormationAt
+  rw [entanglementOfFormation_eq_entanglementCurve_concurrence, concurrence_reference_channel]
+
+/-- The Bell input maximizes formation for every qubit-to-qubit channel. -/
+theorem qubit_channelFormationAt_le_choi (N : Channel Qubit Qubit)
+    (ψ : PureVector (Qubit × Qubit)) :
+    channelFormationAt N ψ ≤ entanglementOfFormation (channelChoiState N) := by
+  rw [qubit_channelFormationAt_eq, entanglementOfFormation_eq_entanglementCurve_concurrence]
+  have hp := pureConcurrence_mem_Icc ψ
+  have hc := concurrence_mem_Icc (channelChoiState N)
+  have hle : pureConcurrence ψ * concurrence (channelChoiState N) ≤
+      concurrence (channelChoiState N) := mul_le_of_le_one_left hc.1 hp.2
+  exact entanglementCurve_monotoneOn ⟨mul_nonneg hp.1 hc.1, hle.trans hc.2⟩ hc hle
+
+/-- The original all-qubit-channel formation identity, with no external premise. -/
+theorem qubitChannelFormationIdentity : QubitChannelFormationIdentity := by
+  intro N
+  apply le_antisymm _ (choi_entanglementOfFormation_le_channel N)
+  apply csSup_le (channelFormationValues_nonempty N)
+  rintro _ ⟨ψ, rfl⟩
+  exact qubit_channelFormationAt_le_choi N ψ
+
+/-- AD channel formation follows from the proved qubit identity. -/
 theorem amplitudeDamping_channelEntanglementOfFormation
-    (hqubit : QubitChannelFormationIdentity)
     (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
     channelEntanglementOfFormation (amplitudeDamping p hp0 hp1) =
       binaryEntropy ((1 + Real.sqrt p) / 2) := by
-  rw [hqubit, channelChoiState_amplitudeDamping,
+  rw [qubitChannelFormationIdentity, channelChoiState_amplitudeDamping,
     choiState_entanglementOfFormation_eq_binaryEntropy_unconditional]
 end
 end AmplitudeDamping

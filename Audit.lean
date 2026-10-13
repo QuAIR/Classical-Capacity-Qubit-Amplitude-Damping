@@ -8,7 +8,7 @@ This checks transitive axiom dependencies of every public project theorem.
 It is deliberately separate from the mathematical trust-boundary audit:
 explicit theorem hypotheses do not appear in `collectAxioms`, so the classical
 interfaces must also be inspected in `PAPER_COVERAGE.md` and theorem types.
-The retired T/H/U/K interface names are additionally rejected in theorem premises.
+The retired T/H/U/K/Q interface names are additionally rejected in theorem premises.
 -/
 open Lean Elab Command in
 run_cmd do
@@ -19,7 +19,8 @@ run_cmd do
     `AmplitudeDamping.GeneralTwoExpectationDecomposition, `AmplitudeDamping.ProductSignalHSW,
     `AmplitudeDamping.UniformKrausRepresentation,
     `AmplitudeDamping.GeneralUniformKrausRepresentation,
-    `AmplitudeDamping.FaithfulRelativeEntropyEquality]
+    `AmplitudeDamping.FaithfulRelativeEntropyEquality,
+    `AmplitudeDamping.QubitChannelFormationIdentity]
   let rec hasRetiredPremise : Expr → Bool
     | .forallE _ domain body _ =>
       (domain.find? fun e => retiredInterfaces.any e.isConstOf).isSome || hasRetiredPremise body
@@ -28,9 +29,9 @@ run_cmd do
   for name in names do
     if let some ci := env.find? name then
       if hasRetiredPremise ci.type then
-        throwError "Retired T/H/U/K interface remains a hypothesis of {name}"
+        throwError "Retired T/H/U/K/Q interface remains a hypothesis of {name}"
     let axioms ← Lean.collectAxioms name
     for ax in axioms do
       unless ax == `propext || ax == `Classical.choice || ax == `Quot.sound do
         throwError "Unexpected axiom {ax} in {name}"
-  logInfo m!"Audited {names.size} AmplitudeDamping theorems: only propext, Classical.choice, Quot.sound; no T/H/U/K interface hypotheses."
+  logInfo m!"Audited {names.size} AmplitudeDamping theorems: only propext, Classical.choice, Quot.sound; no T/H/U/K/Q interface hypotheses."

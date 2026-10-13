@@ -9,7 +9,7 @@ import AmplitudeDamping.ProductSignalCoding
 These entry points discharge the temporary general-subadditivity premise
 using the proved uniform-Kraus application. In particular, no manuscript
 additivity result is taken as a premise. The AD formation formula does not
-require the general qubit-channel/Choi identity.
+require the general qubit-channel/Choi identity, which is also proved.
 -/
 namespace AmplitudeDamping
 open QIT
@@ -38,7 +38,6 @@ theorem supported_state_cost
 /-- All four arbitrary-partner additivity identities for a pure-output qubit
 channel. The partner's own regularization is unrestricted. -/
 theorem pure_output_additivity
-    (hqubit : QubitChannelFormationIdentity)
     (hparallel : ParallelCostRegularization)
     (N : Channel Qubit Qubit) (hpure : HasPureQubitOutput N)
     {c d : Type} [Fintype c] [DecidableEq c] [Fintype d] [DecidableEq d]
@@ -51,7 +50,7 @@ theorem pure_output_additivity
       channelEntanglementOfFormation N + channelEntanglementOfFormation M ∧
     parallelEntanglementCost (N.prod M) =
       parallelEntanglementCost N + parallelEntanglementCost M := by
-  have hf : FormationRegularization.StrongFormationAdditive N := pure_output_strongFormation hqubit
+  have hf : FormationRegularization.StrongFormationAdditive N := pure_output_strongFormation
     (generalChannelFormationSubadditivity_of_uniformKraus) N hpure
   exact ⟨pure_output_strongHolevoAdditive N hpure M,
     pure_output_classicalCapacity_prod_eq N hpure M,
@@ -60,7 +59,6 @@ theorem pure_output_additivity
 /-- Own capacity, state/channel cost and all finite-copy identities for the
 pure-output class, with standard regularization theorems kept explicit. -/
 theorem pure_output_single_letter_and_powers
-    (hqubit : QubitChannelFormationIdentity)
     (hstate : StateCostRegularization) (hparallel : ParallelCostRegularization)
     (N : Channel Qubit Qubit) (hpure : HasPureQubitOutput N) :
     Channel.classicalCapacity.{0,0,0} N = Channel.holevoInformation.{0,0,0} N ∧
@@ -74,10 +72,10 @@ theorem pure_output_single_letter_and_powers
         n * entanglementOfFormation (channelChoiState N) := by
   obtain ⟨u,v,hu,hv,hk⟩ := pure_output_has_choi_product_kernel N hpure
   have hsub : GeneralChannelFormationSubadditivity := generalChannelFormationSubadditivity_of_uniformKraus
-  obtain ⟨hp,hs,hq⟩ := unified_cost_of_productKernel hqubit hsub
+  obtain ⟨hp,hs,hq⟩ := unified_cost_of_productKernel hsub
     hstate hparallel N u v hu hv hk
   exact ⟨pure_output_classicalCapacity_eq_holevoInformation N hpure,
-    hp,hs,hq,fun n => formation_powers_of_productKernel hqubit hsub
+    hp,hs,hq,fun n => formation_powers_of_productKernel hsub
       N u v hu hv hk n⟩
 
 /-- AD strong formation additivity uses its direct binary-instrument
@@ -140,7 +138,6 @@ theorem amplitudeDamping_cost_additivity
 /-- The two-Kraus theorem follows from the proven pure-output witness. -/
 theorem twoKraus_additivity
     {κ : Type*} [Fintype κ]
-    (hqubit : QubitChannelFormationIdentity)
     (hparallel : ParallelCostRegularization)
     (N : Channel Qubit Qubit) (K : κ → Matrix Qubit Qubit ℂ)
     (hN : N.map = MatrixMap.ofKraus K) (hcard : Fintype.card κ ≤ 2)
@@ -154,13 +151,12 @@ theorem twoKraus_additivity
       channelEntanglementOfFormation N + channelEntanglementOfFormation M ∧
     parallelEntanglementCost (N.prod M) =
       parallelEntanglementCost N + parallelEntanglementCost M :=
-  pure_output_additivity hqubit hparallel N
+  pure_output_additivity hparallel N
     (twoKraus_has_pure_output N K hN hcard) M
 
 /-- Capacity, operational costs and every tensor power for at most two Kraus operators. -/
 theorem twoKraus_single_letter_and_powers
     {κ : Type*} [Fintype κ]
-    (hqubit : QubitChannelFormationIdentity)
     (hstate : StateCostRegularization) (hparallel : ParallelCostRegularization)
     (N : Channel Qubit Qubit) (K : κ → Matrix Qubit Qubit ℂ)
     (hN : N.map = MatrixMap.ofKraus K) (hcard : Fintype.card κ ≤ 2) :
@@ -173,7 +169,7 @@ theorem twoKraus_single_letter_and_powers
         n * entanglementOfFormation (channelChoiState N) ∧
       entanglementOfFormation ((channelChoiState N).tensorPowerBipartite n) =
         n * entanglementOfFormation (channelChoiState N) :=
-  pure_output_single_letter_and_powers hqubit hstate hparallel N
+  pure_output_single_letter_and_powers hstate hparallel N
     (twoKraus_has_pure_output N K hN hcard)
 
 end Paper

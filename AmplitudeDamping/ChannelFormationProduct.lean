@@ -91,11 +91,10 @@ theorem channelFormation_prod_ge_of_choi
   exact (le_sub_iff_add_le').2 hw
 
 /-- Strong formation additivity for a qubit channel with a product-kernel
-Choi state. The two external classical interfaces and the existing corner
-formula hypothesis are displayed explicitly. -/
+Choi state. The qubit-channel identity is proved; the subadditivity and
+corner-formula premises are supplied by the main entry points. -/
 theorem channelFormation_prod_eq_of_productKernel
     (hcorner : woottersKernelUpperBound)
-    (hqubit : QubitChannelFormationIdentity)
     (hsub : ChannelFormationSubadditivity (a := Qubit) (b := Qubit)
       (c := c) (d := d))
     (N : Channel Qubit Qubit) (M : Channel c d) [Nonempty c]
@@ -104,7 +103,7 @@ theorem channelFormation_prod_eq_of_productKernel
     channelEntanglementOfFormation (N.prod M) =
       channelEntanglementOfFormation N + channelEntanglementOfFormation M := by
   apply le_antisymm (hsub N M)
-  apply channelFormation_prod_ge_of_choi N M (hqubit N)
+  apply channelFormation_prod_ge_of_choi N M (qubitChannelFormationIdentity N)
   intro sigma
   exact entanglementOfFormation_prod_eq hcorner (channelChoiState N) u v hu hv hk sigma
 
